@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id
+  firstName          String
+  lastName           String
+  username           String?
+  email              String   @unique
+  telNumber          String?
+  additionalContacts String[]
+  bio                String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postedProducts    Product[]
+  purchasedProducts Purchase[]
+  comments          Comment[]
+}
+
+model Product {
+  id           String   @id @default(uuid())
+  name         String
+  imagePaths   String[]
+  priceInCents Int
+  discount     Int?
+  description  String?
+  rating       Int
+  ratingNumber Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sellerId String
+  seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  purchases Purchase[]
+  comments  Comment[]
+}
+
+model Purchase {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  replies Comment[] @relation("commentReplies")
+
+  // if the comment is a reply to another comment, it will have these properties
+  parentCommentId String?
+  parentComment   Comment? @relation("commentReplies", fields: [parentCommentId], references: [id])
+}

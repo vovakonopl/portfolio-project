@@ -2,32 +2,130 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/*=========================================
+    aditional resets and untility classes
+  =========================================*/
+@layer components {
+  .container {
+    width: 100%;
+    max-width: 79.5rem;
+    padding: 0 1rem;
+    margin: 0 auto;
+  }
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .word-break {
+    word-break: break-word;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+:root {
+  --nav-height: 6rem;
+  --footer-height: 7.25rem;
+  @media not all and (min-width: 768px) {
+    --nav-height: 4.25rem;
+  }
+}
+button {
+  user-select: none;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/*==========
+    navbar
+  ==========*/
+.navbar::after {
+  content: '';
+
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  height: 1px;
+  width: calc(100% - 2rem);
+  max-width: 77.5rem;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.navbar__search::before {
+  content: '';
+
+  display: flex;
+
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 1.5rem;
+  height: 1.5rem;
+
+  background-image: url('/icons/search.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.4;
+}
+
+/*===========
+    profile
+  ===========*/
+
+.profile__link {
+  @apply flex w-full rounded border-b transition-colors hover:bg-sky-50 active:bg-sky-50;
+}
+.profile__link a {
+  @apply w-full px-4 py-2;
+}
+
+.avatar__upload {
+  background-image: url('/icons/upload-image.svg');
+  background-size: 2rem;
+}
+@media (hover: hover) {
+  .avatar:hover .avatar__upload {
+    opacity: 0.8;
+  }
+}
+@media (hover: none) {
+  .avatar__upload {
+    @apply inset-auto bottom-0 right-0 flex size-5 items-center justify-center bg-sky-400 bg-none opacity-100 outline outline-2 outline-white md:size-6 md:-translate-x-1/4 md:-translate-y-1/4;
+  }
+  .avatar__upload::after {
+    content: '+';
+
+    line-height: 0.675rem;
+
+    @apply font-bold text-white;
+  }
+}
+
+.nav-close {
+  animation: closeProfileNav 0.3s forwards;
+}
+.nav-open {
+  animation: openProfileNav 0.3s forwards;
+}
+@keyframes closeProfileNav {
+  0% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+    display: none;
+  }
+}
+@keyframes openProfileNav {
+  0% {
+    display: none;
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.2;
   }
 }
