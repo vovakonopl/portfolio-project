@@ -1,14 +1,14 @@
 'use client';
 
 import { ChangeEvent, FC, useCallback, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTrinketUser } from '@/scripts/user';
-// components
-import ProfileLoading from './_profile-components/loading';
+import ProfileLoading from './_components/loading';
 import Image from 'next/image';
-import UserAbout from './_profile-components/user-about';
-import EditProfile from './_profile-components/edit-button';
-import UserAboutForm from './_profile-components/user-about-form';
+import UserAbout from './_components/about';
+import EditButton from './_components/edit-button';
+import UserAboutForm from './_components/about-form';
+import ToHome from './_components/return-to-home';
+import AuthProviders from './_components/auth-providers';
 
 type ImageUploader = (e: ChangeEvent<HTMLInputElement>) => void;
 
@@ -17,7 +17,6 @@ interface IProfileProps {}
 const Profile: FC<IProfileProps> = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { user, clerkUser, isLoaded } = useTrinketUser();
-  const router = useRouter();
 
   const updateProfielImage: ImageUploader = useCallback<ImageUploader>(
     (e: ChangeEvent<HTMLInputElement>): void => {
@@ -34,9 +33,8 @@ const Profile: FC<IProfileProps> = () => {
   if (!isLoaded) {
     return <ProfileLoading />;
   }
-  if (isLoaded && (!clerkUser || !user)) {
-    router.replace('/');
-    return <></>;
+  if (!user || !clerkUser) {
+    return <ToHome />;
   }
 
   const toggleEditing = (): void => {
@@ -44,13 +42,13 @@ const Profile: FC<IProfileProps> = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-1 flex-col gap-12 max-md:justify-center">
       <div className="flex flex-1 gap-4 max-md:flex-col max-md:items-center">
         <div className="flex flex-col gap-4">
           {/* user avatar */}
           <div className="avatar relative flex size-36 rounded-full max-md:size-24">
             <Image
-              src={clerkUser!.imageUrl}
+              src={clerkUser.imageUrl}
               alt="avatar"
               width={500}
               height={500}
@@ -68,30 +66,42 @@ const Profile: FC<IProfileProps> = () => {
           </div>
 
           {/* edit button on larger screens*/}
-          <EditProfile
-            onClick={toggleEditing}
-            containerClassName="max-md:hidden"
-          >
-            Edit profile
-          </EditProfile>
+          {!isEditing && (
+            <div className="flex flex-1 items-start justify-center font-normal text-gray-400 max-md:hidden">
+              <EditButton onClick={toggleEditing} className="pl-4">
+                Edit profile
+              </EditButton>
+            </div>
+          )}
         </div>
 
         {/* about user */}
         {isEditing ? (
           <UserAboutForm toggleEditing={toggleEditing} />
         ) : (
-          <UserAbout user={user!} clerkUser={clerkUser!} />
+          <UserAbout user={user} />
         )}
 
         {/* edit button on smaller screens*/}
-        <EditProfile
-          onClick={toggleEditing}
-          containerClassName="hidden max-md:flex"
-        >
-          Edit profile
-        </EditProfile>
+        {!isEditing && (
+          <div className="hidden flex-1 items-start justify-center font-normal text-gray-400 max-md:flex">
+            <EditButton onClick={toggleEditing} className="pl-4">
+              Edit profile
+            </EditButton>
+          </div>
+        )}
       </div>
-    </>
+      {!isEditing && (
+        <div className="flex flex-col gap-4 max-md:gap-2">
+          {/* OAuth providers */}
+          <h2 className="text-center text-lg font-medium">
+            Connect your account with socials
+          </h2>
+
+          <AuthProviders />
+        </div>
+      )}
+    </div>
   );
 };
 

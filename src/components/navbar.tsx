@@ -40,7 +40,7 @@ const Navbar: FC<INavbarProps> = () => {
               className="grow rounded-3xl bg-gray-100 py-3 pl-12 pr-4 placeholder:select-none placeholder:text-black placeholder:opacity-40"
             />
           </div>
-          <div className="flex h-6 select-none gap-3">
+          <div className="flex min-h-6 select-none items-center gap-3">
             <button className="hidden max-md:block">
               <Image
                 src="/icons/search.svg"
@@ -58,7 +58,7 @@ const Navbar: FC<INavbarProps> = () => {
                 className="size-6"
               />
             </Link>
-            <div className="flex w-13 justify-center">
+            <div className="flex min-w-7">
               <SignedOut>
                 <SignInButton>
                   <button className="capitalize">Sign in</button>

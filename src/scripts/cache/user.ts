@@ -1,25 +1,26 @@
-'use server';
-
 import { redisClient } from '@/lib/redis';
-import { User } from '@prisma/client';
+import { UserWithContacts } from '@/types/user';
 import db from '@/lib/db';
 
 const DEFAULT_EXPIRE_TIME = 3600;
 
-export async function setUser(user: User): Promise<void> {
+async function set(user: UserWithContacts): Promise<void> {
   await redisClient.set(`user:${user.id}`, JSON.stringify(user), {
     EX: DEFAULT_EXPIRE_TIME,
   });
 }
 
-export async function getUser(userId: string): Promise<string> {
+async function get(userId: string): Promise<string> {
   const userJSON: string | null = await redisClient.get(`user:${userId}`);
 
   if (!userJSON) {
     // if user wasn't found in cache => return data from db and set it in cache
-    const user: User | null = await db.user.findUnique({
+    const user: UserWithContacts | null = await db.user.findUnique({
       where: {
         id: userId,
+      },
+      include: {
+        additionalContacts: true,
       },
     });
 
@@ -27,7 +28,7 @@ export async function getUser(userId: string): Promise<string> {
       throw new Error('User does not exist.');
     }
 
-    await setUser(user);
+    await set(user);
 
     return JSON.stringify(user);
   }
@@ -35,6 +36,12 @@ export async function getUser(userId: string): Promise<string> {
   return userJSON;
 }
 
-export async function updateUser(user: Partial<User>): Promise<void> {
-  // const userJSON: string | null = await redisClient.get(`user:${userId}`);
+async function del(userId: string): Promise<void> {
+  await redisClient.del(`user:${userId}`);
 }
+
+export const userCache = {
+  set,
+  get,
+  del,
+};

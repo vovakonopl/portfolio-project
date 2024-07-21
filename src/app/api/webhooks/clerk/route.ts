@@ -2,9 +2,7 @@ import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { UserJSON, WebhookEvent } from '@clerk/nextjs/server';
 import db from '@/lib/db';
-import { setUser } from '@/scripts/cache/user';
-import { redisClient } from '@/lib/redis';
-import { User } from '@prisma/client';
+import { userCache } from '@/scripts/cache/user';
 
 class UserData {
   id: string;
@@ -74,27 +72,30 @@ export async function POST(req: Request) {
     const userData: UserData = new UserData(evt.data);
 
     // set/update user to db
-    await db.user.upsert({
+    const user = await db.user.upsert({
       where: {
         id: userData.id,
       },
       create: userData,
       update: userData,
+      include: {
+        additionalContacts: true,
+      },
     });
-    // update user to cache
-    const userCacheJSON = await redisClient.get(`user:${userData.id}`);
-    if (userCacheJSON) {
-      const userCache: User = JSON.parse(userCacheJSON);
-      setUser({ ...userCache, ...userData });
-    }
+
+    // set/update user to cache
+    await userCache.set(user);
   }
 
   if (eventType === 'user.deleted') {
+    if (!evt.data.id) return;
+
     await db.user.delete({
       where: {
         id: evt.data.id,
       },
     });
+    userCache.del(evt.data.id);
   }
 
   return new Response('', { status: 200 });

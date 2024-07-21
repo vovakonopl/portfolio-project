@@ -14,13 +14,13 @@ datasource db {
 }
 
 model User {
-  id                 String   @id
+  id                 String    @id
   firstName          String
   lastName           String
   username           String?
-  email              String   @unique
-  telNumber          String?
-  additionalContacts String[]
+  email              String    @unique
+  phoneNumbers       String[]
+  additionalContacts Contact[]
   bio                String?
 
   createdAt DateTime @default(now())
@@ -29,6 +29,15 @@ model User {
   postedProducts    Product[]
   purchasedProducts Purchase[]
   comments          Comment[]
+}
+
+model Contact {
+  id   String  @id @default(uuid())
+  body String
+  url  String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Product {

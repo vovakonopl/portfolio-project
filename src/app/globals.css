@@ -29,12 +29,18 @@
 :root {
   --nav-height: 6rem;
   --footer-height: 7.25rem;
-  @media not all and (min-width: 768px) {
+}
+@media not all and (min-width: 768px) {
+  :root {
     --nav-height: 4.25rem;
   }
 }
+
 button {
   user-select: none;
+}
+address {
+  font-style: normal;
 }
 
 /*==========
@@ -75,12 +81,14 @@ button {
 /*===========
     profile
   ===========*/
-
 .profile__link {
   @apply flex w-full rounded border-b transition-colors hover:bg-sky-50 active:bg-sky-50;
 }
 .profile__link a {
   @apply w-full px-4 py-2;
+}
+.profile__link .active {
+  @apply bg-sky-50;
 }
 
 .avatar__upload {
@@ -103,6 +111,10 @@ button {
 
     @apply font-bold text-white;
   }
+}
+
+.avatar:has(input:focus) img {
+  @apply outline outline-2 outline-offset-2 outline-black;
 }
 
 .nav-close {
@@ -128,4 +140,13 @@ button {
   100% {
     opacity: 0.2;
   }
+}
+
+/*---------------
+    phone input
+  ---------------*/
+/* !important for overriding the default input rules */
+.flag-dropdown,
+.selected-flag.open {
+  @apply rounded-l !important;
 }

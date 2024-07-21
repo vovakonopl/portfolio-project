@@ -1,7 +1,7 @@
 'use client';
 
 import { FC, useEffect, useState } from 'react';
-import Filters from './_shop-components/filters';
+import Filters from './_components/filters';
 import Link from 'next/link';
 import { useResize } from '@/scripts/hooks/useResize';
 

@@ -1,9 +1,9 @@
 'use client';
 
+import { FC, useState } from 'react';
 import { useResize } from '@/scripts/hooks/useResize';
 import Image from 'next/image';
-import Link from 'next/link';
-import { FC, useState } from 'react';
+import NavLink from '@/components/util-components/nav-link';
 
 interface IProfileNavProps {}
 
@@ -57,19 +57,27 @@ const ProfileNav: FC<IProfileNavProps> = () => {
             </button>
           </li>
           <li className="profile__link">
-            <Link href="/profile" onClick={closeNav}>
+            <NavLink
+              href="/profile"
+              onClick={closeNav}
+              activeClassName="active"
+            >
               User
-            </Link>
+            </NavLink>
           </li>
           <li className="profile__link">
-            <Link href="/profile/contacts" onClick={closeNav}>
+            <NavLink
+              href="/profile/contacts"
+              onClick={closeNav}
+              activeClassName="active"
+            >
               Contacts
-            </Link>
+            </NavLink>
           </li>
         </ul>
       </nav>
 
-      <div className="absolute hidden max-sm:block">
+      <div className="absolute left-2 hidden max-sm:block">
         <button className="p-2" onClick={openNav}>
           <Image
             src={'/icons/settings.svg'}

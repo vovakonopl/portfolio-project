@@ -38,10 +38,15 @@ const UserAboutForm: FC<IUserAboutFormProps> = ({ toggleEditing }) => {
       data.lastName === clerkUser?.lastName &&
       data.username === clerkUser?.username
     ) {
+      if (data.bio !== user?.bio) {
+        updateUser({ bio: data.bio });
+      }
+
       toggleEditing();
       return;
     }
 
+    // update clerk user data
     try {
       const dataToUpdate = {
         firstName: data.firstName,
@@ -49,7 +54,7 @@ const UserAboutForm: FC<IUserAboutFormProps> = ({ toggleEditing }) => {
         username: data.username,
       };
       await clerkUser?.update(dataToUpdate);
-      updateUser(dataToUpdate);
+      updateUser(data);
 
       toggleEditing();
     } catch (error) {
@@ -73,9 +78,11 @@ const UserAboutForm: FC<IUserAboutFormProps> = ({ toggleEditing }) => {
             type="text"
             id="first-name"
             defaultValue={user?.firstName || ''}
-            className="rounded border border-solid border-gray-400 p-1 px-2"
+            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
+            maxLength={35}
           />
         </div>
+
         <div className="flex flex-col gap-1">
           <label htmlFor="last-name" className="text-gray-400">
             Last name
@@ -86,9 +93,11 @@ const UserAboutForm: FC<IUserAboutFormProps> = ({ toggleEditing }) => {
             type="text"
             id="last-name"
             defaultValue={user?.lastName || ''}
-            className="rounded border border-solid border-gray-400 p-1 px-2"
+            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
+            maxLength={35}
           />
         </div>
+
         <div className="flex flex-col gap-1">
           <label htmlFor="username" className="text-gray-400">
             Username
@@ -99,7 +108,23 @@ const UserAboutForm: FC<IUserAboutFormProps> = ({ toggleEditing }) => {
             type="text"
             id="username"
             defaultValue={user?.username || ''}
-            className="rounded border border-solid border-gray-400 p-1 px-2"
+            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
+            maxLength={35}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="bio" className="text-gray-400">
+            Bio
+          </label>
+          <Error error={errors.bio} />
+          <textarea
+            {...register('bio')}
+            id="bio"
+            defaultValue={user?.bio || ''}
+            rows={4}
+            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
+            maxLength={200}
           />
         </div>
       </div>
