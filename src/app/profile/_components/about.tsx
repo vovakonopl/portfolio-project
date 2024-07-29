@@ -1,6 +1,7 @@
 import { FC, Fragment } from 'react';
 import { UserWithContacts } from '@/types/user';
 import Title from './title';
+import { cn } from '@/scripts/classname';
 
 interface IUserAboutProps {
   user: UserWithContacts;
@@ -18,7 +19,7 @@ const UserAbout: FC<IUserAboutProps> = ({ user }) => {
 
       <div className="flex">
         <Title>Username: </Title>
-        <span className={user.username ? '' : 'italic'}>
+        <span className={cn(user.username && 'italic')}>
           {user.username || 'No username'}
         </span>
       </div>

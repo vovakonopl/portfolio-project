@@ -1,5 +1,7 @@
-import Image from 'next/image';
 import { FC } from 'react';
+// svgs
+import FiltersIcon from '@/assets/icons/filters.svg';
+import Close from '@/assets/icons/close.svg';
 
 // components for filters only
 const Title: FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -24,26 +26,14 @@ const Filters: FC<IFiltersProps> = ({ close }) => {
   return (
     <div className="no-scrollbar relative flex h-full flex-col gap-6 overflow-y-auto px-4 pb-6 pt-1">
       <div className="inset-x-4 -top-5 flex flex-col gap-6 bg-white max-md:sticky max-md:-mt-5 max-md:pt-5">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4 md:justify-between">
           <h2 className="text-xl font-bold text-black">Filters</h2>
-          <Image
-            src="/icons/filters.svg"
-            alt=""
-            width={24}
-            height={24}
-            className="h-6 opacity-40 max-md:hidden"
-          />
+          <FiltersIcon className="size-6 fill-gray-400" />
           <button
-            className="-mb-1 -mr-2 -mt-1 hidden p-2 max-md:inline-block"
+            className="-mb-1 -mr-2 -mt-1 hidden p-2 max-md:ml-auto max-md:inline-block"
             onClick={close}
           >
-            <Image
-              src="/icons/close.svg"
-              alt=""
-              width={16}
-              height={16}
-              className="opacity-40"
-            />
+            <Close className="size-4 fill-gray-400" />
           </button>
         </div>
         <Hr />

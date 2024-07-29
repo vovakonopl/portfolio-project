@@ -1,3 +1,4 @@
+import { cn } from '@/scripts/classname';
 import Link, { LinkProps } from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FC } from 'react';
@@ -19,9 +20,9 @@ const NavLink: FC<INavLinkProps> = ({
 
   return (
     <Link
-      href={href}
-      className={`${className || ''} ${pathname === href ? activeClassName : ''}`.trim()}
       {...props}
+      href={href}
+      className={cn(className, pathname === href && activeClassName)}
     >
       {children}
     </Link>

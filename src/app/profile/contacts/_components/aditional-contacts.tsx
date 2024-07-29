@@ -25,7 +25,7 @@ const AdditionalContacts: FC<IAdditionalContactsProps> = () => {
   };
 
   return (
-    <ul className="word-break break-words max-sm:mx-auto">
+    <ul className="word-break break-words">
       {user?.additionalContacts.map((contact: Contact) => (
         <li key={contact.id} className="flex gap-2">
           <address>

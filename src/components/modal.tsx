@@ -1,5 +1,6 @@
-import Image from 'next/image';
+import { cn } from '@/scripts/classname';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import Close from '@/assets/icons/close.svg';
 
 const tabbableElements = [
   'a',
@@ -21,26 +22,32 @@ class ModalClassName {
   public className: string = '';
 
   private withOpacityAppearance(isOpen: boolean): ModalClassName {
-    this.className += `${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity ease-in `;
+    this.className = cn(
+      this.className,
+      isOpen ? 'opacity-100' : 'opacity-0',
+      'transition-opacity ease-in',
+    );
 
     return this;
   }
 
   private centered(): ModalClassName {
-    this.className +=
-      'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ';
+    this.className = cn(
+      this.className,
+      'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+    );
 
     return this;
   }
 
   private withFlex(): ModalClassName {
-    this.className += 'flex flex-col ';
+    this.className = cn(this.className, 'flex flex-col');
 
     return this;
   }
 
   private withDefaultShape(): ModalClassName {
-    this.className += 'overflow-hidden p-8 rounded-md ';
+    this.className = cn(this.className, 'overflow-hidden p-8 rounded-md');
 
     return this;
   }
@@ -66,7 +73,7 @@ class ModalClassName {
       this.withFlex();
     }
 
-    this.className += className;
+    this.className = cn(this.className, className);
   }
 }
 
@@ -164,7 +171,7 @@ const Modal: FC<IModalProps> = ({
       ...defaultStyles,
     };
     const defaultClassName: string =
-      'min-h-[18rem] bg-white max-sm:inset-0 max-sm:px-3 sm:min-w-[32rem] max-sm:rounded-none max-sm:translate-x-0 max-sm:translate-y-0';
+      'min-h-64 bg-white max-sm:inset-0 max-sm:px-3 sm:min-w-[32rem] max-sm:rounded-none max-sm:translate-x-0 max-sm:translate-y-0';
 
     const modalClassName: ModalClassName = new ModalClassName(
       defaultStyleOptions,
@@ -178,7 +185,11 @@ const Modal: FC<IModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className={`${isOpen ? 'bg-opacity-40' : 'bg-opacity-0'} fixed inset-0 z-20 bg-black transition-colors ease-in ${backdropClassName || ''}`.trimEnd()}
+      className={cn(
+        isOpen ? 'bg-opacity-40' : 'bg-opacity-0',
+        'fixed inset-0 z-20 bg-black transition-colors ease-in',
+        backdropClassName,
+      )}
       onClick={handleCloseRef.current}
     >
       <div className={modalClassName} onClick={(e) => e.stopPropagation()}>
@@ -186,7 +197,7 @@ const Modal: FC<IModalProps> = ({
           className="absolute right-3 top-3 p-1"
           onClick={handleCloseRef.current}
         >
-          <Image src="/icons/close.svg" alt="X" width={12} height={12} />
+          <Close className="size-3" />
         </button>
         {children}
       </div>

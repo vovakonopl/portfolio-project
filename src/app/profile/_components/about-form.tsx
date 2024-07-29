@@ -6,6 +6,7 @@ import {
   userAboutScheme,
 } from '@/scripts/validation-schemes/user-about-scheme';
 import { useTrinketUser } from '@/scripts/user';
+import InputField from '@/components/util-components/input-field';
 
 const Error: FC<{ error: FieldError | undefined }> = ({ error }) => {
   if (!error) return;
@@ -68,65 +69,50 @@ const UserAboutForm: FC<IUserAboutFormProps> = ({ toggleEditing }) => {
       className="flex w-full flex-col gap-4"
     >
       <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="first-name" className="text-gray-400">
-            First name
-          </label>
-          <Error error={errors.firstName} />
-          <input
-            {...register('firstName')}
-            type="text"
-            id="first-name"
-            defaultValue={user?.firstName || ''}
-            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
-            maxLength={35}
-          />
-        </div>
+        <InputField
+          register={register('firstName')}
+          id="first-name"
+          defaultValue={user?.firstName || ''}
+          type="text"
+          maxLength={35}
+          label="First name"
+          error={errors.firstName}
+          fullWidth
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="last-name" className="text-gray-400">
-            Last name
-          </label>
-          <Error error={errors.lastName} />
-          <input
-            {...register('lastName')}
-            type="text"
-            id="last-name"
-            defaultValue={user?.lastName || ''}
-            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
-            maxLength={35}
-          />
-        </div>
+        <InputField
+          register={register('lastName')}
+          id="last-name"
+          defaultValue={user?.lastName || ''}
+          type="text"
+          maxLength={35}
+          label="Last name"
+          error={errors.lastName}
+          fullWidth
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="username" className="text-gray-400">
-            Username
-          </label>
-          <Error error={errors.username} />
-          <input
-            {...register('username')}
-            type="text"
-            id="username"
-            defaultValue={user?.username || ''}
-            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
-            maxLength={35}
-          />
-        </div>
+        <InputField
+          register={register('username')}
+          id="username"
+          defaultValue={user?.username || ''}
+          type="text"
+          maxLength={35}
+          label="Username"
+          error={errors.username}
+          fullWidth
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="bio" className="text-gray-400">
-            Bio
-          </label>
-          <Error error={errors.bio} />
-          <textarea
-            {...register('bio')}
-            id="bio"
-            defaultValue={user?.bio || ''}
-            rows={4}
-            className="rounded border border-solid border-gray-400 p-1 px-2 focus:outline-black"
-            maxLength={200}
-          />
-        </div>
+        <InputField
+          register={register('bio')}
+          id="bio"
+          defaultValue={user?.bio || ''}
+          maxLength={200}
+          component="textarea"
+          label="Bio"
+          error={errors.bio}
+          fullWidth
+          rows={4}
+        />
       </div>
 
       <div className="flex gap-4 font-medium text-white max-md:justify-center">

@@ -7,6 +7,7 @@ import {
   contactScheme,
   TContact,
 } from '@/scripts/validation-schemes/contact-scheme';
+import InputField from '@/components/util-components/input-field';
 
 interface IContactFormProps {
   closeModal: () => void;
@@ -52,7 +53,6 @@ const ContactForm: FC<IContactFormProps> = ({ closeModal }) => {
 
     // if url input is empty and user pastes the link into the first input => move the copied data to the second input
     e.preventDefault();
-    console.log(copiedText.length);
     setValue('url', copiedText, { shouldValidate: true });
   };
 
@@ -64,42 +64,31 @@ const ContactForm: FC<IContactFormProps> = ({ closeModal }) => {
     >
       <h2 className="mb-2 text-center text-xl">Adding contact</h2>
       <form
-        className="flex flex-1 flex-col max-sm:max-h-72"
+        className="flex flex-1 flex-col gap-2 max-sm:max-h-72"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="mb-2 flex w-full flex-col">
-          <label htmlFor="contact-body" className="text-lg text-gray-400">
-            Contact<sup>*</sup>
-          </label>
-          <input
-            {...register('body')}
-            autoFocus
-            id="contact-body"
-            type="text"
-            placeholder="My contact"
-            onPaste={onPaste}
-            className="w-full rounded border border-black px-2 py-1 focus:outline-black"
-          />
-          {errors.body && (
-            <p className="mt-1 text-red-600">{errors.body.message}</p>
-          )}
-        </div>
+        <InputField
+          register={register('body')}
+          autoFocus
+          id="contact-body"
+          type="text"
+          placeholder="My contact"
+          onPaste={onPaste}
+          label="Contact"
+          error={errors.body}
+          fullWidth
+        />
 
-        <div className="mb-2 flex w-full flex-col">
-          <label htmlFor="contact-url" className="text-lg text-gray-400">
-            URL
-          </label>
-          <input
-            {...register('url')}
-            id="contact-url"
-            type="text"
-            placeholder="https://..."
-            className="w-full rounded border border-black px-2 py-1 focus:outline-black"
-          />
-          {errors.url && (
-            <p className="mt-1 text-red-600">{errors.url.message}</p>
-          )}
-        </div>
+        <InputField
+          register={register('url')}
+          id="contact-url"
+          type="text"
+          placeholder="https://..."
+          label="URL"
+          error={errors.url}
+          fullWidth
+          containerProps={{ className: 'mb-2' }}
+        />
 
         <div className="mt-auto flex flex-col">
           <button

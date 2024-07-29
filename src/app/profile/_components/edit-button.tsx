@@ -1,5 +1,6 @@
-import Image from 'next/image';
+import { cn } from '@/scripts/classname';
 import { FC } from 'react';
+import Edit from '@/assets/icons/edit.svg';
 
 interface IEditButtonProps {
   onClick: () => void;
@@ -16,12 +17,15 @@ const EditButton: FC<IEditButtonProps> = ({
 }) => {
   return (
     <button
-      className={`flex items-start gap-1 capitalize underline-offset-2 hover:underline active:opacity-60 ${className || ''}`.trimEnd()}
+      className={cn(
+        'flex items-start gap-1 capitalize underline-offset-2 hover:underline active:opacity-60',
+        className,
+      )}
       onClick={onClick}
     >
       {iconLeft && (
         <span className="opacity-40">
-          <Image src={'/icons/edit.svg'} alt="" height={12} width={12} />
+          <Edit className="size-3" />
         </span>
       )}
 
@@ -29,7 +33,7 @@ const EditButton: FC<IEditButtonProps> = ({
 
       {!iconLeft && (
         <span className="opacity-40">
-          <Image src={'/icons/edit.svg'} alt="" height={12} width={12} />
+          <Edit className="size-3" />
         </span>
       )}
     </button>

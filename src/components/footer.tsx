@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import Logo from './util-components/logo';
+import Logo from './logo';
 
 interface IFooterProps {}
 

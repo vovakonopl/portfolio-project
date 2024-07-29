@@ -1,6 +1,9 @@
 import { FC } from 'react';
 import ExternalAccount from './external-account';
-import Image from 'next/image';
+// svgs
+import Google from '@/assets/icons/socials/google.svg';
+import FaceBook from '@/assets/icons/socials/facebook.svg';
+import Apple from '@/assets/icons/socials/apple.svg';
 
 interface IAuthProvidersProps {}
 
@@ -9,37 +12,19 @@ const AuthProviders: FC<IAuthProvidersProps> = () => {
     <ul className="flex flex-col gap-2 max-md:mx-auto max-md:gap-1">
       <li>
         <ExternalAccount provider="google">
-          <Image
-            src="/icons/socials/google.svg"
-            alt=""
-            width={20}
-            height={20}
-            className="mr-2 inline"
-          />
+          <Google className="mr-2 size-5" />
           Google
         </ExternalAccount>
       </li>
       <li>
         <ExternalAccount provider="facebook">
-          <Image
-            src="/icons/socials/facebook.svg"
-            alt=""
-            width={20}
-            height={20}
-            className="mr-2 inline"
-          />
+          <FaceBook className="mr-2 size-5" />
           Facebook
         </ExternalAccount>
       </li>
       <li>
         <ExternalAccount provider="apple">
-          <Image
-            src="/icons/socials/apple.svg"
-            alt=""
-            width={20}
-            height={20}
-            className="mr-2 inline"
-          />
+          <Apple className="mr-2 size-5" />
           Apple
         </ExternalAccount>
       </li>

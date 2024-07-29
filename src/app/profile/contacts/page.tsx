@@ -32,7 +32,7 @@ const Contacts: FC<IContactsProps> = () => {
     <div className="flex w-fit flex-col gap-2 pl-4 max-sm:mx-auto max-sm:gap-4 max-sm:px-10">
       <div className="flex flex-wrap items-start">
         <Title className="min-w-44 max-sm:min-w-fit">Email: </Title>
-        <address>{user.email || ''}</address>
+        <address>{user.email}</address>
       </div>
       <div className="flex flex-wrap items-start">
         <Title className="min-w-44 max-sm:min-w-fit">
@@ -56,7 +56,7 @@ const Contacts: FC<IContactsProps> = () => {
           <PhoneForm closeModal={() => setActiveModal(null)} />
         )}
       </div>
-      <div className="flex flex-wrap items-start max-sm:flex-col">
+      <div className="flex flex-wrap items-start">
         <Title className="min-w-44 max-sm:min-w-fit">
           {user.additionalContacts.length < 6 ? (
             <EditButton

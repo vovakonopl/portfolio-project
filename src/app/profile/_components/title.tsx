@@ -1,3 +1,4 @@
+import { cn } from '@/scripts/classname';
 import { FC } from 'react';
 
 interface ITitleProps {
@@ -7,9 +8,7 @@ interface ITitleProps {
 
 const Title: FC<ITitleProps> = ({ children, className }) => {
   return (
-    <h4
-      className={`mr-2 not-italic text-gray-400 ${className || ''}`.trimEnd()}
-    >
+    <h4 className={cn('mr-2 not-italic text-gray-400', className)}>
       {children}
     </h4>
   );
