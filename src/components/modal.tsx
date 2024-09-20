@@ -1,4 +1,4 @@
-import { cn } from '@/scripts/classname';
+import { cn } from '@/lib/cn';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import Close from '@/assets/icons/close.svg';
 
@@ -18,64 +18,46 @@ interface IDefaultStyles {
   defaultShape: boolean;
 }
 
-class ModalClassName {
-  public className: string = '';
+// class ModalClassName {
+//   public className: string = '';
 
-  private withOpacityAppearance(isOpen: boolean): ModalClassName {
-    this.className = cn(
-      this.className,
-      isOpen ? 'opacity-100' : 'opacity-0',
-      'transition-opacity ease-in',
-    );
+//   private withOpacityAppearance(isOpen: boolean): ModalClassName {
+//     this.className = cn(
+//       this.className,
+//       isOpen ? 'opacity-100' : 'opacity-0',
+//       'transition-opacity ease-in',
+//     );
 
-    return this;
-  }
+//     return this;
+//   }
 
-  private centered(): ModalClassName {
-    this.className = cn(
-      this.className,
-      'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-    );
+//   private centered(): ModalClassName {
+//     this.className = cn(
+//       this.className,
+//       'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+//     );
 
-    return this;
-  }
+//     return this;
+//   }
 
-  private withFlex(): ModalClassName {
-    this.className = cn(this.className, 'flex flex-col');
+//   private withFlex(): ModalClassName {
+//     this.className = cn(this.className, 'flex flex-col');
 
-    return this;
-  }
+//     return this;
+//   }
 
-  private withDefaultShape(): ModalClassName {
-    this.className = cn(this.className, 'overflow-hidden p-8 rounded-md');
+//   private withDefaultShape(): ModalClassName {
+//     this.className = cn(this.className, 'overflow-hidden p-8 rounded-md');
 
-    return this;
-  }
+//     return this;
+//   }
 
-  constructor(
-    styleOptions: IDefaultStyles,
-    className: string,
-    isOpened: boolean,
-  ) {
-    if (styleOptions.appearanceMethod === 'opacity') {
-      this.withOpacityAppearance(isOpened);
-    }
-
-    if (styleOptions.centered) {
-      this.centered();
-    }
-
-    if (styleOptions.defaultShape) {
-      this.withDefaultShape();
-    }
-
-    if (styleOptions.flex) {
-      this.withFlex();
-    }
-
-    this.className = cn(this.className, className);
-  }
-}
+//   constructor(
+//     styleOptions: IDefaultStyles,
+//     className: string,
+//     isOpened: boolean,
+//   ) {}
+// }
 
 interface IModalProps {
   backdropClassName?: string;
@@ -170,16 +152,19 @@ const Modal: FC<IModalProps> = ({
       // replace default options with selected ones
       ...defaultStyles,
     };
-    const defaultClassName: string =
-      'min-h-64 bg-white max-sm:inset-0 max-sm:px-3 sm:min-w-[32rem] max-sm:rounded-none max-sm:translate-x-0 max-sm:translate-y-0';
 
-    const modalClassName: ModalClassName = new ModalClassName(
-      defaultStyleOptions,
-      className || defaultClassName,
-      isOpen,
+    const modalClassName = cn(
+      'min-h-64 bg-white max-sm:inset-0 max-sm:px-3 sm:min-w-[32rem] max-sm:rounded-none max-sm:translate-x-0 max-sm:translate-y-0',
+      defaultStyleOptions?.appearanceMethod === 'opacity' &&
+        `transition-opacity ease-in ${isOpen ? 'opacity-100' : 'opacity-0'}`,
+      defaultStyleOptions?.centered &&
+        'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+      defaultStyleOptions?.defaultShape && 'overflow-hidden p-8 rounded-md',
+      defaultStyleOptions?.flex && 'flex flex-col',
+      className,
     );
 
-    return modalClassName.className;
+    return modalClassName;
   }, [className, defaultStyles, isOpen]);
 
   return (

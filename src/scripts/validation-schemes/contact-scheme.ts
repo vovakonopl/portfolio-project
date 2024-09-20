@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
 export const contactScheme = z.object({
-  body: z.string().min(1, 'required.').max(30, 'Maximum 30 characters.'),
+  body: z
+    .string({ message: 'Must be a string.' })
+    .min(1, 'required.')
+    .max(30, 'Maximum 30 characters.'),
   url: z
     .string({ message: 'Must be a string.' })
     .optional()

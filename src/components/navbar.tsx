@@ -1,6 +1,5 @@
-import Link from 'next/link';
 import { FC } from 'react';
-import Logo from './logo';
+import Link from 'next/link';
 import {
   ClerkLoading,
   SignInButton,
@@ -8,7 +7,8 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs';
-import Tooltip from './util-components/tooltip';
+import Logo from './logo';
+import Tooltip from './ui/tooltip';
 // svgs
 import BurgerMenu from '@/assets/icons/burger-menu.svg';
 import Search from '@/assets/icons/search.svg';
@@ -41,7 +41,9 @@ const Navbar: FC<INavbarProps> = () => {
         <div className="flex grow items-center gap-10 max-md:grow-0 max-md:gap-3">
           <div className="navbar__search relative flex grow max-md:hidden">
             <input
+              id="search"
               type="search"
+              autoComplete="off"
               placeholder="Search for products..."
               className="grow rounded-3xl bg-gray-100 py-3 pl-12 pr-4 placeholder:select-none placeholder:text-black placeholder:opacity-40"
             />

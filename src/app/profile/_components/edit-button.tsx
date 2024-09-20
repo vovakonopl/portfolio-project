@@ -1,4 +1,4 @@
-import { cn } from '@/scripts/classname';
+import { cn } from '@/lib/cn';
 import { FC } from 'react';
 import Edit from '@/assets/icons/edit.svg';
 

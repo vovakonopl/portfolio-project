@@ -1,4 +1,4 @@
-import { cn } from '@/scripts/classname';
+import { cn } from '@/lib/cn';
 import { cloneElement, FC } from 'react';
 
 interface ITooltipProps extends React.HTMLAttributes<HTMLDivElement> {

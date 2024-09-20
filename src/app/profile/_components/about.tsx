@@ -1,7 +1,7 @@
 import { FC, Fragment } from 'react';
 import { UserWithContacts } from '@/types/user';
 import Title from './title';
-import { cn } from '@/scripts/classname';
+import { cn } from '@/lib/cn';
 
 interface IUserAboutProps {
   user: UserWithContacts;

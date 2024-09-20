@@ -1,0 +1,259 @@
+import { cn } from '@/lib/cn';
+import {
+  FC,
+  Children,
+  cloneElement,
+  isValidElement,
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+} from 'react';
+import { FieldError } from 'react-hook-form';
+import Label from '../label';
+import { ChevronDown } from 'lucide-react';
+import SelectOption, { ISelectOptionProps } from './select-option';
+
+interface ISelectProps {
+  id?: string;
+  children?: React.ReactNode;
+  containerClassName?: string;
+  error?: FieldError;
+  fullHeight?: boolean;
+  fullWidth?: boolean;
+  label: string;
+  name: string;
+  onValueChange?: (value: string) => void;
+  value?: string;
+}
+
+const Select: FC<ISelectProps> = ({
+  id,
+  children,
+  containerClassName,
+  error,
+  fullHeight,
+  fullWidth,
+  label,
+  name,
+  onValueChange,
+  value: initialValue,
+}) => {
+  const [value, setValue] = useState<string | undefined>(initialValue);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // for animation
+  const [isClosing, setIsClosing] = useState<boolean>(false);
+  const timeoutIdRef = useRef<NodeJS.Timeout>();
+  const optionListRef = useRef<HTMLUListElement>(null);
+  const optionsRef = useRef<Array<HTMLElement>>();
+
+  const handleClose = () => {
+    clearTimeout(timeoutIdRef.current);
+
+    setIsClosing(true);
+
+    timeoutIdRef.current = setTimeout(() => {
+      setIsClosing(false);
+      setIsOpen(false);
+    }, 150);
+  };
+  const handleOpen = () => {
+    clearTimeout(timeoutIdRef.current);
+
+    setIsOpen(true);
+    setIsClosing(false);
+  };
+  const handleButtonClick = () => {
+    if (isOpen && !isClosing) {
+      handleClose();
+      return;
+    }
+
+    handleOpen();
+  };
+
+  const handleChange = (value: string) => {
+    onValueChange?.(value);
+    setValue(value);
+
+    handleClose();
+  };
+
+  // update options ref when list drops down
+  useEffect(() => {
+    if (!isOpen || !optionListRef.current) {
+      optionsRef.current = [];
+      return;
+    }
+
+    optionsRef.current = Array.from(
+      optionListRef.current.querySelectorAll('li > input'),
+    );
+  }, [isOpen]);
+
+  const getActiveOption = useCallback<() => HTMLInputElement | null>(() => {
+    const options: Array<HTMLElement> | undefined = optionsRef.current;
+    if (!options || options.length === 0) return null;
+
+    const activeElement: Element | null = document.activeElement;
+    if (!activeElement) return null;
+
+    const activeOption = options.find(
+      (option: HTMLElement) => option === activeElement,
+    ) as HTMLInputElement | undefined;
+
+    return activeOption || null;
+  }, []);
+
+  const optionsTabbing = useCallback<(tab: 'next' | 'prev') => void>(
+    (tab: 'next' | 'prev') => {
+      const options: Array<HTMLElement> | undefined = optionsRef.current;
+      if (!options || options.length === 0) return;
+
+      const activeElement: Element | null = document.activeElement;
+      if (!activeElement) return;
+
+      const activeElementIndex: number = options.indexOf(
+        activeElement as HTMLElement,
+      );
+
+      // if active element is not child of this Select component
+      if (activeElementIndex < 0) return;
+
+      const tabIndex = tab === 'next' ? 1 : -1;
+      let nextElementIndex: number = activeElementIndex + tabIndex;
+
+      // from 1 end to another
+      if (nextElementIndex < 0) {
+        nextElementIndex = options.length - 1;
+      } else if (nextElementIndex >= options.length) {
+        nextElementIndex = 0;
+      }
+
+      const newActiveElement = options[nextElementIndex] as HTMLElement;
+      newActiveElement.focus();
+    },
+    [],
+  );
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!e.key.startsWith('Arrow') && e.key !== 'Enter') return;
+    e.preventDefault();
+
+    switch (e.key) {
+      // prev el
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        optionsTabbing('prev');
+        break;
+
+      // next el
+      case 'ArrowDown':
+      case 'ArrowRight':
+        optionsTabbing('next');
+        break;
+
+      // change value
+      case 'Enter':
+        const activeOption: HTMLInputElement | null = getActiveOption();
+        if (!activeOption) break;
+
+        handleChange(activeOption.value);
+        break;
+    }
+  };
+  const onBlur = (
+    e: React.FocusEvent<HTMLButtonElement | HTMLInputElement, Element>,
+  ) => {
+    if (!optionsRef.current) return;
+    const isOptionActive: boolean = optionsRef.current.includes(
+      e.relatedTarget as HTMLElement,
+    );
+
+    if (!isOptionActive) {
+      handleClose();
+    }
+  };
+
+  const buttonId: string = id || name;
+
+  return (
+    <div
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (isOpen && e.key === 'Escape') {
+          handleClose();
+          (document.activeElement as HTMLElement)?.blur();
+        }
+      }}
+      className={cn(
+        'select-field relative min-w-fit',
+        !value && 'no-value',
+        isOpen && 'open',
+        fullHeight && 'h-full',
+        fullWidth && 'w-full',
+        containerClassName,
+      )}
+    >
+      <button
+        id={buttonId}
+        type="button"
+        onBlur={onBlur}
+        onClick={handleButtonClick}
+        className={cn(
+          'flex min-h-12 w-full min-w-40 items-center gap-1 rounded border border-gray-400 px-4 py-2 outline-none outline-1 outline-offset-0 transition-all placeholder:select-none placeholder:text-transparent focus:border-blue-400 focus:outline-blue-400 focus:placeholder:text-gray-400',
+          error && 'border-rose-700 outline-rose-700',
+        )}
+      >
+        <Label htmlFor={buttonId} className="static -top-2 flex-1 text-start">
+          {label}
+        </Label>
+
+        {/* display value under the label when it selected */}
+        {value && <p>{value}</p>}
+
+        <ChevronDown
+          size={20}
+          className={cn(isOpen && !isClosing && 'rotate-180')}
+        />
+      </button>
+
+      {isOpen && (
+        <ul
+          ref={optionListRef}
+          className={cn(
+            'appear absolute left-1/2 top-full z-10 min-h-96 w-40 -translate-x-1/2 bg-rose-400 transition-opacity',
+            isClosing && 'disappear',
+          )}
+        >
+          {Children.map(children, (child) => {
+            // clone element only if it SelectOption component
+            if (
+              !isValidElement<ISelectOptionProps>(child) ||
+              child.type !== SelectOption
+            ) {
+              return child;
+            }
+
+            const isCurrentlyChecked: boolean =
+              child.props && child.props.value === value;
+
+            const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+              handleChange(e.target.value);
+            };
+
+            return cloneElement<ISelectOptionProps>(child, {
+              ...child.props,
+              checked: isCurrentlyChecked,
+              name,
+              onChange,
+              onBlur,
+              onKeyDown,
+            });
+          })}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default Select;

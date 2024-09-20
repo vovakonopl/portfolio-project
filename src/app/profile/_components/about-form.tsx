@@ -6,7 +6,7 @@ import {
   userAboutScheme,
 } from '@/scripts/validation-schemes/user-about-scheme';
 import { useTrinketUser } from '@/scripts/user';
-import InputField from '@/components/util-components/input-field';
+import InputField from '@/components/ui/text-input-field';
 
 const Error: FC<{ error: FieldError | undefined }> = ({ error }) => {
   if (!error) return;

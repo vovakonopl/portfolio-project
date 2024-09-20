@@ -1,24 +1,29 @@
-import { cn } from '@/scripts/classname';
-import { FC } from 'react';
+import { cn } from '@/lib/cn';
 import { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
 type InputComponents = 'input' | 'textarea';
 
-interface IInputFieldProps
-  extends React.HTMLProps<HTMLInputElement | HTMLTextAreaElement> {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  component?: 'input';
+};
+type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  component: 'textarea';
+};
+
+type InputFieldProps<T extends InputComponents> = {
   id: string;
-  component?: InputComponents;
+  component?: T;
   containerProps?: React.HTMLAttributes<HTMLDivElement>;
   error?: FieldError;
   fullHeight?: boolean;
   fullWidth?: boolean;
   label: string;
   register?: UseFormRegisterReturn;
-}
+} & (T extends 'textarea' ? TextareaProps : InputProps); // use props depending on value of 'component'
 
-const InputField: FC<IInputFieldProps> = ({
+function InputField<T extends InputComponents>({
   id,
-  component = 'input',
+  component = 'input' as T,
   containerProps,
   error,
   fullHeight,
@@ -26,13 +31,13 @@ const InputField: FC<IInputFieldProps> = ({
   label,
   register,
   ...props
-}) => {
+}: InputFieldProps<T>) {
   const fieldClassName: string = cn(
     'field min-h-12 max-w-96 rounded border border-gray-400 px-4 py-2 outline-none outline-1 outline-offset-0 transition-all placeholder:select-none placeholder:text-transparent focus:border-blue-400 focus:outline-blue-400 focus:placeholder:text-gray-400',
     fullHeight && 'h-full',
     fullWidth && 'w-full max-w-full',
-    props.className,
     error && 'border-rose-700 outline-rose-700',
+    props.className,
   );
   return (
     <div
@@ -46,7 +51,7 @@ const InputField: FC<IInputFieldProps> = ({
     >
       {component === 'input' && (
         <input
-          {...(props as React.HTMLProps<HTMLInputElement>)}
+          {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
           {...register}
           id={id}
           className={fieldClassName}
@@ -55,7 +60,7 @@ const InputField: FC<IInputFieldProps> = ({
       )}
       {component === 'textarea' && (
         <textarea
-          {...(props as React.HTMLProps<HTMLTextAreaElement>)}
+          {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
           {...register}
           id={id}
           className={cn(fieldClassName, 'resize-none')}
@@ -78,6 +83,6 @@ const InputField: FC<IInputFieldProps> = ({
       )}
     </div>
   );
-};
+}
 
 export default InputField;

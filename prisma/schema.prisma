@@ -41,17 +41,16 @@ model Contact {
 }
 
 model Product {
-  id           String   @id @default(uuid())
-  name         String
-  priceInCents Int
-  discount     Int?
-  // discountExpirationTime (day, time)
-  imagePaths   String[]
-  description  String?
-  rating       Int
-  ratingNumber Int
-  // special tags []
-  // additionalServices Service[]
+  id                     String   @id @default(uuid())
+  name                   String
+  priceInCents           Int
+  discount               Int?
+  discountExpirationTime DateTime
+  imagePaths             String[]
+  description            String?
+  rating                 Int
+  ratingNumber           Int
+  inStock                Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -59,21 +58,50 @@ model Product {
   sellerId String
   seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
-  purchases Purchase[]
-  comments  Comment[]
+  additionalServices Service[]
+  productVariants    ProductVariant[]
+  purchases          Purchase[]
+  comments           Comment[]
+  filters            Filter[]
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  subCategoryId String
+  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
 }
 
-// model Service {
-//   id           String  @id @default(uuid())
-//   name         String
-//   imagePath    String
-//   priceInCents Int
-//   discount     Int?
-//   description  String?
-// 
-//   primaryProductId String
-//   primaryProduct Product @relation(fields: [primaryProductId], references: [id], onDelete: Cascade)
-// }
+model ProductVariant {
+  id           String @id @default(uuid())
+  variantFor   String
+  variantValue String
+
+  name                   String
+  priceInCents           Int
+  discount               Int?
+  discountExpirationTime DateTime
+  imagePaths             String[]
+  inStock                Int
+  description            String? // if null, it will use main product description
+
+  primaryProductId String
+  primaryProduct   Product @relation(fields: [primaryProductId], references: [id], onDelete: Cascade)
+
+  // only 1 same value per variant group
+  @@unique([variantFor, variantValue])
+}
+
+model Service {
+  id           String  @id @default(uuid())
+  name         String
+  imagePath    String
+  priceInCents Int
+  discount     Int?
+  description  String?
+
+  primaryProductId String
+  primaryProduct   Product @relation(fields: [primaryProductId], references: [id], onDelete: Cascade)
+}
 
 model Purchase {
   id        String   @id @default(uuid())
@@ -81,7 +109,7 @@ model Purchase {
   updatedAt DateTime @updatedAt
 
   productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -103,5 +131,35 @@ model Comment {
 
   // if the comment is a reply to another comment, it will have these properties
   parentCommentId String?
-  parentComment   Comment? @relation("commentReplies", fields: [parentCommentId], references: [id])
+  parentComment   Comment? @relation("commentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+
+  subcategories SubCategory[]
+  products      Product[]
+}
+
+model SubCategory {
+  id   String @id @default(uuid())
+  name String
+
+  relatedCategoryName String
+  relatedCategory     Category @relation(fields: [relatedCategoryName], references: [name], onDelete: Cascade)
+
+  filters  Filter[]
+  products Product[]
+
+  @@unique([name, relatedCategoryName])
+}
+
+model Filter {
+  id          String @id @default(uuid())
+  option      String @unique
+  filterGroup String
+
+  products  Product[]
+  belongsTo SubCategory[]
 }

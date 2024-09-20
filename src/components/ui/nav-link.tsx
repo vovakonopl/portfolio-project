@@ -1,4 +1,4 @@
-import { cn } from '@/scripts/classname';
+import { cn } from '@/lib/cn';
 import Link, { LinkProps } from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FC } from 'react';

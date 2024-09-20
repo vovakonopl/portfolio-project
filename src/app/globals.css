@@ -24,6 +24,9 @@
   .word-break {
     word-break: break-word;
   }
+  .line-h-1 {
+    line-height: 1;
+  }
 }
 @layer base {
   button {
@@ -39,7 +42,6 @@
     -webkit-appearance: none;
     margin: 0;
   }
-
   /* Firefox */
   input[type='number'] {
     appearance: textfield;
@@ -55,6 +57,15 @@
   :root {
     --nav-height: 4.25rem;
   }
+}
+
+/*---------------
+    phone input
+  ---------------*/
+/* !important for overriding the default input rules */
+.flag-dropdown,
+.selected-flag.open {
+  @apply rounded-l !important;
 }
 
 /*-----------
@@ -115,6 +126,33 @@
   }
   .field-container .field:focus + label {
     @apply text-blue-400;
+  }
+}
+
+/*----------------
+    custom select
+  ----------------*/
+.appear {
+  animation: fadeAppear 0.15s forwards;
+}
+.disappear {
+  animation: fadeDisappear 0.15s forwards;
+}
+
+@keyframes fadeAppear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeDisappear {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -206,13 +244,4 @@
   100% {
     opacity: 0.2;
   }
-}
-
-/*---------------
-    phone input
-  ---------------*/
-/* !important for overriding the default input rules */
-.flag-dropdown,
-.selected-flag.open {
-  @apply rounded-l !important;
 }

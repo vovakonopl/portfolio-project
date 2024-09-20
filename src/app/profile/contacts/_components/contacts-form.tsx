@@ -7,7 +7,7 @@ import {
   contactScheme,
   TContact,
 } from '@/scripts/validation-schemes/contact-scheme';
-import InputField from '@/components/util-components/input-field';
+import InputField from '@/components/ui/text-input-field';
 
 interface IContactFormProps {
   closeModal: () => void;

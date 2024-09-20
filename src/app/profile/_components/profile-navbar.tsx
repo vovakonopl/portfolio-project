@@ -2,8 +2,8 @@
 
 import { FC, useMemo, useState } from 'react';
 import { useResize } from '@/scripts/hooks/useResize';
-import NavLink from '@/components/util-components/nav-link';
-import { cn } from '@/scripts/classname';
+import NavLink from '@/components/ui/nav-link';
+import { cn } from '@/lib/cn';
 // svgs
 import Arrow from '@/assets/icons/arrow.svg';
 import Settings from '@/assets/icons/settings.svg';
