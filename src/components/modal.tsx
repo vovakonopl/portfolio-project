@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
+import { X } from 'lucide-react';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import Close from '@/assets/icons/close.svg';
 
 const tabbableElements = [
   'a',
@@ -141,7 +141,7 @@ const Modal: FC<IModalProps> = ({
           className="absolute right-3 top-3 p-1"
           onClick={handleCloseRef.current}
         >
-          <Close className="size-3" />
+          <X className="size-4" />
         </button>
         {children}
       </div>

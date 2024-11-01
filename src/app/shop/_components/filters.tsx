@@ -1,7 +1,5 @@
 import { FC } from 'react';
-// svgs
-import FiltersIcon from '@/assets/icons/filters.svg';
-import Close from '@/assets/icons/close.svg';
+import { SlidersVertical, X } from 'lucide-react';
 
 // components for filters only
 const Title: FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -28,12 +26,12 @@ const Filters: FC<IFiltersProps> = ({ close }) => {
       <div className="inset-x-4 -top-5 flex flex-col gap-6 bg-white max-md:sticky max-md:-mt-5 max-md:pt-5">
         <div className="flex items-center gap-4 md:justify-between">
           <h2 className="text-xl font-bold text-black">Filters</h2>
-          <FiltersIcon className="size-6 fill-gray-400" />
+          <SlidersVertical className="size-6 fill-gray-400" />
           <button
             className="-mb-1 -mr-2 -mt-1 hidden p-2 max-md:ml-auto max-md:inline-block"
             onClick={close}
           >
-            <Close className="size-4 fill-gray-400" />
+            <X className="size-4 fill-gray-400" />
           </button>
         </div>
         <Hr />

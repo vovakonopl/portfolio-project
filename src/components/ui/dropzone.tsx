@@ -13,7 +13,6 @@ import {
   Pagination,
 } from 'swiper/modules';
 import Image from 'next/image';
-import AddImage from '@/assets/icons/add-image.svg';
 // styles for Swiper
 import 'swiper/css';
 import 'swiper/css/grid';
@@ -21,6 +20,7 @@ import 'swiper/css/keyboard';
 import 'swiper/css/mousewheel';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { ImagePlus } from 'lucide-react';
 
 const acceptedImages = Object.fromEntries(
   ACCEPTED_IMAGE_TYPES.map((imageType: string) => [imageType, []]),
@@ -89,7 +89,7 @@ const ImageDropzone: FC<IImageDropzoneProps> = ({
           </p>
         )}
 
-        <AddImage className="size-7" />
+        <ImagePlus className="size-7" />
 
         {errorMessage && (
           <div className="text-rose-700">

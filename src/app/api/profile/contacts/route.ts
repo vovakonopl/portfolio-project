@@ -5,7 +5,7 @@ import { auth } from '@clerk/nextjs/server';
 import { Contact } from '@prisma/client';
 
 export async function POST(req: Request) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return new Response('User not logged in', { status: 403 });
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return new Response('User not logged in', { status: 403 });

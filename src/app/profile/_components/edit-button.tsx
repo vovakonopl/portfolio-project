@@ -1,6 +1,14 @@
 import { cn } from '@/lib/cn';
 import { FC } from 'react';
-import Edit from '@/assets/icons/edit.svg';
+import { SquarePen } from 'lucide-react';
+
+const Pen = () => {
+  return (
+    <span className="opacity-40">
+      <SquarePen className="size-3 text-gray-700" />
+    </span>
+  );
+};
 
 interface IEditButtonProps {
   onClick: () => void;
@@ -23,19 +31,11 @@ const EditButton: FC<IEditButtonProps> = ({
       )}
       onClick={onClick}
     >
-      {iconLeft && (
-        <span className="opacity-40">
-          <Edit className="size-3" />
-        </span>
-      )}
+      {iconLeft && <Pen />}
 
       {children}
 
-      {!iconLeft && (
-        <span className="opacity-40">
-          <Edit className="size-3" />
-        </span>
-      )}
+      {!iconLeft && <Pen />}
     </button>
   );
 };

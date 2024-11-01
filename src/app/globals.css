@@ -156,6 +156,19 @@
   }
 }
 
+/*=========================
+    icons as a background
+  =========================*/
+.google-icon {
+  background-image: url('/icons/socials/google.svg');
+}
+.facebook-icon {
+  background-image: url('/icons/socials/facebook.svg');
+}
+.apple-icon {
+  background-image: url('/icons/socials/apple.svg');
+}
+
 /*==========
     navbar
   ==========*/

@@ -9,11 +9,7 @@ import {
 } from '@clerk/nextjs';
 import Logo from './logo';
 import Tooltip from './ui/tooltip';
-// svgs
-import BurgerMenu from '@/assets/icons/burger-menu.svg';
-import Search from '@/assets/icons/search.svg';
-import Cart from '@/assets/icons/cart.svg';
-import UploadProduct from '@/assets/icons/upload-product.svg';
+import { CirclePlus, Menu, Search, ShoppingCart } from 'lucide-react';
 
 interface INavbarProps {}
 
@@ -24,7 +20,7 @@ const Navbar: FC<INavbarProps> = () => {
         {/* left side */}
         <div className="flex items-center gap-10 max-md:gap-4">
           <button className="hidden max-md:block">
-            <BurgerMenu className="size-6" />
+            <Menu className="size-6" />
           </button>
           <Logo />
           <ul className="flex gap-6 capitalize max-md:hidden">
@@ -54,7 +50,7 @@ const Navbar: FC<INavbarProps> = () => {
             </button>
             <Tooltip tooltipId="cart" tooltip="Go to cart" position="bottom">
               <Link href="">
-                <Cart className="size-6" />
+                <ShoppingCart className="size-6" />
               </Link>
             </Tooltip>
             <div className="flex min-w-16 items-center gap-3">
@@ -71,7 +67,7 @@ const Navbar: FC<INavbarProps> = () => {
                   className="size-6"
                 >
                   <Link href="/shop/upload-product">
-                    <UploadProduct className="size-6" />
+                    <CirclePlus className="size-6" />
                   </Link>
                 </Tooltip>
 

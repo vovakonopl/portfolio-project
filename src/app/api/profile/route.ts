@@ -8,7 +8,7 @@ import { UserWithContacts } from '@/types/user';
 export const revalidate = 0;
 
 export async function GET() {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return new Response('User not logged in', { status: 403 });
@@ -23,7 +23,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return new Response('User not logged in', { status: 403 });

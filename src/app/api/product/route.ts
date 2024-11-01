@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export async function POST(req: Request) {
-  const { userId: sellerId } = auth();
+  const { userId: sellerId } = await auth();
 
   if (sellerId) {
     return new Response('User not logged in', { status: 403 });
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
-  const { userId: sellerId } = auth();
+  const { userId: sellerId } = await auth();
 
   if (sellerId) {
     return new Response('User not logged in', { status: 403 });

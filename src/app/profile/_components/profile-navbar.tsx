@@ -5,8 +5,7 @@ import { useResize } from '@/scripts/hooks/useResize';
 import NavLink from '@/components/ui/nav-link';
 import { cn } from '@/lib/cn';
 // svgs
-import Arrow from '@/assets/icons/arrow.svg';
-import Settings from '@/assets/icons/settings.svg';
+import { ArrowLeft, Settings } from 'lucide-react';
 
 interface IProfileNavProps {}
 
@@ -53,7 +52,7 @@ const ProfileNav: FC<IProfileNavProps> = () => {
         <ul className="flex flex-col gap-2 text-lg">
           <li className="hidden justify-end max-sm:flex">
             <button className="p-2" onClick={closeNav}>
-              <Arrow className="size-6 -rotate-90" />
+              <ArrowLeft className="size-6 -rotate-90" />
             </button>
           </li>
           <li className="profile__link">

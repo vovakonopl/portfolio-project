@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import Delete from '@/assets/icons/delete.svg';
+import { Trash2 } from 'lucide-react';
 
 interface IDeleteButtonProps {
   onClick: () => void;
@@ -11,7 +11,7 @@ const DeleteButton: FC<IDeleteButtonProps> = ({ onClick }) => {
       onClick={onClick}
       className="flex size-6 items-center justify-center transition-transform hover:scale-110 active:scale-90"
     >
-      <Delete className="size-4" />
+      <Trash2 className="size-4 text-rose-500" />
     </button>
   );
 };
