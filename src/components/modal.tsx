@@ -18,47 +18,6 @@ interface IDefaultStyles {
   defaultShape: boolean;
 }
 
-// class ModalClassName {
-//   public className: string = '';
-
-//   private withOpacityAppearance(isOpen: boolean): ModalClassName {
-//     this.className = cn(
-//       this.className,
-//       isOpen ? 'opacity-100' : 'opacity-0',
-//       'transition-opacity ease-in',
-//     );
-
-//     return this;
-//   }
-
-//   private centered(): ModalClassName {
-//     this.className = cn(
-//       this.className,
-//       'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-//     );
-
-//     return this;
-//   }
-
-//   private withFlex(): ModalClassName {
-//     this.className = cn(this.className, 'flex flex-col');
-
-//     return this;
-//   }
-
-//   private withDefaultShape(): ModalClassName {
-//     this.className = cn(this.className, 'overflow-hidden p-8 rounded-md');
-
-//     return this;
-//   }
-
-//   constructor(
-//     styleOptions: IDefaultStyles,
-//     className: string,
-//     isOpened: boolean,
-//   ) {}
-// }
-
 interface IModalProps {
   backdropClassName?: string;
   children: React.ReactNode;
@@ -77,7 +36,7 @@ const Modal: FC<IModalProps> = ({
   onClose,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const timeoutIdRef = useRef<NodeJS.Timeout>();
+  const timeoutIdRef = useRef<NodeJS.Timeout>(undefined);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const handleCloseRef = useRef<() => void>(() => {

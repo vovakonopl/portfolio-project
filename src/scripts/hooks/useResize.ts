@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 export function useResize(callback: () => void): void {
-  const timeoutIdRef = useRef<NodeJS.Timeout>();
+  const timeoutIdRef = useRef<NodeJS.Timeout>(undefined);
   const callbackRef = useRef<() => void>(callback);
 
   useEffect(() => {

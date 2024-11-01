@@ -18,9 +18,9 @@ const Tooltip: FC<ITooltipProps> = ({
   ...props
 }) => {
   // link the tooltip with child component
-  const childWithTooltip = cloneElement(children as React.ReactElement, {
-    'aria-describedby': tooltipId,
-  });
+  // const childWithTooltip = cloneElement(children as React.ReactElement, {
+  //   'aria-describedby': tooltipId,
+  // });
 
   const baseStyles: string =
     'tooltip invisible absolute z-10 w-max rounded bg-zinc-600 bg-opacity-65 px-2 py-1 text-white opacity-0 transition-all';
@@ -32,7 +32,7 @@ const Tooltip: FC<ITooltipProps> = ({
       {...props}
       className={cn('tooltip-container relative', props.className)}
     >
-      {childWithTooltip}
+      {children}
       <span
         id={tooltipId}
         className={cn(

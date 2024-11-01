@@ -43,9 +43,9 @@ const Select: FC<ISelectProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // for animation
   const [isClosing, setIsClosing] = useState<boolean>(false);
-  const timeoutIdRef = useRef<NodeJS.Timeout>();
+  const timeoutIdRef = useRef<NodeJS.Timeout>(undefined);
   const optionListRef = useRef<HTMLUListElement>(null);
-  const optionsRef = useRef<Array<HTMLElement>>();
+  const optionsRef = useRef<Array<HTMLElement>>(undefined);
 
   const handleClose = () => {
     clearTimeout(timeoutIdRef.current);
