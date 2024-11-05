@@ -129,9 +129,9 @@
   }
 }
 
-/*----------------
+/*-----------------
     custom select
-  ----------------*/
+  -----------------*/
 .appear {
   animation: fadeAppear 0.15s forwards;
 }
@@ -154,6 +154,13 @@
   100% {
     opacity: 0;
   }
+}
+
+/*------------------------
+    custom switch button
+  ------------------------*/
+.switch-translate-left::after {
+  --tw-translate-x: calc(-100% - 0.25rem);
 }
 
 /*=========================

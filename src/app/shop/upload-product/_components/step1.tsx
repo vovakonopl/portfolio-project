@@ -1,6 +1,6 @@
 'use client';
 
-import Radio from '@/components/util-components/radio-input';
+// import Radio from '@/components/util-components/radio-input';
 import {
   categoriesByIdScheme,
   TCategoriesById,
@@ -60,30 +60,30 @@ const FirstStep: FC<IFirstStepProps> = ({ categories, subCategories }) => {
         <div>
           <h4>Category</h4>
           <div className="grid grid-cols-4 gap-4 max-md:grid-cols-3 max-sm:grid-cols-2">
-            {categories.map((category: Category) => (
-              <Radio
-                id={category.name}
-                // containerProps={{ className: 'justify-center' }}
-                label={category.name}
-                value={category.id}
-                register={register('categoryId')}
-                key={category.name}
-              />
-            ))}
+            {/*{categories.map((category: Category) => (*/}
+            {/*  <Radio*/}
+            {/*    id={category.name}*/}
+            {/*    // containerProps={{ className: 'justify-center' }}*/}
+            {/*    label={category.name}*/}
+            {/*    value={category.id}*/}
+            {/*    register={register('categoryId')}*/}
+            {/*    key={category.name}*/}
+            {/*  />*/}
+            {/*))}*/}
           </div>
         </div>
         <div>
           <h4>Subcategory</h4>
           <div>
-            {relevantSubcategories.map((subCategory: SubCategory) => (
-              <Radio
-                id={subCategory.name}
-                label={subCategory.name}
-                value={subCategory.id}
-                register={register('subCategoryId')}
-                key={subCategory.name}
-              />
-            ))}
+            {/*{relevantSubcategories.map((subCategory: SubCategory) => (*/}
+            {/*  <Radio*/}
+            {/*    id={subCategory.name}*/}
+            {/*    label={subCategory.name}*/}
+            {/*    value={subCategory.id}*/}
+            {/*    register={register('subCategoryId')}*/}
+            {/*    key={subCategory.name}*/}
+            {/*  />*/}
+            {/*))}*/}
           </div>
         </div>
       </form>

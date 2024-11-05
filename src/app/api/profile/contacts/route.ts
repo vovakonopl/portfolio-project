@@ -1,5 +1,5 @@
 import db from '@/lib/db';
-import { userCache } from '@/scripts/cache/user';
+import { userCache } from '@/lib/cache/user';
 import { UserWithContacts } from '@/types/user';
 import { auth } from '@clerk/nextjs/server';
 import { Contact } from '@prisma/client';

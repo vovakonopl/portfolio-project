@@ -2,7 +2,7 @@ import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { UserJSON, WebhookEvent } from '@clerk/nextjs/server';
 import db from '@/lib/db';
-import { userCache } from '@/scripts/cache/user';
+import { userCache } from '@/lib/cache/user';
 
 class UserData {
   id: string;

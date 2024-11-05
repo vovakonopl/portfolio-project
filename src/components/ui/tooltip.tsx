@@ -2,7 +2,7 @@ import { cn } from '@/lib/cn';
 import { cloneElement, FC } from 'react';
 
 interface ITooltipProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  children: React.ReactElement;
   tooltip: string;
   tooltipId: string;
   position?: 'top' | 'bottom' | 'left' | 'right';
@@ -17,13 +17,13 @@ const Tooltip: FC<ITooltipProps> = ({
   hoverable,
   ...props
 }) => {
-  // link the tooltip with child component
-  // const childWithTooltip = cloneElement(children as React.ReactElement, {
-  //   'aria-describedby': tooltipId,
-  // });
+  // link the tooltip with a child component
+  const childWithTooltip = cloneElement(children, {
+    'aria-describedby': tooltipId,
+  } as React.HTMLAttributes<HTMLElement>);
 
   const baseStyles: string =
-    'tooltip invisible absolute z-10 w-max rounded bg-zinc-600 bg-opacity-65 px-2 py-1 text-white opacity-0 transition-all';
+    'tooltip invisible absolute z-10 w-max whitespace-pre-line rounded bg-zinc-600 bg-opacity-65 px-2 py-1 text-white opacity-0 transition-all';
   const afterStyles: string =
     'after:absolute after:border-[0.375rem] after:border-transparent after:border-opacity-65';
 

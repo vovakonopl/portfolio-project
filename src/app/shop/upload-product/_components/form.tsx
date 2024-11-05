@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useRef } from 'react';
+import { FC, useMemo, useRef, useState } from 'react';
 import {
   TUploadProduct,
   uploadProductScheme,
@@ -15,6 +15,9 @@ import { Category, SubCategory } from '@prisma/client';
 import Title from './form-title';
 import Select from '@/components/ui/select/select';
 import SelectOption from '@/components/ui/select/select-option';
+import { ToggleSwitch } from '@/components/ui/toggle-switch';
+import { CircleHelp } from 'lucide-react';
+import Tooltip from '@/components/ui/tooltip';
 
 interface INewProductFormProps {
   categories: Array<Category>;
@@ -25,8 +28,9 @@ const NewProductForm: FC<INewProductFormProps> = ({
   categories,
   subCategories,
 }) => {
+  const [isMultipleMode, setIsMultipleMode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const router = useRouter();
+  // const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -44,7 +48,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
     const formData: FormData = new FormData(formRef.current);
 
     // add all images to formData manually
-    // reason: FormData obj receive only 1 file from dropzone
+    // reason: FormData obj receives only 1 file from dropzone
     formData.delete('images');
 
     const images: Array<File> = getValues('images');
@@ -75,66 +79,31 @@ const NewProductForm: FC<INewProductFormProps> = ({
       onSubmit={handleSubmit(onSubmit)}
       className="flex w-full flex-col gap-4"
     >
-      {/* product */}
+      {/* single product or multiple variants mode*/}
       <div className="">
-        {/* flex gap-2 max-sm:flex-col */}
-        <Title>Prouct info</Title>
-        <div className="">
-          <div className="grid grid-cols-4 gap-2 max-md:grid-cols-3 max-sm:grid-cols-1 max-sm:gap-0">
-            <InputField
-              id="name"
-              register={register('name')}
-              error={errors.name}
-              type="text"
-              label="Name"
-              placeholder="My product"
-              fullWidth
-              containerProps={{
-                className: 'col-span-3 max-md:col-span-2 max-sm:col-span-1',
-              }}
-            />
-
-            <InputField
-              id="price"
-              register={register('price')}
-              error={errors.price}
-              type="number"
-              label="Price"
-              placeholder="1.00$"
-              fullWidth
-            />
-          </div>
-        </div>
-
-        <Controller
-          control={control}
-          name="images"
-          render={({ field: { onChange } }) => (
-            <ImageDropzone
-              onDrop={onChange}
-              multiple
-              errorMessage={errors.images?.message}
-              id="images"
-              name="images"
-            />
-          )}
-        />
-
-        <InputField
-          id="description"
-          register={register('description')}
-          error={errors.description}
-          component="textarea"
-          label="Description"
-          placeholder="About product"
-          fullWidth
-          className="h-36"
+        <Title className="mb-2">
+          Current mode
+          <Tooltip
+            className="inline text-sm"
+            tooltipId="uploading-mode"
+            tooltip={`Single product: just a single variant of the product.
+              Multiple variants: you can upload several products within 1 page that differ in some options`}
+          >
+            <CircleHelp className="inline h-4 cursor-pointer text-gray-400" />
+          </Tooltip>
+        </Title>
+        <ToggleSwitch
+          id="product-mode"
+          checked={isMultipleMode}
+          toggle={setIsMultipleMode}
+          uncheckedLabel="Signgle product"
+          checkedLabel="Multiple variants"
         />
       </div>
 
       {/* categories */}
       <div className="">
-        <Title className="mb-2">Where will you place your product?</Title>
+        <Title className="mb-2">Where will you post your product?</Title>
         <div className="flex justify-center gap-4">
           <Controller
             control={control}
@@ -198,6 +167,63 @@ const NewProductForm: FC<INewProductFormProps> = ({
             )}
           />
         </div>
+      </div>
+
+      {/* product info*/}
+      <div className="">
+        {/* flex gap-2 max-sm:flex-col */}
+        <Title>Product info</Title>
+        <div className="">
+          <div className="grid grid-cols-4 gap-2 max-md:grid-cols-3 max-sm:grid-cols-1 max-sm:gap-0">
+            <InputField
+              id="name"
+              register={register('name')}
+              error={errors.name}
+              type="text"
+              label="Name"
+              placeholder="My product"
+              fullWidth
+              containerProps={{
+                className: 'col-span-3 max-md:col-span-2 max-sm:col-span-1',
+              }}
+            />
+
+            <InputField
+              id="price"
+              register={register('price')}
+              error={errors.price}
+              type="number"
+              label="Price"
+              placeholder="1.00$"
+              fullWidth
+            />
+          </div>
+        </div>
+
+        <Controller
+          control={control}
+          name="images"
+          render={({ field: { onChange } }) => (
+            <ImageDropzone
+              onDrop={onChange}
+              multiple
+              errorMessage={errors.images?.message}
+              id="images"
+              name="images"
+            />
+          )}
+        />
+
+        <InputField
+          id="description"
+          register={register('description')}
+          error={errors.description}
+          component="textarea"
+          label="Description"
+          placeholder="About product"
+          fullWidth
+          className="h-36"
+        />
       </div>
 
       {/* additional services */}

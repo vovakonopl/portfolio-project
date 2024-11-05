@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import NewProductForm from './_components/form';
 import db from '@/lib/db';
 import { Category, SubCategory } from '@prisma/client';
@@ -13,7 +12,7 @@ const NewProduct = async () => {
   const categories: Array<SubCategory> = [];
   const subCategories: Array<SubCategory> = [];
 
-  // create Map with categories and with array of sub categories with key as category id
+  // create Map with categories and with array of subcategories with a key as category id
   // Map with categories
   // const categoriesMap: Map<string, Category> = new Map(
   //   categories.map((category: Category) => [category.id, category]),
