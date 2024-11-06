@@ -41,16 +41,31 @@ model Contact {
 }
 
 model Product {
-  id                     String   @id @default(uuid())
-  name                   String
-  priceInCents           Int
-  discount               Int?
-  discountExpirationTime DateTime
-  imagePaths             String[]
-  description            String?
-  rating                 Int
-  ratingNumber           Int
-  inStock                Int
+  // main info
+  id                 String           @id @default(uuid())
+  name               String
+  description        String?
+  additionalServices Service[]
+  productVariants    ProductVariant[]
+
+  // same discaunt for all product varriants if they exists
+  totalDiscountProcent        Int?
+  totalDiscountExpirationTime DateTime
+
+  // if single product was posted
+  priceInCents Int
+  imagePaths   String[]
+  purchases    Purchase[]
+  comments     Comment[]
+
+  // filters here: the list of filters for main product info
+  // + the list of filters that occur in each product variant weill be merged
+  filters Filter[]
+
+  // stats
+  rating        Int
+  ratingNumber  Int
+  remainRnStock Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -58,12 +73,7 @@ model Product {
   sellerId String
   seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
-  additionalServices Service[]
-  productVariants    ProductVariant[]
-  purchases          Purchase[]
-  comments           Comment[]
-  filters            Filter[]
-
+  // where it was posted
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
@@ -72,35 +82,42 @@ model Product {
 }
 
 model ProductVariant {
-  id           String @id @default(uuid())
-  variantFor   String
-  variantValue String
-
-  name                   String
+  id                     String   @id @default(uuid())
+  optionGroup            String // may be replaced with Int for optionGroupId or smth in feature for optimization
+  optionName             String?
   priceInCents           Int
-  discount               Int?
+  discountPercent        Int?
   discountExpirationTime DateTime
   imagePaths             String[]
-  inStock                Int
-  description            String? // if null, it will use main product description
 
-  primaryProductId String
-  primaryProduct   Product @relation(fields: [primaryProductId], references: [id], onDelete: Cascade)
+  purchases Purchase[]
+  comments  Comment[]
+
+  // filters here: if the item occurs in each variant - move it to main info filters
+  filters Filter[]
+
+  inStock     Int
+  description String? // if null, it will use main product description
+
+  mainProductId String
+  mainProduct   Product @relation(fields: [mainProductId], references: [id], onDelete: Cascade)
 
   // only 1 same value per variant group
-  @@unique([variantFor, variantValue])
+  @@unique([optionGroup, optionName])
 }
 
 model Service {
-  id           String  @id @default(uuid())
-  name         String
-  imagePath    String
-  priceInCents Int
-  discount     Int?
-  description  String?
+  id                     String   @id @default(uuid())
+  name                   String
+  priceInCents           Int
+  discountProcent        Int?
+  discountExpirationTime DateTime
+  description            String?
+  imagePath              String
 
   primaryProductId String
-  primaryProduct   Product @relation(fields: [primaryProductId], references: [id], onDelete: Cascade)
+  primaryProduct   Product    @relation(fields: [primaryProductId], references: [id], onDelete: Cascade)
+  Purchase         Purchase[]
 }
 
 model Purchase {
@@ -108,11 +125,15 @@ model Purchase {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // what was purchased
+  productId          String
+  product            Product         @relation(fields: [productId], references: [id])
+  productVariantId   String?
+  ProductVariant     ProductVariant? @relation(fields: [productVariantId], references: [id])
+  additionalServices Service[]
 }
 
 model Comment {
@@ -124,8 +145,10 @@ model Comment {
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId        String?
+  product          Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productVariantId String?
+  ProductVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
 
   replies Comment[] @relation("commentReplies")
 
@@ -160,6 +183,7 @@ model Filter {
   option      String @unique
   filterGroup String
 
-  products  Product[]
-  belongsTo SubCategory[]
+  ProductVariants ProductVariant[]
+  products        Product[]
+  belongsTo       SubCategory[]
 }
