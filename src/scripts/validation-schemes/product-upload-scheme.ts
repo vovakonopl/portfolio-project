@@ -38,6 +38,14 @@ export const uploadProductScheme = z.object({
     .max(15, 'Maximum 15 images.'),
   category: z.string(),
   subcategory: z.string(),
+  optionGroup: z
+    .string({ message: 'Must be a string.' })
+    .max(50, 'Maximum 50 characters.')
+    .optional(),
+  optionName: z
+    .string({ message: 'Must be a string.' })
+    .max(50, 'Maximum 50 characters.')
+    .optional(),
 });
 
 export type TUploadProduct = z.infer<typeof uploadProductScheme>;

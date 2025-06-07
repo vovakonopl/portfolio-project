@@ -1,7 +1,6 @@
 import NewProductForm from './_components/form';
 import db from '@/lib/db';
 import { Category, SubCategory } from '@prisma/client';
-import FirstStep from './_components/step1';
 import { auth } from '@clerk/nextjs/server';
 
 interface INewProductProps {}
@@ -29,10 +28,7 @@ const NewProduct = async () => {
     // );
 
     if (!subCategories) {
-      console
-        .error
-        // `Category with id: ${subCategory.relatedCategoryId} does not exist.`,
-        ();
+      console.error();
       return;
     }
 

@@ -41,31 +41,29 @@ model Contact {
 }
 
 model Product {
-  // main info
-  id                 String           @id @default(uuid())
+  id                 String            @id @default(uuid())
   name               String
+  priceInCents       Int
+  imagePaths         String[]
   description        String?
+  secondaryOptions   SecondaryOption[]
   additionalServices Service[]
-  productVariants    ProductVariant[]
 
-  // same discaunt for all product varriants if they exists
+  optionGroup String?
+  optionName  String?
+  variants    ProductVariant[]
+
+  // same discaunt for all product varriants if they exist
   totalDiscountProcent        Int?
   totalDiscountExpirationTime DateTime
 
-  // if single product was posted
-  priceInCents Int
-  imagePaths   String[]
-  purchases    Purchase[]
-  comments     Comment[]
+  comments Comment[]
+  filters  Filter[]
 
-  // filters here: the list of filters for main product info
-  // + the list of filters that occur in each product variant weill be merged
-  filters Filter[]
-
-  // stats
+  // statistics
   rating        Int
   ratingNumber  Int
-  remainRnStock Int
+  remainInStock Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,31 +77,38 @@ model Product {
 
   subCategoryId String
   subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  productId     String?
 }
 
 model ProductVariant {
-  id                     String   @id @default(uuid())
-  optionGroup            String // may be replaced with Int for optionGroupId or smth in feature for optimization
-  optionName             String?
-  priceInCents           Int
-  discountPercent        Int?
-  discountExpirationTime DateTime
-  imagePaths             String[]
+  id            String   @id @default(uuid())
+  name          String
+  priceInCents  Int
+  imagePaths    String[]
+  description   String?
+  remainInStock Int
+  optionGroup   String
+  optionName    String
 
-  purchases Purchase[]
-  comments  Comment[]
+  productId     String
+  product       Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  Comment       Comment[]
+  Category      Category?    @relation(fields: [categoryId], references: [id])
+  categoryId    String?
+  SubCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
+  subCategoryId String?
+  Filter        Filter[]
+}
 
-  // filters here: if the item occurs in each variant - move it to main info filters
-  filters Filter[]
+model SecondaryOption {
+  id           String  @id @default(uuid())
+  name         String?
+  priceInCents Int?
+  optionGroup  String
+  optionName   String
 
-  inStock     Int
-  description String? // if null, it will use main product description
-
-  mainProductId String
-  mainProduct   Product @relation(fields: [mainProductId], references: [id], onDelete: Cascade)
-
-  // only 1 same value per variant group
-  @@unique([optionGroup, optionName])
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Service {
@@ -115,9 +120,7 @@ model Service {
   description            String?
   imagePath              String
 
-  primaryProductId String
-  primaryProduct   Product    @relation(fields: [primaryProductId], references: [id], onDelete: Cascade)
-  Purchase         Purchase[]
+  relatedTo Product[]
 }
 
 model Purchase {
@@ -125,15 +128,14 @@ model Purchase {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // the user who made the purchase
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // what was purchased
-  productId          String
-  product            Product         @relation(fields: [productId], references: [id])
-  productVariantId   String?
-  ProductVariant     ProductVariant? @relation(fields: [productVariantId], references: [id])
-  additionalServices Service[]
+  // the product that was purchased
+  purchasedItem            Json // can be a Product or a ProductVariant, stored as JSON
+  selectedServices         Json // array of Service objects
+  selectedSecondaryOptions Json // array of SecondaryOption objects
 }
 
 model Comment {
@@ -145,24 +147,25 @@ model Comment {
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  productId        String?
-  product          Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productVariantId String?
-  ProductVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   replies Comment[] @relation("commentReplies")
 
   // if the comment is a reply to another comment, it will have these properties
-  parentCommentId String?
-  parentComment   Comment? @relation("commentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  parentCommentId  String?
+  parentComment    Comment?        @relation("commentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  ProductVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
+  productVariantId String?
 }
 
 model Category {
   id   String @id @default(uuid())
   name String @unique
 
-  subcategories SubCategory[]
-  products      Product[]
+  subcategories  SubCategory[]
+  products       Product[]
+  ProductVariant ProductVariant[]
 }
 
 model SubCategory {
@@ -172,8 +175,9 @@ model SubCategory {
   relatedCategoryName String
   relatedCategory     Category @relation(fields: [relatedCategoryName], references: [name], onDelete: Cascade)
 
-  filters  Filter[]
-  products Product[]
+  filters        Filter[]
+  products       Product[]
+  ProductVariant ProductVariant[]
 
   @@unique([name, relatedCategoryName])
 }
@@ -183,7 +187,8 @@ model Filter {
   option      String @unique
   filterGroup String
 
-  ProductVariants ProductVariant[]
-  products        Product[]
-  belongsTo       SubCategory[]
+  products         Product[]
+  belongsTo        SubCategory[]
+  ProductVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
+  productVariantId String?
 }
