@@ -10,9 +10,12 @@ import {
   useEffect,
 } from 'react';
 import { FieldError } from 'react-hook-form';
-import Label from '../label';
 import { ChevronDown } from 'lucide-react';
+import Label from '../label';
 import SelectOption, { ISelectOptionProps } from './select-option';
+import SelectInputField, {
+  ISelectInputFieldProps,
+} from '@/components/ui/select/select-input-field';
 
 interface ISelectProps {
   id?: string;
@@ -79,7 +82,7 @@ const Select: FC<ISelectProps> = ({
     handleClose();
   };
 
-  // update options ref when list drops down
+  // update options ref when the list drops down
   useEffect(() => {
     if (!isOpen || !optionListRef.current) {
       optionsRef.current = [];
@@ -117,7 +120,7 @@ const Select: FC<ISelectProps> = ({
         activeElement as HTMLElement,
       );
 
-      // if active element is not child of this Select component
+      // if an active element is not child of this Select component
       if (activeElementIndex < 0) return;
 
       const tabIndex = tab === 'next' ? 1 : -1;
@@ -200,7 +203,7 @@ const Select: FC<ISelectProps> = ({
         onBlur={onBlur}
         onClick={handleButtonClick}
         className={cn(
-          'flex min-h-12 w-full min-w-40 items-center gap-1 rounded border border-gray-400 px-4 py-2 outline-none outline-1 outline-offset-0 transition-all placeholder:select-none placeholder:text-transparent focus:border-blue-400 focus:outline-blue-400 focus:placeholder:text-gray-400',
+          'peer flex min-h-12 w-full min-w-40 items-center gap-1 rounded border border-gray-400 px-4 py-2 outline-none outline-1 outline-offset-0 transition-all placeholder:select-none placeholder:text-transparent focus:border-blue-400 focus:outline-blue-400 focus:placeholder:text-gray-400',
           error && 'border-rose-700 outline-rose-700',
         )}
       >
@@ -221,34 +224,52 @@ const Select: FC<ISelectProps> = ({
         <ul
           ref={optionListRef}
           className={cn(
-            'appear absolute left-1/2 top-full z-10 min-h-96 w-40 -translate-x-1/2 bg-rose-400 transition-opacity',
+            'appear absolute left-4 right-4 z-10 h-fit rounded-b border border-gray-400 border-t-transparent bg-white py-2 transition-opacity peer-focus:border-t-blue-400',
             isClosing && 'disappear',
           )}
         >
           {Children.map(children, (child) => {
-            // clone element only if it SelectOption component
+            // clone element only if it is a SelectOption or SelectInputField component
             if (
-              !isValidElement<ISelectOptionProps>(child) ||
-              child.type !== SelectOption
+              isValidElement<ISelectInputFieldProps>(child) &&
+              child.type === SelectInputField
             ) {
-              return child;
+              return cloneElement<ISelectInputFieldProps>(child, {
+                ...child.props,
+                name,
+                onBlur,
+                onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (['ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
+                    return;
+                  }
+
+                  onKeyDown(e);
+                },
+              });
             }
 
-            const isCurrentlyChecked: boolean =
-              child.props && child.props.value === value;
+            if (
+              isValidElement<ISelectOptionProps>(child) &&
+              child.type === SelectOption
+            ) {
+              const isCurrentlyChecked: boolean =
+                child.props && child.props.value === value;
 
-            const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e.target.value);
-            };
+              const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                handleChange(e.target.value);
+              };
 
-            return cloneElement<ISelectOptionProps>(child, {
-              ...child.props,
-              checked: isCurrentlyChecked,
-              name,
-              onChange,
-              onBlur,
-              onKeyDown,
-            });
+              return cloneElement<ISelectOptionProps>(child, {
+                ...child.props,
+                checked: isCurrentlyChecked,
+                name,
+                onChange,
+                onBlur,
+                onKeyDown,
+              });
+            }
+
+            return child;
           })}
         </ul>
       )}

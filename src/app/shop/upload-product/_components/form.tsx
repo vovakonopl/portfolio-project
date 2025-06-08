@@ -13,6 +13,7 @@ import InputField from '@/components/ui/text-input-field';
 import Error from '@/components/ui/error-message';
 import Select from '@/components/ui/select/select';
 import SelectOption from '@/components/ui/select/select-option';
+import SelectInputField from '@/components/ui/select/select-input-field';
 import { ToggleSwitch } from '@/components/ui/toggle-switch';
 import Tooltip from '@/components/ui/tooltip';
 import { CircleHelp } from 'lucide-react';
@@ -249,6 +250,11 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 <SelectOption id="5" value="5">
                   test5
                 </SelectOption>
+                <SelectInputField
+                  placeholder="Add new group"
+                  id="test-inp"
+                  autoComplete="off"
+                />
               </Select>
             )}
           />
