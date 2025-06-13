@@ -18,7 +18,7 @@ const Profile: FC<IProfileProps> = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { user, clerkUser, isLoaded } = useTrinketUser();
 
-  const updateProfielImage: ImageUploader = useCallback<ImageUploader>(
+  const updateProfileImage: ImageUploader = useCallback<ImageUploader>(
     (e: ChangeEvent<HTMLInputElement>): void => {
       const image: File | undefined = e.target.files?.[0];
       if (!image) return;
@@ -58,7 +58,7 @@ const Profile: FC<IProfileProps> = () => {
             <div className="avatar__upload absolute inset-0 rounded-full bg-black bg-opacity-70 bg-center bg-no-repeat opacity-0 transition-opacity ease-in"></div>
             <input
               type="file"
-              onChange={updateProfielImage}
+              onChange={updateProfileImage}
               accept="image/*"
               className="absolute size-full cursor-pointer rounded-full opacity-0"
               title=""

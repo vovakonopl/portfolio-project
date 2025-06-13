@@ -1,10 +1,11 @@
 import { cn } from '@/lib/cn';
-import { cloneElement, FC } from 'react';
+import { FC } from 'react';
 
 interface ITooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactElement;
   tooltip: string;
-  tooltipId: string;
+  tooltipClassName?: string;
+  tooltipId: string; // used for 'aria-describedby' attribute inside another element
   position?: 'top' | 'bottom' | 'left' | 'right';
   hoverable?: boolean;
 }
@@ -12,21 +13,12 @@ interface ITooltipProps extends React.HTMLAttributes<HTMLDivElement> {
 const Tooltip: FC<ITooltipProps> = ({
   children,
   tooltip,
+  tooltipClassName,
   tooltipId,
   position,
   hoverable,
   ...props
 }) => {
-  // link the tooltip with a child component
-  const childWithTooltip = cloneElement(children, {
-    'aria-describedby': tooltipId,
-  } as React.HTMLAttributes<HTMLElement>);
-
-  const baseStyles: string =
-    'tooltip invisible absolute z-10 w-max whitespace-pre-line rounded bg-zinc-600 bg-opacity-65 px-2 py-1 text-white opacity-0 transition-all';
-  const afterStyles: string =
-    'after:absolute after:border-[0.375rem] after:border-transparent after:border-opacity-65';
-
   return (
     <div
       {...props}
@@ -36,10 +28,12 @@ const Tooltip: FC<ITooltipProps> = ({
       <span
         id={tooltipId}
         className={cn(
+          'tooltip invisible absolute z-10 w-max max-w-[50dvw] whitespace-pre-line rounded',
+          'bg-zinc-600 bg-opacity-65 px-2 py-1 text-white opacity-0 transition-all',
+          'after:absolute after:border-[0.375rem] after:border-transparent after:border-opacity-65',
           hoverable && 'tooltip-hoverable',
-          baseStyles,
-          afterStyles,
           position || 'right',
+          tooltipClassName,
         )}
       >
         {tooltip}

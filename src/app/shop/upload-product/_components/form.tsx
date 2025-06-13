@@ -18,6 +18,7 @@ import { ToggleSwitch } from '@/components/ui/toggle-switch';
 import Tooltip from '@/components/ui/tooltip';
 import { CircleHelp } from 'lucide-react';
 import Title from './form-title';
+import OptionGroup from './product-options/option-group';
 import {
   formReducer,
   FormStateActions,
@@ -28,6 +29,12 @@ import {
   productReducer,
   ProductStateActions,
 } from '../_reducers/product-reducer';
+import {
+  optionGroupReducer,
+  OptionGroupsActions,
+  TOptionGroups,
+} from '../_reducers/option-groups-reducer';
+import GroupList from '@/app/shop/upload-product/_components/product-options/group-list';
 
 const initialFormState: IFormState = {
   isMultipleMode: false,
@@ -49,8 +56,28 @@ const initialProductState: IProduct = {
   optionName: '',
 };
 
-type TOptionNames = Set<string>;
-type TOptionGroups = Map<string, TOptionNames>;
+// TODO: remove this test data
+const TEST_initialOptionGroups: TOptionGroups = new Map([
+  [
+    'group1',
+    new Set([
+      'option1',
+      'option2',
+      'option3',
+      'option4',
+      'option5',
+      'option6',
+      'option7',
+      'option8',
+      'option9',
+      'option10',
+    ]),
+  ],
+  ['group2', new Set(['option1', 'option2', 'option3'])],
+  ['group3', new Set(['option1', 'option2'])],
+  ['group4', new Set(['option1'])],
+  ['group5', new Set()],
+]);
 
 interface INewProductFormProps {
   categories: Array<Category>;
@@ -62,8 +89,10 @@ const NewProductForm: FC<INewProductFormProps> = ({
   subCategories,
 }) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const [optionGroups, setOptionGroups] = useState(
-    new Map<string, Set<string>>(),
+  const [optionGroups, dispatchOptionGroups] = useReducer(
+    optionGroupReducer,
+    // new Map<string, Set<string>>(),
+    TEST_initialOptionGroups,
   );
   const [activeProduct, dispatchActiveProduct] = useReducer(
     productReducer,
@@ -143,6 +172,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
     // router.replace(`/shop/product/${productId}`);
   };
 
+  /*
   const createOptionGroup = (groupName: string): boolean => {
     if (optionGroups.has(groupName)) return false;
 
@@ -178,6 +208,49 @@ const NewProductForm: FC<INewProductFormProps> = ({
 
     return true;
   };
+  */
+
+  const onGroupReorder = (newOrder: string[]) => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.ReorderOptionGroups,
+      payload: { newOrder },
+    });
+  };
+
+  const onGroupDelete = (optionGroupName: string) => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.RemoveOptionGroup,
+      payload: { optionGroupName },
+    });
+  };
+
+  const onOptionReorder = (
+    optionGroupName: string,
+    options: string[] | Set<string>,
+  ) => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.SetOptionGroup,
+      payload: { optionGroupName, options },
+    });
+  };
+
+  const onOptionDelete = (optionGroupName: string, optionName: string) => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.RemoveOption,
+      payload: { optionGroupName, optionName },
+    });
+  };
+
+  const onOptionRename = (
+    optionGroupName: string,
+    option: string,
+    newName: string,
+  ) => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.RenameOption,
+      payload: { optionGroupName, option, newName },
+    });
+  };
 
   return (
     <form
@@ -186,12 +259,13 @@ const NewProductForm: FC<INewProductFormProps> = ({
       className="flex w-full flex-col gap-4"
     >
       {/* single product or multiple variants mode*/}
-      <div className="">
+      <div className="flex w-full flex-col">
         <Title className="mb-2">
           Current mode
           <Tooltip
             className="inline text-sm"
-            tooltipId="uploading-mode"
+            tooltipClassName="max-sm:max-w-36"
+            tooltipId="uploading-mode-tooltip"
             tooltip={`Single product: just a single variant of the product.
               Multiple variants: you can upload several products within 1 page that differ in some options`}
           >
@@ -199,6 +273,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
           </Tooltip>
         </Title>
         <ToggleSwitch
+          aria-describedby="uploading-mode-tooltip"
           id="product-mode"
           checked={formState.isMultipleMode}
           toggle={(state: boolean) => {
@@ -222,7 +297,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
             </span>
           )}
         </Title>
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 max-md:flex-col">
           <Controller
             control={control}
             name="category"
@@ -233,7 +308,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 label="Category"
                 onValueChange={onChange}
                 value={value}
-                containerClassName="min-w-80 max-w-lg"
+                containerClassName=""
               >
                 <SelectOption id="1" value="1">
                   test1
@@ -269,7 +344,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 label="Subcategory"
                 onValueChange={onChange}
                 value={value}
-                containerClassName="min-w-80 max-w-lg"
+                containerClassName=""
               >
                 <SelectOption id="1" value="1">
                   test1
@@ -366,7 +441,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
               Main group
               <Tooltip
                 className="inline text-sm"
-                tooltipId="uploading-mode"
+                tooltipId="main-group-tooltip"
                 tooltip={`Only variants in main group can have different images and description.
                 Other groups can only add text to name or price (both will be calculated as sum of all selected variants).
                 You can disable several combinations of secondary options with main options.`}
@@ -374,16 +449,26 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 <CircleHelp className="inline h-4 cursor-pointer text-gray-400" />
               </Tooltip>
             </h5>
-            {/* TODO: by default a placeholder with group name = Main; option name = Main */}
-            {/*<div></div>*/}
+            {/* TODO: by default a placeholder with group name = Main; option name = default */}
+            {/*<div aria-describedby='main-group-tooltip'></div>*/}
 
             <h5 className="mb-2 text-sm font-medium">Secondary groups</h5>
+            <GroupList
+              optionGroups={optionGroups}
+              onGroupReorder={onGroupReorder}
+              onGroupDelete={onGroupDelete}
+              onOptionReorder={onOptionReorder}
+              onOptionDelete={onOptionDelete}
+            />
+
             <Tooltip
               className="inline text-sm"
+              tooltipClassName="max-sm:max-w-36"
               tooltipId="add-variant-tooltip"
               tooltip="Add a new product variant to the main group."
             >
               <button
+                aria-describedby="add-variant-tooltip"
                 // before adding new variants,
                 className="w-fit rounded border border-black px-4 py-2"
               >
