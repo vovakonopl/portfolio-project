@@ -13,6 +13,12 @@ interface IOptionGroupProps {
     optionGroupName: string,
     options: string[] | Set<string>,
   ) => void;
+  onOptionRename?: (
+    optionGroupName: string,
+    optionName: string,
+    newName: string,
+  ) => void;
+  onGroupRename?: (groupName: string, newName: string) => void;
 }
 
 const OptionGroup: FC<IOptionGroupProps> = ({
@@ -21,6 +27,8 @@ const OptionGroup: FC<IOptionGroupProps> = ({
   onGroupDelete,
   onOptionDelete,
   onOptionReorder,
+  onOptionRename,
+  onGroupRename,
 }) => {
   const {
     attributes,
@@ -49,7 +57,10 @@ const OptionGroup: FC<IOptionGroupProps> = ({
           id={groupName}
           className="my-auto max-h-fit w-full"
           onDelete={() => onGroupDelete(groupName)}
-          onEdit={() => {}}
+          onRename={
+            onGroupRename &&
+            ((newName: string) => onGroupRename(groupName, newName))
+          }
           isDragDisabled={true}
           dragListeners={listeners}
         >
@@ -62,6 +73,7 @@ const OptionGroup: FC<IOptionGroupProps> = ({
         isDragDisabled={isDragging}
         onOptionDelete={onOptionDelete}
         onReorder={onOptionReorder}
+        onRename={onOptionRename}
         optionSet={optionSet}
       />
     </li>

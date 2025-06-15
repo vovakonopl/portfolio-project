@@ -20,6 +20,11 @@ interface IOptionListProps {
   groupName: string;
   isDragDisabled?: boolean;
   onReorder: (optionGroupName: string, options: string[] | Set<string>) => void;
+  onRename?: (
+    optionGroupName: string,
+    optionName: string,
+    newName: string,
+  ) => void;
   onOptionDelete: (optionGroupName: string, optionName: string) => void;
   optionSet: Set<string>;
 }
@@ -29,6 +34,7 @@ const OptionList: FC<IOptionListProps> = ({
   isDragDisabled = false,
   onOptionDelete,
   onReorder,
+  onRename,
   optionSet,
 }) => {
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
@@ -54,7 +60,7 @@ const OptionList: FC<IOptionListProps> = ({
       modifiers={[restrictToParentElement]}
       sensors={sensors}
     >
-      <ol className="relative flex flex-1 flex-wrap gap-x-4 gap-y-2 overflow-hidden px-4 py-2">
+      <ol className="relative flex flex-1 flex-wrap items-center gap-x-4 gap-y-2 overflow-hidden px-4 py-2">
         <SortableContext
           items={options}
           strategy={rectSortingStrategy}
@@ -66,6 +72,10 @@ const OptionList: FC<IOptionListProps> = ({
               isDragDisabled={isDragDisabled}
               isListItem={true}
               onDelete={() => onOptionDelete(groupName, option)}
+              onRename={
+                onRename &&
+                ((newName: string) => onRename(groupName, option, newName))
+              }
               key={option}
             >
               {option}

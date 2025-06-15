@@ -70,12 +70,16 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
         return state; // Option group does not exist or new name already exists
       }
 
-      const options = state.get(optionGroupName)!;
-      const newState = new Map(state);
-      newState.delete(optionGroupName);
-      newState.set(newName, options);
+      type TEntry = [string, TOptionNames];
+      const entries = state
+        .entries()
+        .map(([groupName, optionSet]: TEntry): TEntry => {
+          const newOptionSet: TOptionNames = new Set(optionSet);
+          if (groupName === optionGroupName) return [newName, newOptionSet];
+          return [groupName, newOptionSet];
+        });
 
-      return newState;
+      return new Map(entries);
     }
 
     case OptionGroupsActions.AddOption: {
@@ -122,12 +126,10 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
 
       let options: string[] = Array.from(optionSet);
       options = options.map((opt) => (opt === option ? newName : opt));
-      optionGroupReducer(state, {
-        type: OptionGroupsActions.SetOptionGroup,
-        payload: { optionGroupName, options },
-      });
+      const newState = new Map(state);
+      newState.set(optionGroupName, new Set(options));
 
-      return state;
+      return newState;
     }
 
     case OptionGroupsActions.ReorderOptionGroups: {

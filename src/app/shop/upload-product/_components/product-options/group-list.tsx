@@ -26,6 +26,12 @@ interface IGroupListProps {
     optionGroupName: string,
     options: string[] | Set<string>,
   ) => void;
+  onOptionRename?: (
+    optionGroupName: string,
+    optionName: string,
+    newName: string,
+  ) => void;
+  onGroupRename?: (groupName: string, newName: string) => void;
 }
 
 const GroupList: FC<IGroupListProps> = ({
@@ -34,6 +40,8 @@ const GroupList: FC<IGroupListProps> = ({
   onGroupReorder,
   onOptionDelete,
   onOptionReorder,
+  onOptionRename,
+  onGroupRename,
 }) => {
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
@@ -71,6 +79,8 @@ const GroupList: FC<IGroupListProps> = ({
                 onGroupDelete={onGroupDelete}
                 onOptionDelete={onOptionDelete}
                 onOptionReorder={onOptionReorder}
+                onOptionRename={onOptionRename}
+                onGroupRename={onGroupRename}
                 key={groupName}
               />
             ),

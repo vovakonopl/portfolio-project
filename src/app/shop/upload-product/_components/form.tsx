@@ -252,6 +252,13 @@ const NewProductForm: FC<INewProductFormProps> = ({
     });
   };
 
+  const onGroupRename = (optionGroupName: string, newName: string) => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.RenameOptionGroup,
+      payload: { optionGroupName, newName },
+    });
+  };
+
   return (
     <form
       ref={formRef}
@@ -459,6 +466,8 @@ const NewProductForm: FC<INewProductFormProps> = ({
               onGroupDelete={onGroupDelete}
               onOptionReorder={onOptionReorder}
               onOptionDelete={onOptionDelete}
+              onOptionRename={onOptionRename}
+              onGroupRename={onGroupRename}
             />
 
             <Tooltip
