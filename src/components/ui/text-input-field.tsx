@@ -71,7 +71,7 @@ function InputField<T extends InputComponents>({
       <label
         htmlFor={id}
         className={cn(
-          'absolute left-4 top-4 select-none border-b-white bg-transparent px-1 text-gray-400 transition-all',
+          'absolute left-4 top-4 cursor-text select-none border-b-white bg-transparent px-1 text-gray-400 transition-all',
           error && 'text-rose-700',
         )}
       >

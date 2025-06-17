@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import {
   closestCorners,
   DndContext,
@@ -13,18 +13,29 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { TOptionGroups } from '@/app/shop/upload-product/_reducers/option-groups-reducer';
-import OptionGroup from './option-group';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
+import { Check, PlusCircle, X } from 'lucide-react';
+import { cn } from '@/lib/cn';
+import Modal from '@/components/modal';
+import InputField from '@/components/ui/text-input-field';
+import { SecondaryOption } from '@/app/shop/upload-product/_reducers/secondary-option';
+import {
+  MAX_SECONDARY_GROUPS,
+  TOptionGroups,
+  TOptionMap,
+} from '@/app/shop/upload-product/_reducers/option-groups-reducer';
+import OptionGroup from './option-group';
 
 interface IGroupListProps {
   optionGroups: TOptionGroups;
-  onGroupDelete: (groupName: string) => void;
+  onGroupAdd: (optionGroupName: string) => void;
+  onOptionAdd: (optionGroupName: string, option: SecondaryOption) => void;
+  onGroupDelete: (optionGroupName: string) => void;
   onGroupReorder: (newGroupOrder: string[]) => void;
   onOptionDelete: (optionGroupName: string, optionName: string) => void;
   onOptionReorder: (
     optionGroupName: string,
-    options: string[] | Set<string>,
+    options: SecondaryOption[] | TOptionMap,
   ) => void;
   onOptionRename?: (
     optionGroupName: string,
@@ -36,6 +47,8 @@ interface IGroupListProps {
 
 const GroupList: FC<IGroupListProps> = ({
   optionGroups,
+  onGroupAdd,
+  onOptionAdd,
   onGroupDelete,
   onGroupReorder,
   onOptionDelete,
@@ -43,6 +56,9 @@ const GroupList: FC<IGroupListProps> = ({
   onOptionRename,
   onGroupRename,
 }) => {
+  const [isActiveModal, setIsActiveModal] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string>('');
+  const closeModalRef = useRef<() => void>(() => {});
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
   const groups: string[] = Array.from(optionGroups.keys());
@@ -58,36 +74,123 @@ const GroupList: FC<IGroupListProps> = ({
     onGroupReorder(updatedOrder);
   };
 
+  const handleCloseModal = () => {
+    setIsActiveModal(false);
+    setInputValue('');
+  };
+
+  const handleConfirm = () => {
+    onGroupAdd(inputValue);
+    handleCloseModal();
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key == 'Enter') {
+      e.preventDefault();
+      handleConfirm();
+    }
+  };
+
   return (
-    <DndContext
-      collisionDetection={closestCorners}
-      onDragEnd={handleOnDragEnd}
-      modifiers={[restrictToParentElement]}
-      sensors={sensors}
-    >
-      <ol className="relative flex flex-col gap-4 overflow-hidden">
-        <SortableContext
-          items={groups}
-          strategy={verticalListSortingStrategy}
-          disabled={optionGroups.size < 2}
-        >
-          {Array.from(optionGroups.entries()).map(
-            ([groupName, optionSet]: [string, Set<string>]) => (
-              <OptionGroup
-                groupName={groupName}
-                optionSet={optionSet}
-                onGroupDelete={onGroupDelete}
-                onOptionDelete={onOptionDelete}
-                onOptionReorder={onOptionReorder}
-                onOptionRename={onOptionRename}
-                onGroupRename={onGroupRename}
-                key={groupName}
-              />
-            ),
+    <div className="flex flex-col gap-4">
+      <DndContext
+        collisionDetection={closestCorners}
+        onDragEnd={handleOnDragEnd}
+        modifiers={[restrictToParentElement]}
+        sensors={sensors}
+      >
+        <ol className="relative flex flex-col gap-4 overflow-hidden">
+          <SortableContext
+            items={groups}
+            strategy={verticalListSortingStrategy}
+            disabled={optionGroups.size < 2}
+          >
+            {Array.from(optionGroups.entries()).map(
+              ([groupName, optionMap]: [string, TOptionMap]) => (
+                <OptionGroup
+                  groupName={groupName}
+                  optionMap={optionMap}
+                  onOptionAdd={onOptionAdd}
+                  onGroupDelete={onGroupDelete}
+                  onOptionDelete={onOptionDelete}
+                  onOptionReorder={onOptionReorder}
+                  onOptionRename={onOptionRename}
+                  onGroupRename={onGroupRename}
+                  key={groupName}
+                />
+              ),
+            )}
+          </SortableContext>
+        </ol>
+      </DndContext>
+
+      {optionGroups.size < MAX_SECONDARY_GROUPS && (
+        <button
+          className={cn(
+            'ml-4 flex w-fit items-center gap-2 rounded border border-black px-4 py-2 transition-colors',
+            'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
           )}
-        </SortableContext>
-      </ol>
-    </DndContext>
+          onClick={() => setIsActiveModal(true)}
+          type="button"
+        >
+          <span>Add new group</span>
+          <PlusCircle className="size-5" />
+        </button>
+      )}
+
+      {isActiveModal && (
+        <Modal
+          onClose={handleCloseModal}
+          closeModalRef={closeModalRef}
+          defaultStyles={{ coverSmallScreen: false }}
+        >
+          <h3 className="text-center text-xl font-medium">
+            Add new option group
+          </h3>
+          <div className="my-auto flex flex-col gap-6">
+            <InputField
+              fullWidth
+              id="option-name"
+              label="Option name"
+              type="text"
+              onChange={onChange}
+              onKeyDown={onKeyDown}
+              value={inputValue}
+            />
+
+            <div className="flex justify-evenly gap-4">
+              <button
+                className={cn(
+                  'flex items-center gap-2 rounded border border-black px-6 py-2',
+                  'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
+                )}
+                type="button"
+                onClick={handleCloseModal}
+              >
+                <span>Cancel</span>
+                <X className="size-4 text-red-600" />
+              </button>
+
+              <button
+                className={cn(
+                  'flex items-center gap-2 rounded border border-black px-6 py-2',
+                  'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
+                )}
+                type="button"
+                onClick={handleConfirm}
+              >
+                <span>Confirm</span>
+                <Check className="size-4 text-green-600" />
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
   );
 };
 

@@ -14,15 +14,16 @@ const tabbableElements = [
 interface IDefaultStyles {
   appearanceMethod: 'opacity' | null;
   centered: boolean;
-  flex: boolean;
+  coverSmallScreen: boolean;
   defaultShape: boolean;
+  flex: boolean;
 }
 
 interface IModalProps {
   backdropClassName?: string;
   children: React.ReactNode;
   className?: string;
-  closeModalRef?: React.MutableRefObject<() => void>;
+  closeModalRef?: React.RefObject<() => void>;
   defaultStyles?: Partial<IDefaultStyles>;
   onClose?: () => void;
 }
@@ -105,25 +106,30 @@ const Modal: FC<IModalProps> = ({
     const defaultStyleOptions: IDefaultStyles = {
       appearanceMethod: 'opacity',
       centered: true,
-      flex: true,
+      coverSmallScreen: true,
       defaultShape: true,
+      flex: true,
 
       // replace default options with selected ones
       ...defaultStyles,
     };
 
-    const modalClassName = cn(
-      'min-h-64 bg-white max-sm:inset-0 max-sm:px-3 sm:min-w-[32rem] max-sm:rounded-none max-sm:translate-x-0 max-sm:translate-y-0',
+    return cn(
+      'min-h-64 bg-white sm:min-w-[32rem]',
+
+      defaultStyleOptions?.coverSmallScreen &&
+        'max-sm:inset-0 max-sm:px-3 max-sm:rounded-none max-sm:translate-x-0 max-sm:translate-y-0',
+
       defaultStyleOptions?.appearanceMethod === 'opacity' &&
         `transition-opacity ease-in ${isOpen ? 'opacity-100' : 'opacity-0'}`,
+
       defaultStyleOptions?.centered &&
         'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+
       defaultStyleOptions?.defaultShape && 'overflow-hidden p-8 rounded-md',
       defaultStyleOptions?.flex && 'flex flex-col',
       className,
     );
-
-    return modalClassName;
   }, [className, defaultStyles, isOpen]);
 
   return (
@@ -131,7 +137,7 @@ const Modal: FC<IModalProps> = ({
       ref={modalRef}
       className={cn(
         isOpen ? 'bg-opacity-40' : 'bg-opacity-0',
-        'fixed inset-0 z-20 bg-black transition-colors ease-in',
+        'fixed inset-0 z-20 cursor-default bg-black transition-colors ease-in',
         backdropClassName,
       )}
       onClick={handleCloseRef.current}
@@ -140,6 +146,7 @@ const Modal: FC<IModalProps> = ({
         <button
           className="absolute right-3 top-3 p-1"
           onClick={handleCloseRef.current}
+          type="button"
         >
           <X className="size-4" />
         </button>

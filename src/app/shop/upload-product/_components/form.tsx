@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect, useReducer, useRef, useState } from 'react';
+import { FC, useEffect, useReducer, useRef } from 'react';
 import { Category, SubCategory } from '@prisma/client';
 import {
   TUploadProduct,
@@ -18,7 +18,6 @@ import { ToggleSwitch } from '@/components/ui/toggle-switch';
 import Tooltip from '@/components/ui/tooltip';
 import { CircleHelp } from 'lucide-react';
 import Title from './form-title';
-import OptionGroup from './product-options/option-group';
 import {
   formReducer,
   FormStateActions,
@@ -33,8 +32,10 @@ import {
   optionGroupReducer,
   OptionGroupsActions,
   TOptionGroups,
+  TOptionMap,
 } from '../_reducers/option-groups-reducer';
-import GroupList from '@/app/shop/upload-product/_components/product-options/group-list';
+import GroupList from './product-options/group-list';
+import { SecondaryOption } from '../_reducers/secondary-option';
 
 const initialFormState: IFormState = {
   isMultipleMode: false,
@@ -60,23 +61,39 @@ const initialProductState: IProduct = {
 const TEST_initialOptionGroups: TOptionGroups = new Map([
   [
     'group1',
-    new Set([
-      'option1',
-      'option2',
-      'option3',
-      'option4',
-      'option5',
-      'option6',
-      'option7',
-      'option8',
-      'option9',
-      'option10',
+    new Map([
+      ['option1', new SecondaryOption('option1', 'opt1', 100)],
+      ['option2', new SecondaryOption('option2', 'opt2', 200)],
+      ['option3', new SecondaryOption('option3', 'opt3', 300)],
+      ['option4', new SecondaryOption('option4', 'opt4', 400)],
+      ['option5', new SecondaryOption('option5', 'opt5', 500)],
+      ['option6', new SecondaryOption('option6', 'opt6', 600)],
+      ['option7', new SecondaryOption('option7', 'opt7', 700)],
+      ['option8', new SecondaryOption('option8', 'opt8', 800)],
+      ['option9', new SecondaryOption('option9', 'opt9', 900)],
+      ['option10', new SecondaryOption('option10', 'opt10', 1000)],
     ]),
   ],
-  ['group2', new Set(['option1', 'option2', 'option3'])],
-  ['group3', new Set(['option1', 'option2'])],
-  ['group4', new Set(['option1'])],
-  ['group5', new Set()],
+  [
+    'group2',
+    new Map([
+      ['option1', new SecondaryOption('option1', 'opt1', 100)],
+      ['option2', new SecondaryOption('option2', 'opt2', 200)],
+      ['option3', new SecondaryOption('option3', 'opt3', 300)],
+    ]),
+  ],
+  [
+    'group3',
+    new Map([
+      ['option1', new SecondaryOption('option1', 'opt1', 100)],
+      ['option2', new SecondaryOption('option2', 'opt2', 200)],
+    ]),
+  ],
+  [
+    'group4',
+    new Map([['option1', new SecondaryOption('option1', 'opt1', 100)]]),
+  ],
+  ['group5', new Map()],
 ]);
 
 interface INewProductFormProps {
@@ -91,7 +108,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
   const formRef = useRef<HTMLFormElement>(null);
   const [optionGroups, dispatchOptionGroups] = useReducer(
     optionGroupReducer,
-    // new Map<string, Set<string>>(),
     TEST_initialOptionGroups,
   );
   const [activeProduct, dispatchActiveProduct] = useReducer(
@@ -172,43 +188,23 @@ const NewProductForm: FC<INewProductFormProps> = ({
     // router.replace(`/shop/product/${productId}`);
   };
 
-  /*
-  const createOptionGroup = (groupName: string): boolean => {
-    if (optionGroups.has(groupName)) return false;
-
-    setOptionGroups((prev) => {
-      // clear other empty groups
-      const newMap = new Map(prev);
-      for (const [key, value] of newMap.entries()) {
-        if (value.size === 0) {
-          newMap.delete(key);
-        }
-      }
-
-      // add a new group
-      newMap.set(groupName, new Set());
-      return newMap;
+  // =-=-=-=-=-=-=-=-=-=-=-=-=-= handlers =-=-=-=-=-=-=-=-=-=-=-=-=-=
+  const onGroupAdd = (optionGroupName: string): void => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.AddOptionGroup,
+      payload: { optionGroupName },
     });
-
-    return true;
   };
 
-  const addOptionName = (optionGroup: string, optionName: string): boolean => {
-    if (optionGroups.get(optionGroup)?.has(optionName)) return false;
-
-    // add option name to the group
-    setOptionGroups((prev) => {
-      const newMap = new Map(prev);
-      const optionNames: TOptionNames | undefined = newMap.get(optionGroup);
-      if (!optionNames) return prev;
-
-      optionNames.add(optionName);
-      return newMap;
+  const onOptionAdd = (
+    optionGroupName: string,
+    option: SecondaryOption,
+  ): void => {
+    dispatchOptionGroups({
+      type: OptionGroupsActions.AddOption,
+      payload: { optionGroupName, option },
     });
-
-    return true;
   };
-  */
 
   const onGroupReorder = (newOrder: string[]) => {
     dispatchOptionGroups({
@@ -226,7 +222,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
 
   const onOptionReorder = (
     optionGroupName: string,
-    options: string[] | Set<string>,
+    options: SecondaryOption[] | TOptionMap,
   ) => {
     dispatchOptionGroups({
       type: OptionGroupsActions.SetOptionGroup,
@@ -243,12 +239,12 @@ const NewProductForm: FC<INewProductFormProps> = ({
 
   const onOptionRename = (
     optionGroupName: string,
-    option: string,
+    optionName: string,
     newName: string,
   ) => {
     dispatchOptionGroups({
       type: OptionGroupsActions.RenameOption,
-      payload: { optionGroupName, option, newName },
+      payload: { optionGroupName, optionName, newName },
     });
   };
 
@@ -289,7 +285,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
               payload: { isMultipleMode: state },
             });
           }}
-          uncheckedLabel="Signgle product"
+          uncheckedLabel="Single product"
           checkedLabel="Multiple variants"
         />
       </div>
@@ -332,11 +328,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 <SelectOption id="5" value="5">
                   test5
                 </SelectOption>
-                <SelectInputField
-                  placeholder="Add new group"
-                  id="test-inp"
-                  autoComplete="off"
-                />
               </Select>
             )}
           />
@@ -450,8 +441,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 className="inline text-sm"
                 tooltipId="main-group-tooltip"
                 tooltip={`Only variants in main group can have different images and description.
-                Other groups can only add text to name or price (both will be calculated as sum of all selected variants).
-                You can disable several combinations of secondary options with main options.`}
+                Other groups can only add text to name or increase price (both will be calculated as sum of all selected variants).`}
               >
                 <CircleHelp className="inline h-4 cursor-pointer text-gray-400" />
               </Tooltip>
@@ -462,6 +452,8 @@ const NewProductForm: FC<INewProductFormProps> = ({
             <h5 className="mb-2 text-sm font-medium">Secondary groups</h5>
             <GroupList
               optionGroups={optionGroups}
+              onGroupAdd={onGroupAdd}
+              onOptionAdd={onOptionAdd}
               onGroupReorder={onGroupReorder}
               onGroupDelete={onGroupDelete}
               onOptionReorder={onOptionReorder}
@@ -469,21 +461,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
               onOptionRename={onOptionRename}
               onGroupRename={onGroupRename}
             />
-
-            <Tooltip
-              className="inline text-sm"
-              tooltipClassName="max-sm:max-w-36"
-              tooltipId="add-variant-tooltip"
-              tooltip="Add a new product variant to the main group."
-            >
-              <button
-                aria-describedby="add-variant-tooltip"
-                // before adding new variants,
-                className="w-fit rounded border border-black px-4 py-2"
-              >
-                Add new group
-              </button>
-            </Tooltip>
           </div>
         </div>
       )}

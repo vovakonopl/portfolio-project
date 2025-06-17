@@ -1,17 +1,20 @@
 import React, { FC } from 'react';
-import OptionBox from './option-box';
-import OptionList from './option-list';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { TOptionMap } from '@/app/shop/upload-product/_reducers/option-groups-reducer';
+import { SecondaryOption } from '@/app/shop/upload-product/_reducers/secondary-option';
+import OptionBox from './option-box';
+import OptionList from './option-list';
 
 interface IOptionGroupProps {
   groupName: string;
-  optionSet: Set<string>;
+  optionMap: TOptionMap;
+  onOptionAdd: (optionGroupName: string, option: SecondaryOption) => void;
   onGroupDelete: (groupName: string) => void;
   onOptionDelete: (optionGroupName: string, optionName: string) => void;
   onOptionReorder: (
     optionGroupName: string,
-    options: string[] | Set<string>,
+    options: SecondaryOption[] | TOptionMap,
   ) => void;
   onOptionRename?: (
     optionGroupName: string,
@@ -23,7 +26,8 @@ interface IOptionGroupProps {
 
 const OptionGroup: FC<IOptionGroupProps> = ({
   groupName,
-  optionSet,
+  optionMap,
+  onOptionAdd,
   onGroupDelete,
   onOptionDelete,
   onOptionReorder,
@@ -47,10 +51,11 @@ const OptionGroup: FC<IOptionGroupProps> = ({
 
   return (
     <li
-      className="box-border flex w-full items-stretch gap-4"
+      className="box-border flex w-full cursor-default items-stretch gap-4"
       ref={setNodeRef}
       style={style}
       {...attributes}
+      tabIndex={-1}
     >
       <div className="flex w-56 border-r-2 border-gray-400 py-2 pl-4 pr-8">
         <OptionBox
@@ -71,10 +76,11 @@ const OptionGroup: FC<IOptionGroupProps> = ({
       <OptionList
         groupName={groupName}
         isDragDisabled={isDragging}
+        onOptionAdd={onOptionAdd}
         onOptionDelete={onOptionDelete}
         onReorder={onOptionReorder}
         onRename={onOptionRename}
-        optionSet={optionSet}
+        optionMap={optionMap}
       />
     </li>
   );

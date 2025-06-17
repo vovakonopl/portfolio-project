@@ -1,5 +1,7 @@
-type TOptionNames = Set<string>;
-export type TOptionGroups = Map<string, TOptionNames>;
+import { SecondaryOption } from './secondary-option';
+
+export type TOptionMap = Map<string, SecondaryOption>; // <name, option>
+export type TOptionGroups = Map<string, TOptionMap>;
 
 export enum OptionGroupsActions {
   AddOptionGroup,
@@ -20,7 +22,11 @@ type TAction =
       payload: { optionGroupName: string };
     }
   | {
-      type: OptionGroupsActions.AddOption | OptionGroupsActions.RemoveOption;
+      type: OptionGroupsActions.AddOption;
+      payload: { optionGroupName: string; option: SecondaryOption };
+    }
+  | {
+      type: OptionGroupsActions.RemoveOption;
       payload: { optionGroupName: string; optionName: string };
     }
   | {
@@ -29,7 +35,7 @@ type TAction =
     }
   | {
       type: OptionGroupsActions.RenameOption;
-      payload: { optionGroupName: string; option: string; newName: string };
+      payload: { optionGroupName: string; optionName: string; newName: string };
     }
   | {
       type: OptionGroupsActions.ReorderOptionGroups;
@@ -37,19 +43,32 @@ type TAction =
     }
   | {
       type: OptionGroupsActions.SetOptionGroup;
-      payload: { optionGroupName: string; options: string[] | Set<string> };
+      payload: {
+        optionGroupName: string;
+        options: SecondaryOption[] | TOptionMap;
+      };
     };
+
+export const MAX_SECONDARY_GROUPS = 4;
+export const MAX_OPTIONS_IN_GROUP = 8;
 
 export function optionGroupReducer(state: TOptionGroups, action: TAction) {
   switch (action.type) {
     case OptionGroupsActions.AddOptionGroup: {
+      if (state.size >= MAX_SECONDARY_GROUPS) {
+        return state;
+      }
+
       const { optionGroupName } = action.payload;
+      if (optionGroupName.length === 0) {
+        return state; // Empty string
+      }
       if (state.has(optionGroupName)) {
         return state; // Option group already exists
       }
 
       const newState = new Map(state);
-      newState.set(optionGroupName, new Set());
+      newState.set(optionGroupName, new Map());
       return newState;
     }
 
@@ -70,31 +89,35 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
         return state; // Option group does not exist or new name already exists
       }
 
-      type TEntry = [string, TOptionNames];
+      type TEntry = [string, TOptionMap];
       const entries = state
         .entries()
-        .map(([groupName, optionSet]: TEntry): TEntry => {
-          const newOptionSet: TOptionNames = new Set(optionSet);
-          if (groupName === optionGroupName) return [newName, newOptionSet];
-          return [groupName, newOptionSet];
+        .map(([groupName, optionMap]: TEntry): TEntry => {
+          const newOptionMap: TOptionMap = new Map(optionMap);
+          if (groupName === optionGroupName) return [newName, newOptionMap];
+          return [groupName, newOptionMap];
         });
 
       return new Map(entries);
     }
 
     case OptionGroupsActions.AddOption: {
-      const { optionGroupName, optionName } = action.payload;
+      if (state.size >= MAX_OPTIONS_IN_GROUP) {
+        return state;
+      }
+
+      const { optionGroupName, option } = action.payload;
       if (!state.has(optionGroupName)) {
         return state; // Option group does not exist
       }
-      if (state.get(optionGroupName)!.has(optionName)) {
+      if (state.get(optionGroupName)!.has(option.displayedName)) {
         return state; // Option already exists in the group
       }
 
       const newState = new Map(state);
-      const options = newState.get(optionGroupName)!;
-      options.add(optionName);
-      newState.set(optionGroupName, new Set(options));
+      const optionMap = newState.get(optionGroupName)!;
+      optionMap.set(option.displayedName, option);
+      newState.set(optionGroupName, new Map(optionMap));
 
       return newState;
     }
@@ -106,28 +129,38 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       }
 
       const newState = new Map(state);
-      const options = new Set(newState.get(optionGroupName));
-      options.delete(optionName);
-      newState.set(optionGroupName, options);
+      const optionMap = new Map(newState.get(optionGroupName));
+      optionMap.delete(optionName);
+      newState.set(optionGroupName, optionMap);
 
       return newState;
     }
 
     case OptionGroupsActions.RenameOption: {
-      const { optionGroupName, option, newName } = action.payload;
+      const { optionGroupName, optionName, newName } = action.payload;
       if (!state.has(optionGroupName)) {
         return state; // Option group does not exist
       }
 
-      const optionSet = state.get(optionGroupName);
-      if (!optionSet || !optionSet.has(option) || optionSet.has(newName)) {
+      const optionMap = state.get(optionGroupName);
+      if (!optionMap || !optionMap.has(optionName) || optionMap.has(newName)) {
         return state; // Option does not exist in the group or new name already exists
       }
 
-      let options: string[] = Array.from(optionSet);
-      options = options.map((opt) => (opt === option ? newName : opt));
+      type TEntry = [string, SecondaryOption];
+      const optionEntries = optionMap
+        .entries()
+        .map(([optName, option]: TEntry): TEntry => {
+          if (optionName === optName) {
+            option.displayedName = newName;
+            return [newName, option];
+          }
+
+          return [optName, option];
+        });
+
       const newState = new Map(state);
-      newState.set(optionGroupName, new Set(options));
+      newState.set(optionGroupName, new Map(optionEntries));
 
       return newState;
     }
@@ -154,9 +187,16 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       const { optionGroupName, options } = action.payload;
 
       const newState = new Map(state);
-      const optionSet = new Set(options);
-      newState.set(optionGroupName, optionSet);
+      let optionMap: TOptionMap;
+      if (Array.isArray(options)) {
+        optionMap = new Map(
+          options.map((option) => [option.displayedName, option]),
+        );
+      } else {
+        optionMap = new Map(options);
+      }
 
+      newState.set(optionGroupName, optionMap);
       return newState;
     }
 

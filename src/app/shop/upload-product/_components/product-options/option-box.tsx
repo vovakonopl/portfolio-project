@@ -11,8 +11,7 @@ import { cn } from '@/lib/cn';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
-
-const MAX_NAME_LENGTH: number = 25;
+import { MAX_OPTION_NAME_LENGTH } from './option-scheme';
 
 type TContainerProps = (
   | HTMLAttributes<HTMLDivElement>
@@ -153,7 +152,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
       )}
       <div
         className={cn(
-          'cursor-grab overflow-hidden break-all rounded-md border border-gray-400 px-4 py-2 text-center',
+          'word-break cursor-grab overflow-hidden break-all rounded-md border border-gray-400 px-4 py-2 text-center',
           !isRenaming &&
             'hover:bg-black hover:bg-opacity-5 active:cursor-grabbing active:bg-black active:bg-opacity-10',
           (onDelete || onRename) &&
@@ -164,7 +163,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
         ref={elementRef}
       >
         {isRenaming && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col items-center gap-2">
             <input
               className="max-w-full overflow-hidden border-b border-gray-500 bg-transparent px-2 py-1 text-center focus:outline-none"
               autoFocus
@@ -173,7 +172,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               onBlur={handleRename}
-              maxLength={MAX_NAME_LENGTH}
+              maxLength={MAX_OPTION_NAME_LENGTH}
               style={{
                 width:
                   'max(' +
@@ -182,7 +181,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
                   inputValue.length * 1.4 +
                   'ch)',
                 // ch unit takes width of '0' char.
-                // 'm' char is much longer, so it is multiplied by 1.4 to fit all chars,
+                // 'm' char is much longer, so length is multiplied by 1.4 to fit all chars,
                 // but it makes input longer than its content.
               }}
             />
