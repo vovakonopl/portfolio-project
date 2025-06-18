@@ -12,6 +12,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { MAX_OPTION_NAME_LENGTH } from './option-scheme';
+import { SecondaryOption } from '@/app/shop/upload-product/_reducers/secondary-option';
 
 type TContainerProps = (
   | HTMLAttributes<HTMLDivElement>
@@ -46,22 +47,24 @@ interface IOptionBoxProps {
   id: string;
   children?: React.ReactNode;
   className?: string;
-  isDragDisabled?: boolean;
   dragListeners?: SyntheticListenerMap;
+  isDragDisabled?: boolean;
   isListItem?: boolean;
   onDelete?: () => void;
   onRename?: (newName: string) => void;
+  option?: SecondaryOption;
 }
 
 const OptionBox: FC<IOptionBoxProps> = ({
   id,
   children,
   className,
+  dragListeners,
   isDragDisabled = false,
   isListItem = false,
   onDelete,
   onRename,
-  dragListeners,
+  option,
 }) => {
   const disabledSortableOptions = {
     attributes: {},
@@ -72,6 +75,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
   };
   const [isRenaming, setIsRenaming] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(id);
+  const [isDetailsVisible, setIsDetailsVisible] = useState<boolean>(false);
 
   // save the original width of the component while renaming
   const [elemWidthRem, setElemWidthRem] = useState<number>(0);
@@ -88,12 +92,10 @@ const OptionBox: FC<IOptionBoxProps> = ({
     transform: CSS.Transform.toString(transform),
   };
 
-  const iconClassName: string = cn(
-    'box-content size-4 p-1 text-gray-400 transition-all',
-    'hover:text-gray-500 active:text-gray-800',
-  );
-  const buttonClassName: string =
-    'absolute top-1/2 -translate-y-1/2 cursor-pointer opacity-0 transition-all focus:opacity-100 group-hover:opacity-100';
+  useEffect(() => {
+    // update input value on actual name update to avoid mismatching values
+    setInputValue(id);
+  }, [id]);
 
   useEffect(() => {
     // update the component's width after possible rename
@@ -103,6 +105,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
     setElemWidthRem(width);
   }, [isRenaming]);
 
+  // Rename state handlers
   const handleCancelRename = () => {
     setIsRenaming(false);
     setInputValue(id);
@@ -117,6 +120,10 @@ const OptionBox: FC<IOptionBoxProps> = ({
 
     setIsRenaming(false);
     onRename(inputValue);
+
+    // If the value is successfully changed, the input value will be updated with useEffect.
+    // If it wasn't changed (e.g., the same name is already taken), it will avoid mismatching values
+    setInputValue(id);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +140,35 @@ const OptionBox: FC<IOptionBoxProps> = ({
     }
   };
 
+  // details handlers
+  const handleShowDetails = () => {
+    if (!option) return;
+
+    if (sortable.isOver || isDragDisabled) {
+      setIsDetailsVisible(true);
+    }
+  };
+
+  const handleHideDetails = (event: MouseEvent) => {
+    if (!option) return;
+
+    if (
+      elementRef.current &&
+      !elementRef.current.contains(event.target as Node)
+    ) {
+      setIsDetailsVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!option) return;
+
+    document.addEventListener('pointerdown', handleHideDetails);
+    return () => {
+      document.removeEventListener('pointerdown', handleHideDetails);
+    };
+  }, [option]);
+
   return (
     <OptionBoxContainer
       className={cn('group relative h-min touch-none select-none', className)}
@@ -141,27 +177,31 @@ const OptionBox: FC<IOptionBoxProps> = ({
       style={styles}
       {...attributes}
     >
+      {/* Delete button */}
       {!isRenaming && onDelete && (
         <button
-          className={cn(buttonClassName, 'left-2')}
+          className="option__button left-2"
           onClick={onDelete}
           type="button"
         >
-          <X className={iconClassName} />
+          <X className="option__button-icon" />
         </button>
       )}
+
+      {/* Draggable element */}
       <div
         className={cn(
           'word-break cursor-grab overflow-hidden break-all rounded-md border border-gray-400 px-4 py-2 text-center',
-          !isRenaming &&
-            'hover:bg-black hover:bg-opacity-5 active:cursor-grabbing active:bg-black active:bg-opacity-10',
+          !isRenaming && 'option',
           (onDelete || onRename) &&
             !isRenaming &&
             'flex items-center justify-center px-8',
         )}
-        {...(isRenaming ? {} : listeners)} // disable dragging while renaming
+        {...(isRenaming || isDetailsVisible ? {} : listeners)} // disable dragging while renaming or showing details
         ref={elementRef}
+        onPointerUp={handleShowDetails}
       >
+        {/* Renaming state */}
         {isRenaming && (
           <div className="flex flex-col items-center gap-2">
             <input
@@ -192,13 +232,12 @@ const OptionBox: FC<IOptionBoxProps> = ({
                   'cursor-pointer rounded-md outline outline-1 -outline-offset-4 outline-gray-400',
                   'hover:outline-gray-500 active:outline-gray-800',
                 )}
-                onClick={(e) => {
-                  e.stopPropagation();
+                onClick={() => {
                   handleCancelRename();
                 }}
                 type="button"
               >
-                <X className={cn(iconClassName, 'size-5')} />
+                <X className="option__button-icon size-5" />
               </button>
 
               <button
@@ -209,22 +248,53 @@ const OptionBox: FC<IOptionBoxProps> = ({
                 onClick={handleRename}
                 type="button"
               >
-                <Check className={cn(iconClassName, 'size-5')} />
+                <Check className="option__button-icon size-5" />
               </button>
             </div>
           </div>
         )}
 
+        {/* Default state */}
         {!isRenaming && children}
+
+        {/* Detailed info on hover, while not dragged */}
+        {option && isDetailsVisible && (
+          <div className="option__details">
+            <h5 className="text-center font-medium">Option details</h5>
+
+            <div className="text-sm">
+              <p>
+                <span className="mr-2 font-medium">Addition to name:</span>
+                <span
+                  className={
+                    option.name ? 'underline underline-offset-2' : 'italic'
+                  }
+                >
+                  {option.name || 'none'}
+                </span>
+              </p>
+            </div>
+
+            <div className="text-sm">
+              <p>
+                <span className="mr-2 font-medium">Addition to price:</span>
+                <span className="underline underline-offset-2">
+                  {(option.priceInCents / 100).toFixed(2)}$
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
+      {/* Rename button */}
       {!isRenaming && onRename && (
         <button
-          className={cn(buttonClassName, 'right-2')}
-          onClick={() => setIsRenaming((prevState) => !prevState)}
+          className="option__button right-2"
+          onPointerUp={() => setIsRenaming((prevState) => !prevState)}
           type="button"
         >
-          <Edit className={iconClassName} />
+          <Edit className="option__button-icon" />
         </button>
       )}
     </OptionBoxContainer>

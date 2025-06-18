@@ -98,7 +98,7 @@ const OptionList: FC<IOptionListProps> = ({
     const option = new SecondaryOption(
       data.displayedName,
       data.name || '',
-      (data.price || 0) * 100, // dollars to cents
+      Math.floor((data.price || 0) * 100), // dollars to cents
     );
 
     onOptionAdd(groupName, option);
@@ -118,16 +118,16 @@ const OptionList: FC<IOptionListProps> = ({
       modifiers={[restrictToParentElement]}
       sensors={sensors}
     >
-      <ol className="relative flex flex-1 flex-wrap items-center gap-x-4 gap-y-2 overflow-hidden px-4 py-2">
+      <ol className="relative flex flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
         <SortableContext
           items={options.map((option) => option.displayedName)}
           strategy={rectSortingStrategy}
           disabled={options.length < 2}
         >
-          {options.map((option) => (
+          {options.map((option: SecondaryOption) => (
             <OptionBox
               id={option.displayedName}
-              isDragDisabled={isDragDisabled}
+              isDragDisabled={isDragDisabled || options.length < 2}
               isListItem={true}
               onDelete={() => onOptionDelete(groupName, option.displayedName)}
               onRename={
@@ -135,6 +135,7 @@ const OptionList: FC<IOptionListProps> = ({
                 ((newName: string) =>
                   onRename(groupName, option.displayedName, newName))
               }
+              option={option}
               key={option.displayedName}
             >
               {option.displayedName}

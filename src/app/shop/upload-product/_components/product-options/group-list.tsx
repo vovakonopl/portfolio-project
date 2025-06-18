@@ -103,7 +103,7 @@ const GroupList: FC<IGroupListProps> = ({
         modifiers={[restrictToParentElement]}
         sensors={sensors}
       >
-        <ol className="relative flex flex-col gap-4 overflow-hidden">
+        <ol className="relative flex flex-col gap-4">
           <SortableContext
             items={groups}
             strategy={verticalListSortingStrategy}

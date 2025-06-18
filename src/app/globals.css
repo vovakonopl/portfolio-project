@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /*=========================================
-    aditional resets and untility classes
+    additional resets and utility classes
   =========================================*/
 @layer components {
   .container {
@@ -13,25 +13,31 @@
     margin: 0 auto;
   }
 }
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .word-break {
     word-break: break-word;
   }
+
   .line-h-1 {
     line-height: 1;
   }
 }
+
 @layer base {
   button {
     user-select: none;
   }
+
   address {
     font-style: normal;
   }
@@ -42,6 +48,7 @@
     -webkit-appearance: none;
     margin: 0;
   }
+
   /* Firefox */
   input[type='number'] {
     appearance: textfield;
@@ -53,6 +60,7 @@
   --nav-height: 6rem;
   --footer-height: 7.25rem;
 }
+
 @media not all and (min-width: 768px) {
   :root {
     --nav-height: 4.25rem;
@@ -76,6 +84,7 @@
   .tooltip-container:hover .tooltip-hoverable {
     @apply visible opacity-100 delay-300;
   }
+
   .tooltip {
     --tooltip-position: calc(100% + 0.5rem);
 
@@ -86,11 +95,13 @@
   .tooltip.tooltip.bottom {
     @apply left-1/2 -translate-x-1/2 after:left-1/2 after:-translate-x-1/2;
   }
+
   .tooltip.top {
     bottom: var(--tooltip-position);
 
     @apply after:top-full after:border-t-zinc-600;
   }
+
   .tooltip.bottom {
     top: var(--tooltip-position);
 
@@ -101,11 +112,13 @@
   .tooltip.right {
     @apply top-1/2 -translate-y-1/2 after:top-1/2 after:-translate-y-1/2;
   }
+
   .tooltip.left {
     right: var(--tooltip-position);
 
     @apply after:left-full after:border-l-zinc-600;
   }
+
   .tooltip.right {
     left: var(--tooltip-position);
 
@@ -120,10 +133,12 @@
   .field-container label {
     line-height: 1;
   }
+
   .field-container .field:focus + label,
   .field-container .field:not(:placeholder-shown) + label {
     @apply -top-2 border-b bg-white text-xs;
   }
+
   .field-container .field:focus + label {
     @apply text-blue-400;
   }
@@ -135,6 +150,7 @@
 .appear {
   animation: fadeAppear 0.15s forwards;
 }
+
 .disappear {
   animation: fadeDisappear 0.15s forwards;
 }
@@ -147,6 +163,7 @@
     opacity: 1;
   }
 }
+
 @keyframes fadeDisappear {
   0% {
     opacity: 1;
@@ -169,9 +186,11 @@
 .google-icon {
   background-image: url('/icons/socials/google.svg');
 }
+
 .facebook-icon {
   background-image: url('/icons/socials/facebook.svg');
 }
+
 .apple-icon {
   background-image: url('/icons/socials/apple.svg');
 }
@@ -187,6 +206,7 @@
 
   @apply absolute -bottom-px left-1/2 h-px -translate-x-1/2 bg-black bg-opacity-10;
 }
+
 .navbar__search::before {
   content: '';
 
@@ -194,6 +214,7 @@
 
   @apply absolute left-3 top-1/2 flex size-6 -translate-y-1/2 bg-center bg-no-repeat opacity-40;
 }
+
 .navbar__search::before {
   content: '';
 
@@ -208,9 +229,11 @@
 .profile__link {
   @apply flex w-full rounded border-b transition-colors hover:bg-sky-50 active:bg-sky-50;
 }
+
 .profile__link a {
   @apply w-full px-4 py-2;
 }
+
 .profile__link .active {
   @apply bg-sky-50;
 }
@@ -219,15 +242,18 @@
   background-image: url('/icons/upload-image.svg');
   background-size: 2rem;
 }
+
 @media (hover: hover) {
   .avatar:hover .avatar__upload {
     opacity: 0.8;
   }
 }
+
 @media (hover: none) {
   .avatar__upload {
     @apply inset-auto bottom-0 right-0 flex size-5 items-center justify-center bg-sky-400 bg-none opacity-100 outline outline-2 outline-white md:size-6 md:-translate-x-1/4 md:-translate-y-1/4;
   }
+
   .avatar__upload::after {
     content: '+';
 
@@ -244,9 +270,11 @@
 .nav-close {
   animation: closeProfileNav 0.3s forwards;
 }
+
 .nav-open {
   animation: openProfileNav 0.3s forwards;
 }
+
 @keyframes closeProfileNav {
   0% {
     opacity: 0.2;
@@ -256,6 +284,7 @@
     display: none;
   }
 }
+
 @keyframes openProfileNav {
   0% {
     display: none;
@@ -263,5 +292,50 @@
   }
   100% {
     opacity: 0.2;
+  }
+}
+
+/*==============
+    Option box
+  ==============*/
+.option {
+  @apply hover:bg-black hover:bg-opacity-5 active:cursor-grabbing active:bg-black active:bg-opacity-10;
+}
+
+.option:has(.option__details:hover, .option__details:active) {
+  background: transparent;
+}
+
+.option__button {
+  @apply absolute top-1/2 -translate-y-1/2 cursor-pointer opacity-0 transition-all;
+  @apply focus:opacity-100 group-hover:opacity-100;
+}
+
+.option__button-icon {
+  @apply box-content size-4 p-1 text-gray-400 transition-all hover:text-gray-500 active:text-gray-800;
+}
+
+.option__details {
+  bottom: calc(100% + 0.75rem);
+  @apply absolute left-1/2 z-10 flex w-max min-w-60 max-w-96 -translate-x-1/2 cursor-pointer;
+  @apply flex-col gap-2 rounded border border-gray-400 bg-white px-4 py-2 transition-opacity;
+
+  animation: showOptionDetails 0.15s forwards;
+}
+
+.option__details::before {
+  content: '';
+  @apply absolute bottom-0 left-1/2 size-3 -translate-x-1/2 translate-y-1/2 rotate-45 rounded-sm;
+  @apply border border-white border-b-gray-400 border-r-gray-400 bg-white;
+}
+
+
+@keyframes showOptionDetails {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }
