@@ -11,8 +11,9 @@ import { cn } from '@/lib/cn';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
-import { MAX_OPTION_NAME_LENGTH } from './option-scheme';
-import { SecondaryOption } from '@/app/shop/upload-product/_reducers/secondary-option';
+import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import { MAX_OPTION_NAME_LENGTH } from '@/app/shop/upload-product/_utils/constants';
+import OptionDetails from './option-details';
 
 type TContainerProps = (
   | HTMLAttributes<HTMLDivElement>
@@ -258,33 +259,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
         {!isRenaming && children}
 
         {/* Detailed info on hover, while not dragged */}
-        {option && isDetailsVisible && (
-          <div className="option__details">
-            <h5 className="text-center font-medium">Option details</h5>
-
-            <div className="text-sm">
-              <p>
-                <span className="mr-2 font-medium">Addition to name:</span>
-                <span
-                  className={
-                    option.name ? 'underline underline-offset-2' : 'italic'
-                  }
-                >
-                  {option.name || 'none'}
-                </span>
-              </p>
-            </div>
-
-            <div className="text-sm">
-              <p>
-                <span className="mr-2 font-medium">Addition to price:</span>
-                <span className="underline underline-offset-2">
-                  {(option.priceInCents / 100).toFixed(2)}$
-                </span>
-              </p>
-            </div>
-          </div>
-        )}
+        {option && isDetailsVisible && <OptionDetails option={option} />}
       </div>
 
       {/* Rename button */}

@@ -1,7 +1,9 @@
-import { SecondaryOption } from './secondary-option';
-
-export type TOptionMap = Map<string, SecondaryOption>; // <name, option>
-export type TOptionGroups = Map<string, TOptionMap>;
+import { SecondaryOption } from '../_utils/structures/secondary-option';
+import { TOptionGroups, TOptionMap } from '../_utils/structures/option-groups';
+import {
+  MAX_OPTIONS_IN_GROUP,
+  MAX_SECONDARY_GROUPS,
+} from '../_utils/constants';
 
 export enum OptionGroupsActions {
   AddOptionGroup,
@@ -48,9 +50,6 @@ type TAction =
         options: SecondaryOption[] | TOptionMap;
       };
     };
-
-export const MAX_SECONDARY_GROUPS = 4;
-export const MAX_OPTIONS_IN_GROUP = 8;
 
 export function optionGroupReducer(state: TOptionGroups, action: TAction) {
   switch (action.type) {

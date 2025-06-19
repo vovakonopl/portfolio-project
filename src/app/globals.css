@@ -317,7 +317,7 @@
 
 .option__details {
   bottom: calc(100% + 0.75rem);
-  @apply absolute left-1/2 z-10 flex w-max min-w-60 max-w-96 -translate-x-1/2 cursor-pointer;
+  @apply absolute left-1/2 z-10 flex w-max min-w-60 max-w-96 -translate-x-1/2 cursor-default;
   @apply flex-col gap-2 rounded border border-gray-400 bg-white px-4 py-2 transition-opacity;
 
   animation: showOptionDetails 0.15s forwards;

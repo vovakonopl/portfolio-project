@@ -13,29 +13,24 @@ import InputField from '@/components/ui/text-input-field';
 import Error from '@/components/ui/error-message';
 import Select from '@/components/ui/select/select';
 import SelectOption from '@/components/ui/select/select-option';
-import SelectInputField from '@/components/ui/select/select-input-field';
 import { ToggleSwitch } from '@/components/ui/toggle-switch';
 import Tooltip from '@/components/ui/tooltip';
 import { CircleHelp } from 'lucide-react';
 import Title from './form-title';
+import { formReducer, FormStateActions } from '../_reducers/form-reducer';
 import {
-  formReducer,
-  FormStateActions,
-  IFormState,
-} from '../_reducers/form-reducer';
-import {
-  IProduct,
   productReducer,
   ProductStateActions,
 } from '../_reducers/product-reducer';
 import {
   optionGroupReducer,
   OptionGroupsActions,
-  TOptionGroups,
-  TOptionMap,
 } from '../_reducers/option-groups-reducer';
 import GroupList from './product-options/group-list';
-import { SecondaryOption } from '../_reducers/secondary-option';
+import { SecondaryOption } from '../_utils/structures/secondary-option';
+import { IProduct } from '../_utils/structures/product-interface';
+import { TOptionGroups, TOptionMap } from '../_utils/structures/option-groups';
+import { IFormState } from '../_utils/structures/form-state-interface';
 
 const initialFormState: IFormState = {
   isMultipleMode: false,
@@ -435,32 +430,37 @@ const NewProductForm: FC<INewProductFormProps> = ({
         <div className="">
           <Title>Option groups</Title>
           <div className="px-4">
-            <h5 className="mb-2 text-sm font-medium">
-              Main group
-              <Tooltip
-                className="inline text-sm"
-                tooltipId="main-group-tooltip"
-                tooltip={`Only variants in main group can have different images and description.
+            <div>
+              <h5 className="mb-2 text-sm font-medium">
+                Main group
+                <Tooltip
+                  className="inline text-sm"
+                  tooltipId="main-group-tooltip"
+                  tooltip={`Only variants in main group can have different images and description.
                 Other groups can only add text to name or increase price (both will be calculated as sum of all selected variants).`}
-              >
-                <CircleHelp className="inline h-4 cursor-pointer text-gray-400" />
-              </Tooltip>
-            </h5>
-            {/* TODO: by default a placeholder with group name = Main; option name = default */}
-            {/*<div aria-describedby='main-group-tooltip'></div>*/}
+                >
+                  <CircleHelp className="inline h-4 cursor-pointer text-gray-400" />
+                </Tooltip>
+              </h5>
+              {/* TODO: by default a placeholder with group name = Main; option name = default */}
+              {/*<div aria-describedby='main-group-tooltip'></div>*/}
+              {/*<OptionGroup />*/}
+            </div>
 
-            <h5 className="mb-2 text-sm font-medium">Secondary groups</h5>
-            <GroupList
-              optionGroups={optionGroups}
-              onGroupAdd={onGroupAdd}
-              onOptionAdd={onOptionAdd}
-              onGroupReorder={onGroupReorder}
-              onGroupDelete={onGroupDelete}
-              onOptionReorder={onOptionReorder}
-              onOptionDelete={onOptionDelete}
-              onOptionRename={onOptionRename}
-              onGroupRename={onGroupRename}
-            />
+            <div>
+              <h5 className="mb-2 text-sm font-medium">Secondary groups</h5>
+              <GroupList
+                optionGroups={optionGroups}
+                onGroupAdd={onGroupAdd}
+                onOptionAdd={onOptionAdd}
+                onGroupReorder={onGroupReorder}
+                onGroupDelete={onGroupDelete}
+                onOptionReorder={onOptionReorder}
+                onOptionDelete={onOptionDelete}
+                onOptionRename={onOptionRename}
+                onGroupRename={onGroupRename}
+              />
+            </div>
           </div>
         </div>
       )}

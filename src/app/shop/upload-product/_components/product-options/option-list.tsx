@@ -20,13 +20,14 @@ import { Check, PlusCircle, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
-import { SecondaryOption } from '@/app/shop/upload-product/_reducers/secondary-option';
-import {
-  MAX_OPTIONS_IN_GROUP,
-  TOptionMap,
-} from '@/app/shop/upload-product/_reducers/option-groups-reducer';
+import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
 import OptionBox from './option-box';
-import { optionScheme, TOption, MAX_OPTION_NAME_LENGTH } from './option-scheme';
+import { optionScheme, TOption } from '../../_utils/option-scheme';
+import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
+import {
+  MAX_OPTION_NAME_LENGTH,
+  MAX_OPTIONS_IN_GROUP,
+} from '@/app/shop/upload-product/_utils/constants';
 
 interface IOptionListProps {
   groupName: string;

@@ -1,6 +1,5 @@
 import { z } from 'zod';
-
-export const MAX_OPTION_NAME_LENGTH = 25;
+import { MAX_OPTION_NAME_LENGTH } from '@/app/shop/upload-product/_utils/constants';
 
 export const optionScheme = z.object({
   displayedName: z

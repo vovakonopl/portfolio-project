@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { TOptionMap } from '@/app/shop/upload-product/_reducers/option-groups-reducer';
-import { SecondaryOption } from '@/app/shop/upload-product/_reducers/secondary-option';
+import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
 import OptionBox from './option-box';
 import OptionList from './option-list';
+import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
 
 interface IOptionGroupProps {
   groupName: string;

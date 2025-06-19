@@ -18,13 +18,13 @@ import { Check, PlusCircle, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
-import { SecondaryOption } from '@/app/shop/upload-product/_reducers/secondary-option';
+import OptionGroup from './option-group';
+import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
 import {
-  MAX_SECONDARY_GROUPS,
   TOptionGroups,
   TOptionMap,
-} from '@/app/shop/upload-product/_reducers/option-groups-reducer';
-import OptionGroup from './option-group';
+} from '@/app/shop/upload-product/_utils/structures/option-groups';
+import { MAX_SECONDARY_GROUPS } from '@/app/shop/upload-product/_utils/constants';
 
 interface IGroupListProps {
   optionGroups: TOptionGroups;
