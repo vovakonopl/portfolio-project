@@ -1,11 +1,14 @@
-import { SecondaryOption } from '../_utils/structures/secondary-option';
-import { TOptionGroups, TOptionMap } from '../_utils/structures/option-groups';
+import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import {
+  TOptionGroups,
+  TOptionMap,
+} from '@/app/shop/upload-product/_utils/structures/option-groups';
 import {
   MAX_OPTIONS_IN_GROUP,
   MAX_SECONDARY_GROUPS,
-} from '../_utils/constants';
+} from '@/app/shop/upload-product/_utils/constants';
 
-export enum OptionGroupsActions {
+export enum SecondaryGroupsActions {
   AddOptionGroup,
   RemoveOptionGroup,
   RenameOptionGroup,
@@ -16,44 +19,47 @@ export enum OptionGroupsActions {
   SetOptionGroup,
 }
 
-type TAction =
+export type TAction =
   | {
       type:
-        | OptionGroupsActions.AddOptionGroup
-        | OptionGroupsActions.RemoveOptionGroup;
+        | SecondaryGroupsActions.AddOptionGroup
+        | SecondaryGroupsActions.RemoveOptionGroup;
       payload: { optionGroupName: string };
     }
   | {
-      type: OptionGroupsActions.AddOption;
+      type: SecondaryGroupsActions.AddOption;
       payload: { optionGroupName: string; option: SecondaryOption };
     }
   | {
-      type: OptionGroupsActions.RemoveOption;
+      type: SecondaryGroupsActions.RemoveOption;
       payload: { optionGroupName: string; optionName: string };
     }
   | {
-      type: OptionGroupsActions.RenameOptionGroup;
+      type: SecondaryGroupsActions.RenameOptionGroup;
       payload: { optionGroupName: string; newName: string };
     }
   | {
-      type: OptionGroupsActions.RenameOption;
+      type: SecondaryGroupsActions.RenameOption;
       payload: { optionGroupName: string; optionName: string; newName: string };
     }
   | {
-      type: OptionGroupsActions.ReorderOptionGroups;
+      type: SecondaryGroupsActions.ReorderOptionGroups;
       payload: { newOrder: string[] };
     }
   | {
-      type: OptionGroupsActions.SetOptionGroup;
+      type: SecondaryGroupsActions.SetOptionGroup;
       payload: {
         optionGroupName: string;
         options: SecondaryOption[] | TOptionMap;
       };
     };
 
-export function optionGroupReducer(state: TOptionGroups, action: TAction) {
+export function secondaryGroupsReducer(
+  state: TOptionGroups,
+  action: TAction,
+): TOptionGroups {
   switch (action.type) {
-    case OptionGroupsActions.AddOptionGroup: {
+    case SecondaryGroupsActions.AddOptionGroup: {
       if (state.size >= MAX_SECONDARY_GROUPS) {
         return state;
       }
@@ -71,7 +77,7 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       return newState;
     }
 
-    case OptionGroupsActions.RemoveOptionGroup: {
+    case SecondaryGroupsActions.RemoveOptionGroup: {
       const { optionGroupName } = action.payload;
       if (!state.has(optionGroupName)) {
         return state; // Option group does not exist
@@ -82,7 +88,7 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       return newState;
     }
 
-    case OptionGroupsActions.RenameOptionGroup: {
+    case SecondaryGroupsActions.RenameOptionGroup: {
       const { optionGroupName, newName } = action.payload;
       if (!state.has(optionGroupName) || state.has(newName)) {
         return state; // Option group does not exist or new name already exists
@@ -100,7 +106,7 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       return new Map(entries);
     }
 
-    case OptionGroupsActions.AddOption: {
+    case SecondaryGroupsActions.AddOption: {
       if (state.size >= MAX_OPTIONS_IN_GROUP) {
         return state;
       }
@@ -121,7 +127,7 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       return newState;
     }
 
-    case OptionGroupsActions.RemoveOption: {
+    case SecondaryGroupsActions.RemoveOption: {
       const { optionGroupName, optionName } = action.payload;
       if (!state.get(optionGroupName)?.has(optionName)) {
         return state; // Option group or option does not exist in the group
@@ -135,7 +141,7 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       return newState;
     }
 
-    case OptionGroupsActions.RenameOption: {
+    case SecondaryGroupsActions.RenameOption: {
       const { optionGroupName, optionName, newName } = action.payload;
       if (!state.has(optionGroupName)) {
         return state; // Option group does not exist
@@ -164,7 +170,7 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       return newState;
     }
 
-    case OptionGroupsActions.ReorderOptionGroups: {
+    case SecondaryGroupsActions.ReorderOptionGroups: {
       const { newOrder } = action.payload;
       if (newOrder.length !== state.size) {
         return state; // The number of groups does not match
@@ -182,7 +188,7 @@ export function optionGroupReducer(state: TOptionGroups, action: TAction) {
       return newState;
     }
 
-    case OptionGroupsActions.SetOptionGroup: {
+    case SecondaryGroupsActions.SetOptionGroup: {
       const { optionGroupName, options } = action.payload;
 
       const newState = new Map(state);

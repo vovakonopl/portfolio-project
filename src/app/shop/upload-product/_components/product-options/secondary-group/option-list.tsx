@@ -8,11 +8,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import {
-  arrayMove,
-  rectSortingStrategy,
-  SortableContext,
-} from '@dnd-kit/sortable';
+import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,19 +16,24 @@ import { Check, PlusCircle, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
 import OptionBox from './option-box';
-import { optionScheme, TOption } from '../../_utils/option-scheme';
+import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import {
+  optionScheme,
+  TOption,
+} from '@/app/shop/upload-product/_utils/option-scheme';
 import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
 import {
   MAX_OPTION_NAME_LENGTH,
   MAX_OPTIONS_IN_GROUP,
 } from '@/app/shop/upload-product/_utils/constants';
+import { reorderOptionsArray } from '@/app/shop/upload-product/_utils/reorder-options-array';
 
 interface IOptionListProps {
   groupName: string;
   isDragDisabled?: boolean;
   onOptionAdd: (optionGroupName: string, option: SecondaryOption) => void;
+  onOptionDelete: (optionGroupName: string, optionName: string) => void;
   onReorder: (
     optionGroupName: string,
     options: SecondaryOption[] | TOptionMap,
@@ -42,7 +43,6 @@ interface IOptionListProps {
     optionName: string,
     newName: string,
   ) => void;
-  onOptionDelete: (optionGroupName: string, optionName: string) => void;
   optionMap: TOptionMap;
 }
 
@@ -70,24 +70,14 @@ const OptionList: FC<IOptionListProps> = ({
 
   const options: SecondaryOption[] = Array.from(optionMap.values());
   const handleOnDragEnd = (e: DragEndEvent) => {
-    const { active, over } = e;
-    if (!over) return;
-    if (active.id === over?.id) return;
-
-    const findOptionIdx = (name: string): number => {
-      return options.findIndex(
-        (option: SecondaryOption) => option.displayedName === name,
-      );
-    };
-
-    const oldIdx: number = findOptionIdx(active.id as string);
-    const newIdx: number = findOptionIdx(over?.id as string);
-    const updatedOptions: SecondaryOption[] = arrayMove(
+    const updatedOptions: SecondaryOption[] | null = reorderOptionsArray(
+      e,
       options,
-      oldIdx,
-      newIdx,
     );
-    onReorder(groupName, updatedOptions);
+
+    if (updatedOptions) {
+      onReorder(groupName, updatedOptions);
+    }
   };
 
   const handleCloseModal = () => {

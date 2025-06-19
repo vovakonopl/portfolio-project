@@ -2,9 +2,9 @@ import React, { FC } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
 import OptionBox from './option-box';
 import OptionList from './option-list';
-import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
 
 interface IOptionGroupProps {
   groupName: string;

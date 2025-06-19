@@ -1,16 +1,16 @@
-import { IProduct } from '@/app/shop/upload-product/_utils/structures/product-interface';
+import { Product } from '@/app/shop/upload-product/_utils/structures/product';
 
 export enum ProductStateActions {
   SetField,
 }
 
-type TAction<K extends keyof IProduct = keyof IProduct> = {
+type TAction<K extends keyof Product = keyof Product> = {
   type: ProductStateActions.SetField;
-  payload: { field: K; value: IProduct[K] };
+  payload: { field: K; value: Product[K] };
 };
 
-export function productReducer<K extends keyof IProduct = keyof IProduct>(
-  state: IProduct,
+export function productReducer<K extends keyof Product = keyof Product>(
+  state: Product,
   action: TAction<K>,
 ) {
   switch (action.type) {

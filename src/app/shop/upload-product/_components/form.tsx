@@ -22,34 +22,20 @@ import {
   productReducer,
   ProductStateActions,
 } from '../_reducers/product-reducer';
+import { secondaryGroupsReducer } from '../_reducers/option-groups/secondary-groups-reducer';
 import {
-  optionGroupReducer,
-  OptionGroupsActions,
-} from '../_reducers/option-groups-reducer';
-import GroupList from './product-options/group-list';
-import { SecondaryOption } from '../_utils/structures/secondary-option';
-import { IProduct } from '../_utils/structures/product-interface';
-import { TOptionGroups, TOptionMap } from '../_utils/structures/option-groups';
+  MainGroupActions,
+  mainOptionGroupReducer,
+} from '../_reducers/option-groups/main-group-reducer';
 import { IFormState } from '../_utils/structures/form-state-interface';
+import { SecondaryOption } from '../_utils/structures/secondary-option';
+import { Product } from '../_utils/structures/product';
+import { TMainGroup, TOptionGroups } from '../_utils/structures/option-groups';
+import Groups from './groups';
 
-const initialFormState: IFormState = {
-  isMultipleMode: false,
-  variants: [],
-  // additionalServices: ...
-};
-
-const initialProductState: IProduct = {
-  idx: 0,
-  name: '',
-  price: 0,
-  images: [],
-  category: {} as Category,
-  subcategory: {} as SubCategory,
-  description: '',
-
-  // additional properties for variants (multiple variants mode)
-  optionGroup: '',
-  optionName: '',
+const initialMainGroupValue: Readonly<TMainGroup> = {
+  name: 'Main group',
+  options: new Map([['Option1', new Product({ optionName: 'Option1' })]]),
 };
 
 // TODO: remove this test data
@@ -91,6 +77,13 @@ const TEST_initialOptionGroups: TOptionGroups = new Map([
   ['group5', new Map()],
 ]);
 
+const initialFormState: IFormState = {
+  isMultipleMode: false,
+  variants: initialMainGroupValue,
+  secondaryOptions: TEST_initialOptionGroups,
+  // additionalServices: ...
+};
+
 interface INewProductFormProps {
   categories: Array<Category>;
   subCategories: Map<string, Array<SubCategory>>;
@@ -101,13 +94,17 @@ const NewProductForm: FC<INewProductFormProps> = ({
   subCategories,
 }) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const [optionGroups, dispatchOptionGroups] = useReducer(
-    optionGroupReducer,
+  const [secondaryGroups, dispatchSecondaryGroups] = useReducer(
+    secondaryGroupsReducer,
     TEST_initialOptionGroups,
+  );
+  const [mainGroup, dispatchMainGroup] = useReducer(
+    mainOptionGroupReducer,
+    initialMainGroupValue,
   );
   const [activeProduct, dispatchActiveProduct] = useReducer(
     productReducer,
-    initialProductState,
+    new Product({ optionName: 'Option1' }),
   );
   const [formState, dispatchFormState] = useReducer(
     formReducer,
@@ -133,24 +130,14 @@ const NewProductForm: FC<INewProductFormProps> = ({
       dispatchActiveProduct({
         type: ProductStateActions.SetField,
         payload: {
-          field: name as keyof IProduct,
-          value: value as IProduct[keyof IProduct],
+          field: name as keyof Product,
+          value: value as Product[keyof Product],
         },
       });
     });
 
     return unsubscribe;
   }, [watch]);
-
-  // update form state when product state changes
-  useEffect(() => {
-    dispatchFormState({
-      type: FormStateActions.EditVariant,
-      payload: {
-        product: activeProduct,
-      },
-    });
-  }, [activeProduct]);
 
   const onSubmit = async () => {
     if (!formRef.current) return;
@@ -183,70 +170,43 @@ const NewProductForm: FC<INewProductFormProps> = ({
     // router.replace(`/shop/product/${productId}`);
   };
 
-  // =-=-=-=-=-=-=-=-=-=-=-=-=-= handlers =-=-=-=-=-=-=-=-=-=-=-=-=-=
-  const onGroupAdd = (optionGroupName: string): void => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.AddOptionGroup,
-      payload: { optionGroupName },
+  // Update form state when other parts are updated
+  useEffect(() => {
+    dispatchMainGroup({
+      type: MainGroupActions.UpdateOption,
+      payload: { option: activeProduct },
     });
-  };
+  }, [activeProduct]);
 
-  const onOptionAdd = (
-    optionGroupName: string,
-    option: SecondaryOption,
-  ): void => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.AddOption,
-      payload: { optionGroupName, option },
+  useEffect(() => {
+    dispatchFormState({
+      type: FormStateActions.SetField,
+      payload: {
+        key: 'variants',
+        value: mainGroup,
+      },
     });
-  };
+  }, [mainGroup]);
 
-  const onGroupReorder = (newOrder: string[]) => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.ReorderOptionGroups,
-      payload: { newOrder },
+  useEffect(() => {
+    dispatchFormState({
+      type: FormStateActions.SetField,
+      payload: {
+        key: 'secondaryOptions',
+        value: secondaryGroups,
+      },
     });
-  };
+  }, [secondaryGroups]);
 
-  const onGroupDelete = (optionGroupName: string) => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.RemoveOptionGroup,
-      payload: { optionGroupName },
-    });
-  };
+  useEffect(() => {
+    console.log(formState);
+  }, [formState]);
 
-  const onOptionReorder = (
-    optionGroupName: string,
-    options: SecondaryOption[] | TOptionMap,
-  ) => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.SetOptionGroup,
-      payload: { optionGroupName, options },
-    });
-  };
-
-  const onOptionDelete = (optionGroupName: string, optionName: string) => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.RemoveOption,
-      payload: { optionGroupName, optionName },
-    });
-  };
-
-  const onOptionRename = (
-    optionGroupName: string,
-    optionName: string,
-    newName: string,
-  ) => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.RenameOption,
-      payload: { optionGroupName, optionName, newName },
-    });
-  };
-
-  const onGroupRename = (optionGroupName: string, newName: string) => {
-    dispatchOptionGroups({
-      type: OptionGroupsActions.RenameOptionGroup,
-      payload: { optionGroupName, newName },
+  // =-=-=-=-=-=-=-=-=-=-= Main group handlers =-=-=-=-=-=-=-=-=-=-=
+  const onMainOptionCreate = () => {
+    // TODO: validate other options first
+    dispatchMainGroup({
+      type: MainGroupActions.CreateNewOption,
     });
   };
 
@@ -419,50 +379,14 @@ const NewProductForm: FC<INewProductFormProps> = ({
       </div>
 
       {/* option groups and their options */}
-      {/* TODO: Each group name and option name can be removed or change their names. */}
-      {/* TODO: Option groups and options can be dragged to change the order in which they will be displayed */}
-      {/* TODO: Main group is separated from other. If there is only one product in main group, group name and option name can be unspecified */}
-      {/* TODO: If there is only one variant, it counts as product from single mode */}
-      {/* TODO: Module window appears to add a new NOT MAIN group. Otherwise fields in Product info resets and new variant is added */}
-      {/* TODO: When button for new variant in main group is pressed, validate the current before going to the next*/}
-      {/* TODO: If there is only 1 option in secondary groups, instead of creating such group just add what need to be added to all variants */}
       {formState.isMultipleMode && (
-        <div className="">
-          <Title>Option groups</Title>
-          <div className="px-4">
-            <div>
-              <h5 className="mb-2 text-sm font-medium">
-                Main group
-                <Tooltip
-                  className="inline text-sm"
-                  tooltipId="main-group-tooltip"
-                  tooltip={`Only variants in main group can have different images and description.
-                Other groups can only add text to name or increase price (both will be calculated as sum of all selected variants).`}
-                >
-                  <CircleHelp className="inline h-4 cursor-pointer text-gray-400" />
-                </Tooltip>
-              </h5>
-              {/* TODO: by default a placeholder with group name = Main; option name = default */}
-              {/*<div aria-describedby='main-group-tooltip'></div>*/}
-              {/*<OptionGroup />*/}
-            </div>
-
-            <div>
-              <h5 className="mb-2 text-sm font-medium">Secondary groups</h5>
-              <GroupList
-                optionGroups={optionGroups}
-                onGroupAdd={onGroupAdd}
-                onOptionAdd={onOptionAdd}
-                onGroupReorder={onGroupReorder}
-                onGroupDelete={onGroupDelete}
-                onOptionReorder={onOptionReorder}
-                onOptionDelete={onOptionDelete}
-                onOptionRename={onOptionRename}
-                onGroupRename={onGroupRename}
-              />
-            </div>
-          </div>
-        </div>
+        <Groups
+          dispatchMainGroup={dispatchMainGroup}
+          dispatchSecondaryGroups={dispatchSecondaryGroups}
+          mainGroup={mainGroup}
+          secondaryGroups={secondaryGroups}
+          onMainOptionCreate={onMainOptionCreate}
+        />
       )}
 
       {/* additional services */}
