@@ -19,16 +19,20 @@ import { MAX_OPTIONS_IN_GROUP } from '@/app/shop/upload-product/_utils/constants
 import MainOptionBox from './main-option-box';
 
 interface IMainOptionListProps {
+  activeProduct: Product;
   group: TMainGroup;
   onOptionAdd: () => void;
+  onOptionClick: (optionName: string) => void;
   onOptionDelete: (optionName: string) => void;
   onOptionRename: (optionName: string, newName: string) => void;
   onReorder: (options: string[]) => void;
 }
 
 const MainOptionList: FC<IMainOptionListProps> = ({
+  activeProduct,
   group,
   onOptionAdd,
+  onOptionClick,
   onOptionDelete,
   onOptionRename,
   onReorder,
@@ -68,7 +72,9 @@ const MainOptionList: FC<IMainOptionListProps> = ({
           {options.map((option: Product) => (
             <MainOptionBox
               id={option.optionName!}
+              isActive={option.optionName === activeProduct.optionName}
               isDragDisabled={options.length < 2}
+              onClick={() => onOptionClick(option.optionName!)}
               onDelete={
                 options.length > 1
                   ? () => onOptionDelete(option.optionName!)

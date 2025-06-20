@@ -4,7 +4,9 @@ import { Product } from '@/app/shop/upload-product/_utils/structures/product';
 import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
 
 function isProduct(item: any): item is Product {
-  return item instanceof Product;
+  // Verify the object by its key if it was created not with class constructor
+  const keyForProduct = 'optionName';
+  return item instanceof Product || keyForProduct in new Product();
 }
 
 export function reorderOptionsArray<T extends Product | SecondaryOption>(

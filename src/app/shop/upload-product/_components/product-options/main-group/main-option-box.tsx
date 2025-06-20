@@ -7,18 +7,22 @@ import { useSortableOptions } from '@/app/shop/upload-product/_components/produc
 
 interface IMainOptionBoxProps {
   id: string;
+  isActive: boolean;
   children?: React.ReactNode;
   className?: string;
   isDragDisabled?: boolean;
+  onClick: () => void;
   onDelete?: () => void;
   onRename?: (newName: string) => void;
 }
 
 const MainOptionBox: FC<IMainOptionBoxProps> = ({
   id,
+  isActive,
   children,
   className,
   isDragDisabled = true,
+  onClick,
   onDelete,
   onRename,
 }) => {
@@ -28,7 +32,7 @@ const MainOptionBox: FC<IMainOptionBoxProps> = ({
   const [elemWidthRem, setElemWidthRem] = useState<number>(0);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
+  const { attributes, isOver, listeners, setNodeRef, transform, transition } =
     useSortableOptions(id, isDragDisabled);
 
   // remove element stretching or squeezing
@@ -63,6 +67,12 @@ const MainOptionBox: FC<IMainOptionBoxProps> = ({
     onRename(value);
   };
 
+  const handleClick = () => {
+    if (isOver) {
+      onClick();
+    }
+  };
+
   return (
     <li
       className={cn('group relative h-min touch-none select-none', className)}
@@ -85,6 +95,7 @@ const MainOptionBox: FC<IMainOptionBoxProps> = ({
       <div
         className={cn(
           'word-break cursor-grab overflow-hidden break-all rounded-md border border-gray-400 px-4 py-2 text-center',
+          isActive && 'border-2 border-blue-400',
           !isRenaming && 'option',
           (onDelete || onRename) &&
             !isRenaming &&
@@ -92,7 +103,7 @@ const MainOptionBox: FC<IMainOptionBoxProps> = ({
         )}
         {...(isRenaming ? {} : listeners)} // disable dragging while renaming or showing details
         ref={elementRef}
-        // onPointerUp={} TODO: place here onClick handler
+        onPointerUp={handleClick}
       >
         {/* Renaming state */}
         {isRenaming && (

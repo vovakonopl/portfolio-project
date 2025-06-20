@@ -3,7 +3,6 @@
 import { FC, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { useDropzone } from 'react-dropzone';
-import { ACCEPTED_IMAGE_TYPES } from '@/scripts/validation-schemes/product-upload-scheme';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {
   Grid,
@@ -21,6 +20,7 @@ import 'swiper/css/mousewheel';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { ImagePlus } from 'lucide-react';
+import { ACCEPTED_IMAGE_TYPES } from '@/scripts/validation-schemes/image-scheme';
 
 const acceptedImages = Object.fromEntries(
   ACCEPTED_IMAGE_TYPES.map((imageType: string) => [imageType, []]),

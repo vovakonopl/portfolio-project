@@ -1,4 +1,4 @@
-import { uploadProductScheme } from '@/scripts/validation-schemes/product-upload-scheme';
+import { uploadProductScheme } from '@/scripts/validation-schemes/product-upload/product-upload-scheme';
 import { auth } from '@clerk/nextjs/server';
 import fs from 'fs/promises';
 import path from 'path';

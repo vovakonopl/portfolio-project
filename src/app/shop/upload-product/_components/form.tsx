@@ -1,11 +1,11 @@
 'use client';
 
-import { FC, useEffect, useReducer, useRef } from 'react';
+import { FC, useCallback, useEffect, useReducer, useRef } from 'react';
 import { Category, SubCategory } from '@prisma/client';
 import {
   TUploadProduct,
   uploadProductScheme,
-} from '@/scripts/validation-schemes/product-upload-scheme';
+} from '@/scripts/validation-schemes/product-upload/product-upload-scheme';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import ImageDropzone from '@/components/ui/dropzone';
@@ -32,6 +32,7 @@ import { SecondaryOption } from '../_utils/structures/secondary-option';
 import { Product } from '../_utils/structures/product';
 import { TMainGroup, TOptionGroups } from '../_utils/structures/option-groups';
 import Groups from './groups';
+import { productScheme } from '@/scripts/validation-schemes/product-upload/product-scheme';
 
 const initialMainGroupValue: Readonly<TMainGroup> = {
   name: 'Main group',
@@ -110,13 +111,16 @@ const NewProductForm: FC<INewProductFormProps> = ({
     formReducer,
     initialFormState,
   );
+  const mainGroupPrevState = useRef<Readonly<TMainGroup> | null>(null);
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
     control,
+    clearErrors,
+    formState: { errors, isSubmitting },
     getValues,
+    handleSubmit,
+    register,
     setError,
+    setValue,
     watch,
   } = useForm<TUploadProduct>({
     resolver: zodResolver(uploadProductScheme),
@@ -127,17 +131,31 @@ const NewProductForm: FC<INewProductFormProps> = ({
     const { unsubscribe } = watch((value, { name }) => {
       if (!name) return unsubscribe;
 
-      dispatchActiveProduct({
-        type: ProductStateActions.SetField,
-        payload: {
-          field: name as keyof Product,
-          value: value as Product[keyof Product],
-        },
-      });
+      if (name in new Product()) {
+        dispatchActiveProduct({
+          type: ProductStateActions.SetField,
+          payload: {
+            field: name as keyof Product,
+            value: value[name as keyof typeof value] as Product[keyof Product],
+          },
+        });
+      }
     });
 
     return unsubscribe;
   }, [watch]);
+
+  // clear errors for product fields on change.
+  useEffect(() => {
+    const { unsubscribe } = watch((_, { name }) => {
+      if (!name || !(name in new Product())) return unsubscribe;
+      if (errors[name as keyof TUploadProduct]) {
+        clearErrors(name);
+      }
+    });
+
+    return unsubscribe;
+  }, [clearErrors, errors, watch]);
 
   const onSubmit = async () => {
     if (!formRef.current) return;
@@ -198,15 +216,96 @@ const NewProductForm: FC<INewProductFormProps> = ({
     });
   }, [secondaryGroups]);
 
+  const changeActiveProduct = useCallback(
+    (optionName: string) => {
+      const product: Product | undefined = mainGroup.options.get(optionName);
+      if (!product) return;
+
+      dispatchActiveProduct({
+        type: ProductStateActions.SetProduct,
+        payload: { product },
+      });
+
+      // update input fields's values
+      setValue('name', product.name);
+      setValue('price', product.price || NaN); // empty field if price is 0
+      setValue('images', product.images);
+      setValue('description', product.description);
+    },
+    [mainGroup, setValue],
+  );
+
+  // Change active product when the new one is added
   useEffect(() => {
-    console.log(formState);
-  }, [formState]);
+    if (
+      !mainGroupPrevState.current ||
+      // don't do anything if the number of items wasn't changed or item was deleted
+      mainGroup.options.size <= mainGroupPrevState.current.options.size
+    ) {
+      mainGroupPrevState.current = mainGroup;
+      return;
+    }
+
+    const options: Product[] = Array.from(mainGroup.options.values());
+    const newOption = options[options.length - 1];
+    changeActiveProduct(newOption.optionName!);
+
+    mainGroupPrevState.current = mainGroup;
+  }, [changeActiveProduct, mainGroup]);
+
+  // Validate only active product each time it will be changed to another
+  // instead of validating every product
+  const validateActiveProduct = (): boolean => {
+    const res = productScheme.safeParse(activeProduct);
+    if (!res.success) {
+      res.error.errors.forEach((err) => {
+        setError(
+          err.path[0] as keyof TUploadProduct,
+          { message: err.message },
+          { shouldFocus: true },
+        );
+      });
+
+      return false;
+    }
+
+    return true;
+  };
 
   // =-=-=-=-=-=-=-=-=-=-= Main group handlers =-=-=-=-=-=-=-=-=-=-=
   const onMainOptionCreate = () => {
-    // TODO: validate other options first
+    if (!validateActiveProduct()) return;
     dispatchMainGroup({
       type: MainGroupActions.CreateNewOption,
+    });
+  };
+
+  const onMainOptionClick = (optionName: string) => {
+    if (optionName === activeProduct.optionName) return;
+    if (!validateActiveProduct()) return;
+
+    changeActiveProduct(optionName);
+  };
+
+  const onMainOptionDelete = (optionName: string) => {
+    if (mainGroup.options.size === 1) return;
+
+    // if active product was deleted, then make the previous product in the map active
+    // or next if it was the first item in the map
+    if (optionName === activeProduct.optionName) {
+      const optionNames: string[] = Array.from(
+        mainGroup.options.values().map((option) => option.optionName!),
+      );
+
+      const currIdx = optionNames.indexOf(optionName);
+      const newIdx = currIdx === 0 ? currIdx + 1 : currIdx - 1;
+
+      changeActiveProduct(optionNames[newIdx]);
+    }
+
+    dispatchMainGroup({
+      type: MainGroupActions.RemoveOption,
+      payload: { optionName },
     });
   };
 
@@ -340,7 +439,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
 
             <InputField
               id="price"
-              register={register('price')}
+              register={register('price', { valueAsNumber: true })}
               error={errors.price}
               type="number"
               label="Price"
@@ -381,11 +480,14 @@ const NewProductForm: FC<INewProductFormProps> = ({
       {/* option groups and their options */}
       {formState.isMultipleMode && (
         <Groups
+          activeProduct={activeProduct}
           dispatchMainGroup={dispatchMainGroup}
           dispatchSecondaryGroups={dispatchSecondaryGroups}
           mainGroup={mainGroup}
-          secondaryGroups={secondaryGroups}
+          onMainOptionClick={onMainOptionClick}
           onMainOptionCreate={onMainOptionCreate}
+          onMainOptionDelete={onMainOptionDelete}
+          secondaryGroups={secondaryGroups}
         />
       )}
 

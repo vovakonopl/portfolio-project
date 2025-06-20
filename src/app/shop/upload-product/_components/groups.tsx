@@ -18,34 +18,34 @@ import {
   TOptionGroups,
   TOptionMap,
 } from '../_utils/structures/option-groups';
+import { Product } from '../_utils/structures/product';
 
 interface GroupsProps {
+  activeProduct: Product;
   dispatchMainGroup: ActionDispatch<[action: TMainGroupAction]>;
   dispatchSecondaryGroups: ActionDispatch<[action: TSecondaryGroupAction]>;
   mainGroup: TMainGroup;
-  secondaryGroups: TOptionGroups;
+  onMainOptionClick: (optionName: string) => void;
   onMainOptionCreate: () => void;
+  onMainOptionDelete: (optionName: string) => void;
+  secondaryGroups: TOptionGroups;
 }
 
 const Groups: FC<GroupsProps> = ({
+  activeProduct,
   dispatchMainGroup,
   dispatchSecondaryGroups,
   mainGroup,
-  secondaryGroups,
+  onMainOptionClick,
   onMainOptionCreate,
+  onMainOptionDelete,
+  secondaryGroups,
 }) => {
   // =-=-=-=-=-=-=-=-=-=-= Main group handlers =-=-=-=-=-=-=-=-=-=-=
   const onMainGroupRename = (newName: string) => {
     dispatchMainGroup({
       type: MainGroupActions.RenameOptionGroup,
       payload: { newName },
-    });
-  };
-
-  const onMainOptionDelete = (optionName: string) => {
-    dispatchMainGroup({
-      type: MainGroupActions.RemoveOption,
-      payload: { optionName },
     });
   };
 
@@ -150,11 +150,13 @@ const Groups: FC<GroupsProps> = ({
             </Tooltip>
           </h5>
           <MainOptionGroup
+            activeProduct={activeProduct}
             group={mainGroup}
             onGroupRename={onMainGroupRename}
             onOptionCreate={onMainOptionCreate}
             onOptionDelete={onMainOptionDelete}
             onOptionRename={onMainOptionRename}
+            onOptionClick={onMainOptionClick}
             onReorder={onMainGroupReorder}
           />
         </div>
