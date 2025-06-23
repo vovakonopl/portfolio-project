@@ -1,4 +1,4 @@
-import { uploadProductScheme } from '@/scripts/validation-schemes/product-upload/product-upload-scheme';
+import { formScheme } from '@/app/shop/upload-product/_utils/schemes/form-scheme';
 import { auth } from '@clerk/nextjs/server';
 import fs from 'fs/promises';
 import path from 'path';
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   const requestData = await req.formData();
-  const formData = uploadProductScheme.safeParse(requestData);
+  const formData = formScheme.safeParse(requestData);
 
   if (!formData.success) {
     return new Response(`Error occurred:${formData.error.message}`, {

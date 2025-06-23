@@ -1,5 +1,8 @@
 import { useTrinketUser } from '@/scripts/user';
-import { phoneScheme, TPhone } from '@/scripts/validation-schemes/phone-scheme';
+import {
+  phoneScheme,
+  TPhone,
+} from '@/scripts/validation-schemes/profile/phone-scheme';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FC, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';

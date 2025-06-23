@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   type TUserAboutScheme,
   userAboutScheme,
-} from '@/scripts/validation-schemes/user-about-scheme';
+} from '@/scripts/validation-schemes/profile/user-about-scheme';
 import { useTrinketUser } from '@/scripts/user';
 import InputField from '@/components/ui/text-input-field';
 

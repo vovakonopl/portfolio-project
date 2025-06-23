@@ -4,8 +4,8 @@ import { FC, useCallback, useEffect, useReducer, useRef } from 'react';
 import { Category, SubCategory } from '@prisma/client';
 import {
   TUploadProduct,
-  uploadProductScheme,
-} from '@/scripts/validation-schemes/product-upload/product-upload-scheme';
+  formScheme,
+} from '@/app/shop/upload-product/_utils/schemes/form-scheme';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import ImageDropzone from '@/components/ui/dropzone';
@@ -123,7 +123,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
     setValue,
     watch,
   } = useForm<TUploadProduct>({
-    resolver: zodResolver(uploadProductScheme),
+    resolver: zodResolver(formScheme),
   });
 
   // update product state on value change

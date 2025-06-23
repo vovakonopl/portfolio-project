@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   contactScheme,
   TContact,
-} from '@/scripts/validation-schemes/contact-scheme';
+} from '@/scripts/validation-schemes/profile/contact-scheme';
 import InputField from '@/components/ui/text-input-field';
 
 interface IContactFormProps {

@@ -21,7 +21,7 @@ import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/sec
 import {
   optionScheme,
   TOption,
-} from '@/app/shop/upload-product/_utils/option-scheme';
+} from '@/app/shop/upload-product/_utils/schemes/option-scheme';
 import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
 import {
   MAX_OPTION_NAME_LENGTH,
