@@ -14,7 +14,7 @@ import { PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { TMainGroup } from '@/app/shop/upload-product/_utils/structures/option-groups';
 import { Product } from '@/app/shop/upload-product/_utils/structures/product';
-import { reorderOptionsArray } from '@/app/shop/upload-product/_utils/reorder-options-array';
+import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
 import { MAX_OPTIONS_IN_GROUP } from '@/app/shop/upload-product/_utils/constants';
 import MainOptionBox from './main-option-box';
 
@@ -46,9 +46,10 @@ const MainOptionList: FC<IMainOptionListProps> = ({
   }
 
   const handleOnDragEnd = (e: DragEndEvent) => {
-    const updatedOptions: Product[] | null = reorderOptionsArray<Product>(
+    const updatedOptions: Product[] | null = reorderArray(
       e,
       options,
+      'optionName',
     );
 
     if (updatedOptions) {

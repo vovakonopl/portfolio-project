@@ -14,6 +14,10 @@ export function useSortableOptions(
     transition: undefined,
   };
   const sortable = useSortable({ id });
+  
+  // remove element stretching or squeezing
+  if (sortable.transform?.scaleY) sortable.transform.scaleY = 1;
+  if (sortable.transform?.scaleX) sortable.transform.scaleX = 1;
 
   if (isDisabled) {
     return { ...sortable, ...disabledSortableOptions };

@@ -78,9 +78,6 @@ const OptionBox: FC<IOptionBoxProps> = ({
   const { attributes, isOver, listeners, setNodeRef, transform, transition } =
     useSortableOptions(id, isDragDisabled, dragListeners);
 
-  // remove element stretching or squeezing
-  if (transform?.scaleY) transform.scaleY = 1;
-  if (transform?.scaleX) transform.scaleX = 1;
   const styles = {
     transition,
     transform: CSS.Transform.toString(transform),

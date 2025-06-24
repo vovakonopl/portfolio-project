@@ -27,7 +27,7 @@ import {
   MAX_OPTION_NAME_LENGTH,
   MAX_OPTIONS_IN_GROUP,
 } from '@/app/shop/upload-product/_utils/constants';
-import { reorderOptionsArray } from '@/app/shop/upload-product/_utils/reorder-options-array';
+import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
 
 interface IOptionListProps {
   groupName: string;
@@ -70,9 +70,10 @@ const OptionList: FC<IOptionListProps> = ({
 
   const options: SecondaryOption[] = Array.from(optionMap.values());
   const handleOnDragEnd = (e: DragEndEvent) => {
-    const updatedOptions: SecondaryOption[] | null = reorderOptionsArray(
+    const updatedOptions: SecondaryOption[] | null = reorderArray(
       e,
       options,
+      'displayedName',
     );
 
     if (updatedOptions) {

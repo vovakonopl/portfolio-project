@@ -1,15 +1,11 @@
-import {
-  TMainGroup,
-  TOptionGroups,
-} from '@/app/shop/upload-product/_utils/structures/option-groups';
+import { TMainGroup, TOptionGroups } from './option-groups';
+import { TServiceMap } from './additional-service';
 
 export interface IFormState {
   isMultipleMode: boolean;
   // main product is a first item in the array
 
-  // multiple variants mode
   variants: TMainGroup; // main group
   secondaryOptions: TOptionGroups;
-
-  // additionalServices: ...;
+  additionalServices: TServiceMap;
 }

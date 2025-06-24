@@ -2,10 +2,6 @@
 
 import { FC, useCallback, useEffect, useReducer, useRef } from 'react';
 import { Category, SubCategory } from '@prisma/client';
-import {
-  TUploadProduct,
-  formScheme,
-} from '@/app/shop/upload-product/_utils/schemes/form-scheme';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import ImageDropzone from '@/components/ui/dropzone';
@@ -15,8 +11,8 @@ import Select from '@/components/ui/select/select';
 import SelectOption from '@/components/ui/select/select-option';
 import { ToggleSwitch } from '@/components/ui/toggle-switch';
 import Tooltip from '@/components/ui/tooltip';
+import { productScheme } from '@/scripts/validation-schemes/product-upload/product-scheme';
 import { CircleHelp } from 'lucide-react';
-import Title from './form-title';
 import { formReducer, FormStateActions } from '../_reducers/form-reducer';
 import {
   productReducer,
@@ -27,63 +23,38 @@ import {
   MainGroupActions,
   mainOptionGroupReducer,
 } from '../_reducers/option-groups/main-group-reducer';
+import {
+  serviceReducer,
+  ServiceStateActions,
+} from '../_reducers/service-reducer';
 import { IFormState } from '../_utils/structures/form-state-interface';
-import { SecondaryOption } from '../_utils/structures/secondary-option';
 import { Product } from '../_utils/structures/product';
 import { TMainGroup, TOptionGroups } from '../_utils/structures/option-groups';
+import { AdditionalService } from '../_utils/structures/additional-service';
+import Title from './form-title';
+import { TUploadProduct, formScheme } from '../_utils/schemes/form-scheme';
 import Groups from './groups';
-import { productScheme } from '@/scripts/validation-schemes/product-upload/product-scheme';
+import ServicesList from './product-options/additional-services/services-list';
 
 const initialMainGroupValue: Readonly<TMainGroup> = {
   name: 'Main group',
   options: new Map([['Option1', new Product({ optionName: 'Option1' })]]),
 };
 
-// TODO: remove this test data
-const TEST_initialOptionGroups: TOptionGroups = new Map([
-  [
-    'group1',
-    new Map([
-      ['option1', new SecondaryOption('option1', 'opt1', 100)],
-      ['option2', new SecondaryOption('option2', 'opt2', 200)],
-      ['option3', new SecondaryOption('option3', 'opt3', 300)],
-      ['option4', new SecondaryOption('option4', 'opt4', 400)],
-      ['option5', new SecondaryOption('option5', 'opt5', 500)],
-      ['option6', new SecondaryOption('option6', 'opt6', 600)],
-      ['option7', new SecondaryOption('option7', 'opt7', 700)],
-      ['option8', new SecondaryOption('option8', 'opt8', 800)],
-      ['option9', new SecondaryOption('option9', 'opt9', 900)],
-      ['option10', new SecondaryOption('option10', 'opt10', 1000)],
-    ]),
-  ],
-  [
-    'group2',
-    new Map([
-      ['option1', new SecondaryOption('option1', 'opt1', 100)],
-      ['option2', new SecondaryOption('option2', 'opt2', 200)],
-      ['option3', new SecondaryOption('option3', 'opt3', 300)],
-    ]),
-  ],
-  [
-    'group3',
-    new Map([
-      ['option1', new SecondaryOption('option1', 'opt1', 100)],
-      ['option2', new SecondaryOption('option2', 'opt2', 200)],
-    ]),
-  ],
-  [
-    'group4',
-    new Map([['option1', new SecondaryOption('option1', 'opt1', 100)]]),
-  ],
-  ['group5', new Map()],
-]);
-
 const initialFormState: IFormState = {
   isMultipleMode: false,
   variants: initialMainGroupValue,
-  secondaryOptions: TEST_initialOptionGroups,
-  // additionalServices: ...
+  secondaryOptions: new Map(),
+  additionalServices: new Map(),
 };
+
+// TODO: Delete this later
+const TEST_initialServiceState = new Map([
+  ['Service1', new AdditionalService('Service1', 1000, 'description1')],
+  ['Service2', new AdditionalService('Service2', 2000, 'description2')],
+  ['Service3', new AdditionalService('Service3', 3000, 'description3')],
+  ['Service4', new AdditionalService('Service4', 4000, 'description4')],
+]);
 
 interface INewProductFormProps {
   categories: Array<Category>;
@@ -97,7 +68,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
   const formRef = useRef<HTMLFormElement>(null);
   const [secondaryGroups, dispatchSecondaryGroups] = useReducer(
     secondaryGroupsReducer,
-    TEST_initialOptionGroups,
+    new Map() as TOptionGroups,
   );
   const [mainGroup, dispatchMainGroup] = useReducer(
     mainOptionGroupReducer,
@@ -110,6 +81,11 @@ const NewProductForm: FC<INewProductFormProps> = ({
   const [formState, dispatchFormState] = useReducer(
     formReducer,
     initialFormState,
+  );
+  const [additionalServices, dispatchAdditionalServices] = useReducer(
+    serviceReducer,
+    TEST_initialServiceState,
+    // new Map() as TServiceMap,
   );
   const mainGroupPrevState = useRef<Readonly<TMainGroup> | null>(null);
   const {
@@ -309,6 +285,14 @@ const NewProductForm: FC<INewProductFormProps> = ({
     });
   };
 
+  // =-=-=-=-=-=-=-=-=-=-= Additional services handlers =-=-=-=-=-=-=-=-=-=-=
+  const onServicesReorder = (newOrder: string[]) => {
+    dispatchAdditionalServices({
+      type: ServiceStateActions.Reorder,
+      payload: { newOrder },
+    });
+  };
+
   return (
     <form
       ref={formRef}
@@ -492,6 +476,13 @@ const NewProductForm: FC<INewProductFormProps> = ({
       )}
 
       {/* additional services */}
+      <div className="">
+        <Title className="mb-2">Additional services</Title>
+        <ServicesList
+          additionalServices={additionalServices}
+          onReorder={onServicesReorder}
+        />
+      </div>
 
       <button
         disabled={isSubmitting}
