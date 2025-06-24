@@ -23,16 +23,13 @@ import {
   MainGroupActions,
   mainOptionGroupReducer,
 } from '../_reducers/option-groups/main-group-reducer';
-import {
-  serviceReducer,
-  ServiceStateActions,
-} from '../_reducers/service-reducer';
+import { serviceReducer } from '../_reducers/service-reducer';
 import { IFormState } from '../_utils/structures/form-state-interface';
 import { Product } from '../_utils/structures/product';
 import { TMainGroup, TOptionGroups } from '../_utils/structures/option-groups';
-import { AdditionalService } from '../_utils/structures/additional-service';
+import { TServiceMap } from '../_utils/structures/additional-service';
 import Title from './form-title';
-import { TUploadProduct, formScheme } from '../_utils/schemes/form-scheme';
+import { formScheme, TUploadProduct } from '../_utils/schemes/form-scheme';
 import Groups from './groups';
 import ServicesList from './product-options/additional-services/services-list';
 
@@ -47,14 +44,6 @@ const initialFormState: IFormState = {
   secondaryOptions: new Map(),
   additionalServices: new Map(),
 };
-
-// TODO: Delete this later
-const TEST_initialServiceState = new Map([
-  ['Service1', new AdditionalService('Service1', 1000, 'description1')],
-  ['Service2', new AdditionalService('Service2', 2000, 'description2')],
-  ['Service3', new AdditionalService('Service3', 3000, 'description3')],
-  ['Service4', new AdditionalService('Service4', 4000, 'description4')],
-]);
 
 interface INewProductFormProps {
   categories: Array<Category>;
@@ -84,8 +73,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
   );
   const [additionalServices, dispatchAdditionalServices] = useReducer(
     serviceReducer,
-    TEST_initialServiceState,
-    // new Map() as TServiceMap,
+    new Map() as TServiceMap,
   );
   const mainGroupPrevState = useRef<Readonly<TMainGroup> | null>(null);
   const {
@@ -286,12 +274,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
   };
 
   // =-=-=-=-=-=-=-=-=-=-= Additional services handlers =-=-=-=-=-=-=-=-=-=-=
-  const onServicesReorder = (newOrder: string[]) => {
-    dispatchAdditionalServices({
-      type: ServiceStateActions.Reorder,
-      payload: { newOrder },
-    });
-  };
 
   return (
     <form
@@ -480,7 +462,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
         <Title className="mb-2">Additional services</Title>
         <ServicesList
           additionalServices={additionalServices}
-          onReorder={onServicesReorder}
+          dispatch={dispatchAdditionalServices}
         />
       </div>
 

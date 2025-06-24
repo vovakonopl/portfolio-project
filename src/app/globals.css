@@ -31,6 +31,12 @@
   .line-h-1 {
     line-height: 1;
   }
+
+  @media (hover: none) {
+    .not-hoverable-opacity-100 {
+      @apply opacity-100;
+    }
+  }
 }
 
 @layer base {
@@ -329,6 +335,11 @@
   @apply border border-white border-b-gray-400 border-r-gray-400 bg-white;
 }
 
+@media (hover: none) {
+  .option__button {
+    @apply opacity-100;
+  }
+}
 
 @keyframes showOptionDetails {
   0% {

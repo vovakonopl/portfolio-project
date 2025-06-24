@@ -7,13 +7,13 @@ import { MAX_SERVICES } from '@/app/shop/upload-product/_utils/constants';
 export enum ServiceStateActions {
   AddService,
   RemoveService,
-  UpdateOption,
+  UpdateService,
   Reorder,
 }
 
 export type TAction =
   | {
-      type: ServiceStateActions.AddService | ServiceStateActions.UpdateOption;
+      type: ServiceStateActions.AddService;
       payload: { service: AdditionalService };
     }
   | {
@@ -27,6 +27,10 @@ export type TAction =
       payload: {
         newOrder: string[];
       };
+    }
+  | {
+      type: ServiceStateActions.UpdateService;
+      payload: { originalName: string; service: AdditionalService };
     };
 
 export function serviceReducer(
@@ -57,12 +61,19 @@ export function serviceReducer(
       return newState;
     }
 
-    case ServiceStateActions.UpdateOption: {
-      const { service } = action.payload;
-      if (!state.has(service.name)) return state; // no service with specified name
+    case ServiceStateActions.UpdateService: {
+      const { originalName, service } = action.payload;
+      if (!state.has(originalName)) return state; // no service with specified name
 
-      const newState = new Map(state);
-      newState.set(service.name, service);
+      const newState = new Map();
+      for (const serviceName of state.keys()) {
+        if (serviceName === originalName) {
+          newState.set(service.name, service);
+          continue;
+        }
+
+        newState.set(serviceName, state.get(serviceName));
+      }
 
       return newState;
     }

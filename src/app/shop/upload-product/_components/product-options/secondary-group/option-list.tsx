@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from 'react';
+import { FC, KeyboardEvent, useRef, useState } from 'react';
 import {
   closestCorners,
   DndContext,
@@ -12,7 +12,7 @@ import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, PlusCircle, X } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
@@ -28,6 +28,7 @@ import {
   MAX_OPTIONS_IN_GROUP,
 } from '@/app/shop/upload-product/_utils/constants';
 import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
+import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
 
 interface IOptionListProps {
   groupName: string;
@@ -94,10 +95,10 @@ const OptionList: FC<IOptionListProps> = ({
     );
 
     onOptionAdd(groupName, option);
-    handleCloseModal();
+    closeModalRef.current();
   };
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key == 'Enter') {
       e.preventDefault();
     }
@@ -192,31 +193,10 @@ const OptionList: FC<IOptionListProps> = ({
                 })}
               />
 
-              <div className="flex justify-evenly gap-4">
-                <button
-                  className={cn(
-                    'flex items-center gap-2 rounded border border-black px-6 py-2',
-                    'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
-                  )}
-                  type="button"
-                  onClick={handleCloseModal}
-                >
-                  <span>Cancel</span>
-                  <X className="size-4 text-red-600" />
-                </button>
-
-                <button
-                  className={cn(
-                    'flex items-center gap-2 rounded border border-black px-6 py-2',
-                    'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
-                  )}
-                  type="button"
-                  onClick={handleSubmit(onSubmit)}
-                >
-                  <span>Confirm</span>
-                  <Check className="size-4 text-green-600" />
-                </button>
-              </div>
+              <ModalButtons
+                handleCancel={handleCloseModal}
+                handleConfirm={handleSubmit(onSubmit)}
+              />
             </div>
           </Modal>
         )}

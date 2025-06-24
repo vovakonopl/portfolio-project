@@ -83,9 +83,9 @@ const ImageDropzone: FC<IImageDropzoneProps> = ({
           <p>Drop the images here</p>
         ) : (
           <p>
-            Drag and drop some images here,
+            Drag and drop {multiple ? 'some images' : 'an image'} here
             <br />
-            or click to select images
+            or click to select
           </p>
         )}
 

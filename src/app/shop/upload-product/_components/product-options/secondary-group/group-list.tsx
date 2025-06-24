@@ -25,6 +25,7 @@ import {
   TOptionMap,
 } from '@/app/shop/upload-product/_utils/structures/option-groups';
 import { MAX_SECONDARY_GROUPS } from '@/app/shop/upload-product/_utils/constants';
+import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
 
 interface IGroupListProps {
   optionGroups: TOptionGroups;
@@ -81,7 +82,7 @@ const GroupList: FC<IGroupListProps> = ({
 
   const handleConfirm = () => {
     onGroupAdd(inputValue);
-    handleCloseModal();
+    closeModalRef.current();
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,31 +163,10 @@ const GroupList: FC<IGroupListProps> = ({
               value={inputValue}
             />
 
-            <div className="flex justify-evenly gap-4">
-              <button
-                className={cn(
-                  'flex items-center gap-2 rounded border border-black px-6 py-2',
-                  'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
-                )}
-                type="button"
-                onClick={handleCloseModal}
-              >
-                <span>Cancel</span>
-                <X className="size-4 text-red-600" />
-              </button>
-
-              <button
-                className={cn(
-                  'flex items-center gap-2 rounded border border-black px-6 py-2',
-                  'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
-                )}
-                type="button"
-                onClick={handleConfirm}
-              >
-                <span>Confirm</span>
-                <Check className="size-4 text-green-600" />
-              </button>
-            </div>
+            <ModalButtons
+              handleCancel={handleCloseModal}
+              handleConfirm={handleConfirm}
+            />
           </div>
         </Modal>
       )}
