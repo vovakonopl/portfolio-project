@@ -52,6 +52,7 @@ interface IOptionBoxProps {
   dragListeners?: SyntheticListenerMap;
   isDragDisabled?: boolean;
   isListItem?: boolean;
+  onClick?: () => void;
   onDelete?: () => void;
   onRename?: (newName: string) => void;
   option?: SecondaryOption;
@@ -64,6 +65,7 @@ const OptionBox: FC<IOptionBoxProps> = ({
   dragListeners,
   isDragDisabled = true,
   isListItem = false,
+  onClick,
   onDelete,
   onRename,
   option,
@@ -169,7 +171,12 @@ const OptionBox: FC<IOptionBoxProps> = ({
         )}
         {...(isRenaming || isDetailsVisible ? {} : listeners)} // disable dragging while renaming or showing details
         ref={elementRef}
-        onPointerUp={handleShowDetails}
+        onPointerUp={() => {
+          if (isOver || isDragDisabled) {
+            handleShowDetails();
+            onClick?.();
+          }
+        }}
       >
         {/* Renaming state */}
         {isRenaming && (

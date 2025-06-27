@@ -350,3 +350,21 @@
     opacity: 1;
   }
 }
+
+
+@media not all and (min-width: 640px) {
+  .option-list-dropdown {
+    @apply origin-top flex-col flex-nowrap overflow-hidden px-8 transition-all;
+  }
+
+  .option-list-dropdown.list-hide {
+    @apply gap-y-0 py-0;
+  }
+
+  .option-list-dropdown.list-hide > * {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+

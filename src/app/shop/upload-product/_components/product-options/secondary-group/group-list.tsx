@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
-import { Check, PlusCircle, X } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
@@ -104,7 +104,7 @@ const GroupList: FC<IGroupListProps> = ({
         modifiers={[restrictToParentElement]}
         sensors={sensors}
       >
-        <ol className="relative flex flex-col gap-4">
+        <ol className="relative flex flex-col gap-4 max-sm:gap-2">
           <SortableContext
             items={groups}
             strategy={verticalListSortingStrategy}
@@ -133,7 +133,7 @@ const GroupList: FC<IGroupListProps> = ({
         <button
           className={cn(
             'ml-4 flex w-fit items-center gap-2 rounded border border-black px-4 py-2 transition-colors',
-            'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
+            'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10 max-sm:mx-auto',
           )}
           onClick={() => setIsActiveModal(true)}
           type="button"

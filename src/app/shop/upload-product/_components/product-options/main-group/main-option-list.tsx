@@ -18,7 +18,7 @@ import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
 import { MAX_OPTIONS_IN_GROUP } from '@/app/shop/upload-product/_utils/constants';
 import MainOptionBox from './main-option-box';
 
-interface IMainOptionListProps {
+interface IMainOptionListProps extends React.HTMLAttributes<HTMLOListElement> {
   activeProduct: Product;
   group: TMainGroup;
   onOptionAdd: () => void;
@@ -36,6 +36,7 @@ const MainOptionList: FC<IMainOptionListProps> = ({
   onOptionDelete,
   onOptionRename,
   onReorder,
+  ...props
 }) => {
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
@@ -64,7 +65,13 @@ const MainOptionList: FC<IMainOptionListProps> = ({
       modifiers={[restrictToParentElement]}
       sensors={sensors}
     >
-      <ol className="relative flex flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
+      <ol
+        {...props}
+        className={cn(
+          'relative flex flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2',
+          props.className,
+        )}
+      >
         <SortableContext
           items={options.map((option) => option.optionName!)}
           strategy={rectSortingStrategy}
@@ -73,6 +80,7 @@ const MainOptionList: FC<IMainOptionListProps> = ({
           {options.map((option: Product) => (
             <MainOptionBox
               id={option.optionName!}
+              className="max-sm:w-full"
               isActive={option.optionName === activeProduct.optionName}
               isDragDisabled={options.length < 2}
               onClick={() => onOptionClick(option.optionName!)}

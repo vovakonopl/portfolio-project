@@ -28,10 +28,11 @@ import { IFormState } from '../_utils/structures/form-state-interface';
 import { Product } from '../_utils/structures/product';
 import { TMainGroup, TOptionGroups } from '../_utils/structures/option-groups';
 import { TServiceMap } from '../_utils/structures/additional-service';
-import Title from './form-title';
 import { formScheme, TUploadProduct } from '../_utils/schemes/form-scheme';
+import Title from './form-title';
 import Groups from './groups';
 import ServicesList from './product-options/additional-services/services-list';
+import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
 
 const initialMainGroupValue: Readonly<TMainGroup> = {
   name: 'Main group',
@@ -295,19 +296,21 @@ const NewProductForm: FC<INewProductFormProps> = ({
             <CircleHelp className="inline h-4 cursor-pointer text-gray-400" />
           </Tooltip>
         </Title>
-        <ToggleSwitch
-          aria-describedby="uploading-mode-tooltip"
-          id="product-mode"
-          checked={formState.isMultipleMode}
-          toggle={(state: boolean) => {
-            dispatchFormState({
-              type: FormStateActions.SetMode,
-              payload: { isMultipleMode: state },
-            });
-          }}
-          uncheckedLabel="Single product"
-          checkedLabel="Multiple variants"
-        />
+        <div className="flex max-sm:justify-center">
+          <ToggleSwitch
+            aria-describedby="uploading-mode-tooltip"
+            id="product-mode"
+            checked={formState.isMultipleMode}
+            checkedLabel="Multiple variants"
+            uncheckedLabel="Single product"
+            toggle={(state: boolean) => {
+              dispatchFormState({
+                type: FormStateActions.SetMode,
+                payload: { isMultipleMode: state },
+              });
+            }}
+          />
+        </div>
       </div>
 
       {/* categories */}

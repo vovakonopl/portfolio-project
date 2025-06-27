@@ -16,7 +16,6 @@ import { PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
-import OptionBox from './option-box';
 import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
 import {
   optionScheme,
@@ -29,8 +28,9 @@ import {
 } from '@/app/shop/upload-product/_utils/constants';
 import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
 import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
+import OptionBox from './option-box';
 
-interface IOptionListProps {
+interface IOptionListProps extends React.HTMLAttributes<HTMLOListElement> {
   groupName: string;
   isDragDisabled?: boolean;
   onOptionAdd: (optionGroupName: string, option: SecondaryOption) => void;
@@ -55,6 +55,7 @@ const OptionList: FC<IOptionListProps> = ({
   onReorder,
   onRename,
   optionMap,
+  ...props
 }) => {
   const [isActiveModal, setIsActiveModal] = useState<boolean>(false);
   const closeModalRef = useRef<() => void>(() => {});
@@ -111,7 +112,13 @@ const OptionList: FC<IOptionListProps> = ({
       modifiers={[restrictToParentElement]}
       sensors={sensors}
     >
-      <ol className="relative flex flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
+      <ol
+        {...props}
+        className={cn(
+          'relative flex flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2',
+          props.className,
+        )}
+      >
         <SortableContext
           items={options.map((option) => option.displayedName)}
           strategy={rectSortingStrategy}
@@ -120,6 +127,7 @@ const OptionList: FC<IOptionListProps> = ({
           {options.map((option: SecondaryOption) => (
             <OptionBox
               id={option.displayedName}
+              className="max-sm:w-full"
               isDragDisabled={isDragDisabled || options.length < 2}
               isListItem={true}
               onDelete={() => onOptionDelete(groupName, option.displayedName)}
