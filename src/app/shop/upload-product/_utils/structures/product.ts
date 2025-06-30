@@ -5,7 +5,7 @@ export class Product {
   public description?: string;
 
   // additional properties for variants (multiple variants mode)
-  public optionName?: string;
+  public optionName: string;
 
   constructor(params?: Partial<Product>) {
     // initial values

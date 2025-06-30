@@ -126,11 +126,6 @@ export function mainOptionGroupReducer(
 
     case MainGroupActions.UpdateOption: {
       const { option } = action.payload;
-      if (!option.optionName) {
-        console.error('Missed "displayedName" property');
-        return state;
-      }
-
       const options = new Map(state.options).set(option.optionName, option);
       return { ...state, options };
     }

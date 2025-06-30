@@ -212,7 +212,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
 
     const options: Product[] = Array.from(mainGroup.options.values());
     const newOption = options[options.length - 1];
-    changeActiveProduct(newOption.optionName!);
+    changeActiveProduct(newOption.optionName);
 
     mainGroupPrevState.current = mainGroup;
   }, [changeActiveProduct, mainGroup]);
@@ -258,7 +258,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
     // or next if it was the first item in the map
     if (optionName === activeProduct.optionName) {
       const optionNames: string[] = Array.from(
-        mainGroup.options.values().map((option) => option.optionName!),
+        mainGroup.options.values().map((option) => option.optionName),
       );
 
       const currIdx = optionNames.indexOf(optionName);

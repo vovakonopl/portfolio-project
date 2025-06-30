@@ -28,11 +28,6 @@ const MainOptionList: FC<IMainOptionListProps> = ({
   ...props
 }) => {
   const options: Product[] = Array.from(group.options.values());
-  if (options.some((option: Product) => !option.optionName)) {
-    console.error('Missed "displayedName" property.');
-    return <></>;
-  }
-
   const handleDragEnd = (e: DragEndEvent) => {
     const updatedOptions: Product[] | null = reorderArray(
       e,
@@ -41,7 +36,7 @@ const MainOptionList: FC<IMainOptionListProps> = ({
     );
 
     if (updatedOptions) {
-      onReorder(updatedOptions.map((option: Product) => option.optionName!));
+      onReorder(updatedOptions.map((option: Product) => option.optionName));
     }
   };
 
@@ -53,7 +48,7 @@ const MainOptionList: FC<IMainOptionListProps> = ({
       onOptionAdd={onOptionAdd}
     >
       <SortableContext
-        items={options.map((option) => option.optionName!)}
+        items={options.map((option) => option.optionName)}
         strategy={rectSortingStrategy}
         disabled={options.length < 2}
       >
@@ -63,14 +58,14 @@ const MainOptionList: FC<IMainOptionListProps> = ({
             className="max-sm:w-full"
             isActive={option.optionName === activeProduct.optionName}
             isDragDisabled={options.length < 2}
-            onClick={() => onOptionClick(option.optionName!)}
+            onClick={() => onOptionClick(option.optionName)}
             onDelete={
               options.length > 1
-                ? () => onOptionDelete(option.optionName!)
+                ? () => onOptionDelete(option.optionName)
                 : undefined
             }
             onRename={(newName: string) =>
-              onOptionRename(option.optionName!, newName)
+              onOptionRename(option.optionName, newName)
             }
             key={option.optionName}
           >
