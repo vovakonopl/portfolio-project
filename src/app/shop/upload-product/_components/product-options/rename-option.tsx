@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { MAX_OPTION_NAME_LENGTH } from '@/app/shop/upload-product/_utils/constants';
 import { cn } from '@/lib/cn';
 import { Check, X } from 'lucide-react';
@@ -17,6 +17,8 @@ const RenameOption: FC<IRenameOptionProps> = ({
   onRename,
 }) => {
   const [inputValue, setInputValue] = useState<string>(defaultValue);
+  // fix firing onBlur handler when clicked on buttons within component
+  const ignoreBlurRef = useRef(false);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -34,6 +36,18 @@ const RenameOption: FC<IRenameOptionProps> = ({
 
   const handleRename = () => onRename(inputValue);
 
+  const handlePointerDown = () => {
+    ignoreBlurRef.current = true;
+  };
+
+  const handleBlur = () => {
+    if (!ignoreBlurRef.current) {
+      handleRename();
+    }
+
+    ignoreBlurRef.current = false;
+  };
+
   return (
     <div className="flex flex-col items-center gap-2">
       <input
@@ -43,7 +57,7 @@ const RenameOption: FC<IRenameOptionProps> = ({
         value={inputValue}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        onBlur={handleRename}
+        onBlur={handleBlur}
         maxLength={MAX_OPTION_NAME_LENGTH}
         style={{
           width:
@@ -64,6 +78,7 @@ const RenameOption: FC<IRenameOptionProps> = ({
             'cursor-pointer rounded-md outline outline-1 -outline-offset-4 outline-gray-400',
             'hover:outline-gray-500 active:outline-gray-800',
           )}
+          onPointerDown={handlePointerDown}
           onClick={onCancel}
           type="button"
         >
@@ -75,6 +90,7 @@ const RenameOption: FC<IRenameOptionProps> = ({
             'cursor-pointer rounded-md outline outline-1 -outline-offset-4 outline-gray-400',
             'hover:outline-gray-500 active:outline-gray-800',
           )}
+          onPointerDown={handlePointerDown}
           onClick={handleRename}
           type="button"
         >

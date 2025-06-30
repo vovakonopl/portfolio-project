@@ -31,8 +31,7 @@ import { TServiceMap } from '../_utils/structures/additional-service';
 import { formScheme, TUploadProduct } from '../_utils/schemes/form-scheme';
 import Title from './form-title';
 import Groups from './groups';
-import ServicesList from './product-options/additional-services/services-list';
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import ServicesList from './additional-services/services-list';
 
 const initialMainGroupValue: Readonly<TMainGroup> = {
   name: 'Main group',
@@ -273,8 +272,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
       payload: { optionName },
     });
   };
-
-  // =-=-=-=-=-=-=-=-=-=-= Additional services handlers =-=-=-=-=-=-=-=-=-=-=
 
   return (
     <form

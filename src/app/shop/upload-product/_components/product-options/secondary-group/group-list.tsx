@@ -38,12 +38,12 @@ interface IGroupListProps {
     optionGroupName: string,
     options: SecondaryOption[] | TOptionMap,
   ) => void;
-  onOptionRename?: (
+  onOptionRename: (
     optionGroupName: string,
     optionName: string,
     newName: string,
   ) => void;
-  onGroupRename?: (groupName: string, newName: string) => void;
+  onGroupRename: (groupName: string, newName: string) => void;
 }
 
 const GroupList: FC<IGroupListProps> = ({

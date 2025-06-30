@@ -6,7 +6,14 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
+import { PlusCircle } from 'lucide-react';
+import { cn } from '@/lib/cn';
 import {
   ServiceStateActions,
   TAction as TServicesAction,
@@ -15,22 +22,15 @@ import {
   AdditionalService,
   TServiceMap,
 } from '@/app/shop/upload-product/_utils/structures/additional-service';
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
 import {
   InteractiveKeyboardSensor,
   InteractivePointerSensor,
   InteractiveTouchSensor,
 } from '@/app/shop/upload-product/_utils/interactive-sensors';
-import Service from './service';
 import { MAX_SERVICES } from '@/app/shop/upload-product/_utils/constants';
-import { cn } from '@/lib/cn';
-import { PlusCircle } from 'lucide-react';
-import ServiceModal from '@/app/shop/upload-product/_components/product-options/additional-services/service-modal';
+import Service from './service';
+import ServiceModal from './service-modal';
 
 interface IServicesListProps {
   additionalServices: TServiceMap;

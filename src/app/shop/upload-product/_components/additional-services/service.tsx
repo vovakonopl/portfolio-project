@@ -5,7 +5,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/cn';
 import { AdditionalService } from '@/app/shop/upload-product/_utils/structures/additional-service';
-import ServiceModal from '@/app/shop/upload-product/_components/product-options/additional-services/service-modal';
+import ServiceModal from './service-modal';
 
 interface IServiceProps {
   onDelete: () => void;
