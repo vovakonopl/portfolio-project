@@ -73,6 +73,13 @@
   }
 }
 
+/*----------
+    swiper
+  ----------*/
+.swiper-pagination-bullet {
+  cursor: pointer;
+}
+
 /*---------------
     phone input
   ---------------*/

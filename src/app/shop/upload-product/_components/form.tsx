@@ -427,7 +427,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
               maxFiles={15}
               multiple
               name="images"
-              onDrop={onChange}
+              onChange={onChange}
               values={value}
             />
           )}

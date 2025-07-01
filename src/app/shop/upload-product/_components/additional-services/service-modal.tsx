@@ -100,7 +100,7 @@ const ServiceModal: FC<IServiceModalProps> = ({
           name="image"
           render={({ field: { onChange } }) => (
             <ImageDropzone
-              onDrop={(images: File[]) => onChange(images[0] || null)}
+              onChange={(images: File[]) => onChange(images[0] || null)}
               errorMessage={errors.image?.message}
               id="image"
               name="image"
