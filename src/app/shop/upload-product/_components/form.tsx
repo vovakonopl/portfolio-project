@@ -418,15 +418,17 @@ const NewProductForm: FC<INewProductFormProps> = ({
         <Controller
           control={control}
           name="images"
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange, value } }) => (
             <ImageDropzone
-              onDrop={onChange}
-              multiple
-              errorMessage={errors.images?.message}
-              id="images"
-              name="images"
               className="mb-px" // when this field outlined (error),
               // the title of focused field below will cover part of this border
+              errorMessage={errors.images?.message}
+              id="images"
+              maxFiles={15}
+              multiple
+              name="images"
+              onDrop={onChange}
+              values={value}
             />
           )}
         />

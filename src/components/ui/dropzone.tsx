@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { useDropzone } from 'react-dropzone';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -21,14 +21,23 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { ImagePlus } from 'lucide-react';
 import { ACCEPTED_IMAGE_TYPES } from '@/scripts/validation-schemes/image-scheme';
+import { useResize } from '@/scripts/hooks/useResize';
 
 const acceptedImages = Object.fromEntries(
   ACCEPTED_IMAGE_TYPES.map((imageType: string) => [imageType, []]),
 );
 
-interface IUploadedImage {
+type TUploadedImage = {
   url: string;
   name: string;
+};
+
+// returns array of TUploadedImage from array of files
+function processImageArray(files: File[]): TUploadedImage[] {
+  return files.map((file: File) => ({
+    url: URL.createObjectURL(file),
+    name: file.name,
+  }));
 }
 
 interface IImageDropzoneProps {
@@ -36,8 +45,12 @@ interface IImageDropzoneProps {
   errorMessage?: string;
   id?: string;
   name?: string;
-  onDrop?: (files: Array<File>) => void;
+  onDrop?: (files: File[]) => void;
   multiple?: boolean;
+  multipleThumbnailRows?: boolean;
+  maxFiles?: number;
+  thumbnailClassName?: string;
+  values?: File[];
 }
 
 const ImageDropzone: FC<IImageDropzoneProps> = ({
@@ -47,23 +60,60 @@ const ImageDropzone: FC<IImageDropzoneProps> = ({
   name,
   onDrop,
   multiple,
+  multipleThumbnailRows,
+  maxFiles,
+  thumbnailClassName,
+  values,
 }) => {
-  const [uploadedImages, setUploadedImages] = useState<Array<IUploadedImage>>(
-    [],
-  );
+  const [uploadedImages, setUploadedImages] = useState<TUploadedImage[]>([]);
+  const [slidesPerView, setSlidesPerView] = useState(1);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const thumbnailRef = useRef<HTMLDivElement>(null);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (files: Array<File>) => {
+    onDrop: (files: File[]) => {
+      // cut array if there is more items than was specified
+      if (multiple && maxFiles && maxFiles > 0 && files.length > maxFiles) {
+        files = files.slice(0, maxFiles);
+      }
+
       onDrop?.(files);
 
       // update state to generate thumbnails
-      const imageUrls: Array<IUploadedImage> = files.map((file: File) => ({
-        url: URL.createObjectURL(file),
-        name: file.name,
-      }));
-      setUploadedImages(imageUrls);
+      setUploadedImages(processImageArray(files));
     },
     multiple,
     accept: acceptedImages,
+  });
+
+  // update array of images if values were changed outside of component
+  useEffect(() => {
+    if (values) {
+      setUploadedImages(processImageArray(values));
+    }
+  }, [values]);
+
+  // Calculates and sets slides per view.
+  // Can be passed instead of ref to run function on mount
+  const calcSlidesPerView = useCallback(
+    (thumbnailEl?: HTMLDivElement | null): void => {
+      if (thumbnailEl) {
+        thumbnailRef.current = thumbnailEl;
+      }
+
+      if (!sliderRef.current || !thumbnailRef.current) return;
+
+      setSlidesPerView(
+        Math.floor(
+          sliderRef.current.offsetWidth / thumbnailRef.current.offsetWidth,
+        ),
+      );
+    },
+    [],
+  );
+
+  // recalculate slides per view on resize
+  useResize(() => {
+    calcSlidesPerView();
   });
 
   return (
@@ -99,12 +149,18 @@ const ImageDropzone: FC<IImageDropzoneProps> = ({
       </div>
 
       {uploadedImages.length > 0 && (
-        <div className="swiper-container center-inactive">
+        <div className="relative px-2" ref={sliderRef}>
           <Swiper
             modules={[Grid, Keyboard, Mousewheel, Navigation, Pagination]}
-            slidesPerView="auto"
-            // if more than 10 items => 2 rows
-            grid={{ rows: uploadedImages.length < 10 ? 1 : 2, fill: 'row' }}
+            slidesPerView={slidesPerView}
+            // add second row if items doesn't fit on screen and this option was specified
+            grid={{
+              rows:
+                multipleThumbnailRows && uploadedImages.length > slidesPerView
+                  ? 2
+                  : 1,
+              fill: 'row',
+            }}
             keyboard
             mousewheel
             navigation={{
@@ -113,20 +169,25 @@ const ImageDropzone: FC<IImageDropzoneProps> = ({
               prevEl: '.swiper-button-prev',
             }}
             pagination={{ clickable: true }}
-            watchOverflow
             spaceBetween={8}
+            watchOverflow
           >
-            {uploadedImages.map((image: IUploadedImage) => {
+            {uploadedImages.map((image: TUploadedImage) => {
               return (
-                <SwiperSlide key={Math.random()} className="w-auto">
-                  <Image
-                    src={image.url}
-                    alt={image.name}
-                    // 16:9
-                    width={96}
-                    height={48}
-                    className="center aspect-video max-h-12 max-w-24 select-none rounded-sm object-cover object-center"
-                  />
+                <SwiperSlide className="w-auto" key={Math.random()}>
+                  <div
+                    className={cn('aspect-video h-16', thumbnailClassName)}
+                    ref={calcSlidesPerView}
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.name}
+                      // 16:9
+                      width={256}
+                      height={144}
+                      className="h-full w-full select-none rounded-sm object-cover object-center"
+                    />
+                  </div>
                 </SwiperSlide>
               );
             })}
