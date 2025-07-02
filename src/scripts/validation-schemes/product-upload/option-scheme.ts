@@ -20,7 +20,7 @@ export const optionScheme = z.object({
       .number()
       .min(0, { message: 'Must be 0 or greater.' })
       .max(PRODUCT_FIELDS_LIMITS.maxPrice, {
-        message: `Too expensive! Maximum price is ${PRODUCT_FIELDS_LIMITS.maxPrice}.`,
+        message: `Maximum price is ${PRODUCT_FIELDS_LIMITS.maxPrice}.`,
       }),
     z.undefined(),
   ]),

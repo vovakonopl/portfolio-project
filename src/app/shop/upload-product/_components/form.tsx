@@ -12,7 +12,6 @@ import SelectOption from '@/components/ui/select/select-option';
 import { ToggleSwitch } from '@/components/ui/toggle-switch';
 import Tooltip from '@/components/ui/tooltip';
 import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
-import { IFormState } from '@/types/product/form-state-interface';
 import { Product } from '@/types/product/product';
 import { TMainGroup, TOptionGroups } from '@/types/product/option-groups';
 import { TServiceMap } from '@/types/product/additional-service';
@@ -30,6 +29,7 @@ import {
 } from '../_reducers/option-groups/main-group-reducer';
 import { serviceReducer } from '../_reducers/service-reducer';
 import { formScheme, TUploadProduct } from '../_utils/form-scheme';
+import { IFormState } from '../_utils/form-state-interface';
 import Title from './form-title';
 import Groups from './groups';
 import ServicesList from './additional-services/services-list';

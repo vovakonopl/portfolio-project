@@ -1,5 +1,5 @@
-import { TMainGroup, TOptionGroups } from './option-groups';
-import { TServiceMap } from './additional-service';
+import { TMainGroup, TOptionGroups } from '@/types/product/option-groups';
+import { TServiceMap } from '@/types/product/additional-service';
 
 export interface IFormState {
   isMultipleMode: boolean;
