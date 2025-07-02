@@ -1,9 +1,6 @@
-import { Product } from '@/app/shop/upload-product/_utils/structures/product';
-import {
-  TMainGroup,
-  TMainOptionMap,
-} from '@/app/shop/upload-product/_utils/structures/option-groups';
-import { MAX_OPTIONS_IN_GROUP } from '@/app/shop/upload-product/_utils/constants';
+import { GROUPS } from '@/constants/product/groups';
+import { Product } from '@/types/product/product';
+import { TMainGroup, TMainOptionMap } from '@/types/product/option-groups';
 
 export enum MainGroupActions {
   RenameOptionGroup,
@@ -52,7 +49,7 @@ export function mainOptionGroupReducer(
     }
 
     case MainGroupActions.CreateNewOption: {
-      if (state.options.size >= MAX_OPTIONS_IN_GROUP) {
+      if (state.options.size >= GROUPS.maxOptionCount) {
         return state;
       }
 

@@ -13,22 +13,22 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { PlusCircle } from 'lucide-react';
+import { MAX_SERVICES } from '@/constants/product/services';
+import {
+  AdditionalService,
+  TServiceMap,
+} from '@/types/product/additional-service';
 import { cn } from '@/lib/cn';
 import {
   ServiceStateActions,
   TAction as TServicesAction,
 } from '@/app/shop/upload-product/_reducers/service-reducer';
-import {
-  AdditionalService,
-  TServiceMap,
-} from '@/app/shop/upload-product/_utils/structures/additional-service';
 import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
 import {
   InteractiveKeyboardSensor,
   InteractivePointerSensor,
   InteractiveTouchSensor,
 } from '@/app/shop/upload-product/_utils/interactive-sensors';
-import { MAX_SERVICES } from '@/app/shop/upload-product/_utils/constants';
 import Service from './service';
 import ServiceModal from './service-modal';
 

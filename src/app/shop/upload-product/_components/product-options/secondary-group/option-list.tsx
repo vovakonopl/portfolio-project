@@ -3,15 +3,15 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
+import { TOptionMap } from '@/types/product/option-groups';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import { SecondaryOption } from '@/types/product/secondary-option';
 import {
   optionScheme,
   TOption,
-} from '@/app/shop/upload-product/_utils/schemes/option-scheme';
-import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
-import { MAX_OPTION_NAME_LENGTH } from '@/app/shop/upload-product/_utils/constants';
+} from '@/scripts/validation-schemes/product-upload/option-scheme';
 import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
 import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
 import OptionListContainer from '../option-list-container';
@@ -131,37 +131,37 @@ const OptionList: FC<IOptionListProps> = ({
           <h3 className="text-center text-xl font-medium">Add a new option</h3>
           <div className="my-auto flex flex-col gap-6">
             <InputField
-              fullWidth
               id="displayed-name"
-              label="Displayed name*"
-              maxLength={MAX_OPTION_NAME_LENGTH}
-              type="text"
-              onKeyDown={onKeyDown}
               error={errors.displayedName}
+              fullWidth
+              label="Displayed name*"
+              maxLength={PRODUCT_FIELDS_LIMITS.option.nameLength}
+              onKeyDown={onKeyDown}
               register={register('displayedName')}
-            />
-            <InputField
-              fullWidth
-              id="option-name"
-              label="Name"
-              maxLength={MAX_OPTION_NAME_LENGTH}
               type="text"
-              onKeyDown={onKeyDown}
-              error={errors.name}
-              register={register('name')}
             />
             <InputField
+              id="option-name"
+              error={errors.name}
               fullWidth
-              id="option-price"
-              label="Price"
-              min={0}
-              max={1000000}
-              type="number"
+              label="Name"
+              maxLength={PRODUCT_FIELDS_LIMITS.option.nameLength}
               onKeyDown={onKeyDown}
+              register={register('name')}
+              type="text"
+            />
+            <InputField
+              id="option-price"
               error={errors.price}
+              fullWidth
+              label="Price"
+              max={PRODUCT_FIELDS_LIMITS.maxPrice}
+              min={0}
+              onKeyDown={onKeyDown}
               register={register('price', {
                 valueAsNumber: true,
               })}
+              type="number"
             />
 
             <ModalButtons

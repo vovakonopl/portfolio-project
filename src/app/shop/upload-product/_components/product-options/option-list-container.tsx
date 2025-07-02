@@ -7,8 +7,8 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
+import { GROUPS } from '@/constants/product/groups';
 import { cn } from '@/lib/cn';
-import { MAX_OPTIONS_IN_GROUP } from '@/app/shop/upload-product/_utils/constants';
 import { PlusCircle } from 'lucide-react';
 import {
   InteractivePointerSensor,
@@ -50,7 +50,7 @@ const OptionListContainer: FC<IOptionListContainerProps> = ({
       >
         {children}
 
-        {itemsCount < MAX_OPTIONS_IN_GROUP && (
+        {itemsCount < GROUPS.maxOptionCount && (
           <button
             className={cn(
               '-m-2 box-content p-2 text-gray-400 transition-colors',

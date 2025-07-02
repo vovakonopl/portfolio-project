@@ -11,7 +11,12 @@ import Select from '@/components/ui/select/select';
 import SelectOption from '@/components/ui/select/select-option';
 import { ToggleSwitch } from '@/components/ui/toggle-switch';
 import Tooltip from '@/components/ui/tooltip';
-import { productScheme } from '@/scripts/validation-schemes/product-upload/product-scheme';
+import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
+import { IFormState } from '@/types/product/form-state-interface';
+import { Product } from '@/types/product/product';
+import { TMainGroup, TOptionGroups } from '@/types/product/option-groups';
+import { TServiceMap } from '@/types/product/additional-service';
+import { productInfoScheme } from '@/scripts/validation-schemes/product-upload/product-info-scheme';
 import { CircleHelp } from 'lucide-react';
 import { formReducer, FormStateActions } from '../_reducers/form-reducer';
 import {
@@ -24,11 +29,7 @@ import {
   mainOptionGroupReducer,
 } from '../_reducers/option-groups/main-group-reducer';
 import { serviceReducer } from '../_reducers/service-reducer';
-import { IFormState } from '../_utils/structures/form-state-interface';
-import { Product } from '../_utils/structures/product';
-import { TMainGroup, TOptionGroups } from '../_utils/structures/option-groups';
-import { TServiceMap } from '../_utils/structures/additional-service';
-import { formScheme, TUploadProduct } from '../_utils/schemes/form-scheme';
+import { formScheme, TUploadProduct } from '../_utils/form-scheme';
 import Title from './form-title';
 import Groups from './groups';
 import ServicesList from './additional-services/services-list';
@@ -220,7 +221,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
   // Validate only active product each time it will be changed to another
   // instead of validating every product
   const validateActiveProduct = (): boolean => {
-    const res = productScheme.safeParse(activeProduct);
+    const res = productInfoScheme.safeParse(activeProduct);
     if (!res.success) {
       res.error.errors.forEach((err) => {
         setError(
@@ -393,24 +394,26 @@ const NewProductForm: FC<INewProductFormProps> = ({
             <InputField
               id="name"
               register={register('name')}
-              error={errors.name}
-              type="text"
-              label="Name"
-              placeholder="My product"
-              fullWidth
               containerProps={{
                 className: 'col-span-3 max-md:col-span-2 max-sm:col-span-1',
               }}
+              error={errors.name}
+              fullWidth
+              label="Name"
+              maxLength={PRODUCT_FIELDS_LIMITS.product.nameLength}
+              placeholder="My product"
+              type="text"
             />
 
             <InputField
               id="price"
               register={register('price', { valueAsNumber: true })}
               error={errors.price}
-              type="number"
-              label="Price"
-              placeholder="1.00$"
               fullWidth
+              label="Price"
+              max={PRODUCT_FIELDS_LIMITS.maxPrice}
+              placeholder="1.00$"
+              type="number"
             />
           </div>
         </div>
@@ -420,11 +423,11 @@ const NewProductForm: FC<INewProductFormProps> = ({
           name="images"
           render={({ field: { onChange, value } }) => (
             <ImageDropzone
+              id="images"
               className="mb-px" // when this field outlined (error),
               // the title of focused field below will cover part of this border
               errorMessage={errors.images?.message}
-              id="images"
-              maxFiles={15}
+              maxFiles={PRODUCT_FIELDS_LIMITS.product.imageCount}
               multiple
               name="images"
               onChange={onChange}
@@ -436,12 +439,13 @@ const NewProductForm: FC<INewProductFormProps> = ({
         <InputField
           id="description"
           register={register('description')}
-          error={errors.description}
-          component="textarea"
-          label="Description"
-          placeholder="About product"
-          fullWidth
           className="h-36"
+          component="textarea"
+          error={errors.description}
+          fullWidth
+          label="Description"
+          maxLength={PRODUCT_FIELDS_LIMITS.product.descriptionLength}
+          placeholder="About product"
         />
       </div>
 

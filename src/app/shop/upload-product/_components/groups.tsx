@@ -1,7 +1,14 @@
 import { ActionDispatch, FC } from 'react';
-import Title from '@/app/shop/upload-product/_components/form-title';
-import Tooltip from '@/components/ui/tooltip';
 import { CircleHelp } from 'lucide-react';
+import { SecondaryOption } from '@/types/product/secondary-option';
+import {
+  TMainGroup,
+  TOptionGroups,
+  TOptionMap,
+} from '@/types/product/option-groups';
+import { Product } from '@/types/product/product';
+import Tooltip from '@/components/ui/tooltip';
+import Title from '@/app/shop/upload-product/_components/form-title';
 import MainOptionGroup from './product-options/main-group/main-group';
 import GroupList from './product-options/secondary-group/group-list';
 import {
@@ -12,13 +19,6 @@ import {
   SecondaryGroupsActions,
   TAction as TSecondaryGroupAction,
 } from '../_reducers/option-groups/secondary-groups-reducer';
-import { SecondaryOption } from '../_utils/structures/secondary-option';
-import {
-  TMainGroup,
-  TOptionGroups,
-  TOptionMap,
-} from '../_utils/structures/option-groups';
-import { Product } from '../_utils/structures/product';
 
 interface GroupsProps {
   activeProduct: Product;

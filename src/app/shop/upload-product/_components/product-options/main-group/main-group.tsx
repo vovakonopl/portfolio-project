@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { cn } from '@/lib/cn';
-import { TMainGroup } from '@/app/shop/upload-product/_utils/structures/option-groups';
-import { Product } from '@/app/shop/upload-product/_utils/structures/product';
+import { TMainGroup } from '@/types/product/option-groups';
+import { Product } from '@/types/product/product';
 import OptionGroupContainer from '../option-group-container';
 import MainOptionList from './main-option-list';
 

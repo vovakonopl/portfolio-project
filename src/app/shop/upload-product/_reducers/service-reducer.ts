@@ -1,8 +1,8 @@
+import { MAX_SERVICES } from '@/constants/product/services';
 import {
   AdditionalService,
   TServiceMap,
-} from '@/app/shop/upload-product/_utils/structures/additional-service';
-import { MAX_SERVICES } from '@/app/shop/upload-product/_utils/constants';
+} from '@/types/product/additional-service';
 
 export enum ServiceStateActions {
   AddService,

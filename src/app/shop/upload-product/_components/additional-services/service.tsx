@@ -4,7 +4,7 @@ import { Edit, X } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/cn';
-import { AdditionalService } from '@/app/shop/upload-product/_utils/structures/additional-service';
+import { AdditionalService } from '@/types/product/additional-service';
 import ServiceModal from './service-modal';
 
 interface IServiceProps {

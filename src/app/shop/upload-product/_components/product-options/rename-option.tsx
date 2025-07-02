@@ -1,7 +1,7 @@
 import React, { FC, useRef, useState } from 'react';
-import { MAX_OPTION_NAME_LENGTH } from '@/app/shop/upload-product/_utils/constants';
-import { cn } from '@/lib/cn';
 import { Check, X } from 'lucide-react';
+import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
+import { cn } from '@/lib/cn';
 
 interface IRenameOptionProps {
   defaultValue: string;
@@ -51,14 +51,12 @@ const RenameOption: FC<IRenameOptionProps> = ({
   return (
     <div className="flex flex-col items-center gap-2">
       <input
-        className="max-w-full overflow-hidden border-b border-gray-500 bg-transparent px-2 py-1 text-center focus:outline-none"
         autoFocus
-        type="text"
-        value={inputValue}
+        className="max-w-full overflow-hidden border-b border-gray-500 bg-transparent px-2 py-1 text-center focus:outline-none"
+        onBlur={handleBlur}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        onBlur={handleBlur}
-        maxLength={MAX_OPTION_NAME_LENGTH}
+        maxLength={PRODUCT_FIELDS_LIMITS.option.nameLength}
         style={{
           width:
             'max(' +
@@ -70,6 +68,8 @@ const RenameOption: FC<IRenameOptionProps> = ({
           // 'm' char is much longer, so length is multiplied by 1.4 to fit all chars,
           // but it makes input longer than its content.
         }}
+        type="text"
+        value={inputValue}
       />
 
       <div className="gap4 flex justify-evenly">
@@ -78,8 +78,8 @@ const RenameOption: FC<IRenameOptionProps> = ({
             'cursor-pointer rounded-md outline outline-1 -outline-offset-4 outline-gray-400',
             'hover:outline-gray-500 active:outline-gray-800',
           )}
-          onPointerDown={handlePointerDown}
           onClick={onCancel}
+          onPointerDown={handlePointerDown}
           type="button"
         >
           <X className="option__button-icon size-5" />

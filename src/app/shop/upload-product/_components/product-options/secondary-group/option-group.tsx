@@ -2,8 +2,8 @@ import React, { FC, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/cn';
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
-import { TOptionMap } from '@/app/shop/upload-product/_utils/structures/option-groups';
+import { SecondaryOption } from '@/types/product/secondary-option';
+import { TOptionMap } from '@/types/product/option-groups';
 import OptionGroupContainer from '../option-group-container';
 import OptionList from './option-list';
 

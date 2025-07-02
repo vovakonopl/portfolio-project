@@ -1,18 +1,25 @@
 import { z } from 'zod';
+import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
 import { imageScheme } from '@/scripts/validation-schemes/image-scheme';
 
 export const serviceScheme = z.object({
   name: z
     .string()
     .min(1, { message: 'Required.' })
-    .max(50, { message: 'Maximum length is 50 chars.' }),
+    .max(PRODUCT_FIELDS_LIMITS.service.nameLength, {
+      message: `Maximum length is ${PRODUCT_FIELDS_LIMITS.service.nameLength} chars.`,
+    }),
   price: z.coerce
     .number({ message: 'Must be a number.' })
     .min(0.01, { message: 'Minimum price is 1 cent.' })
-    .lte(1000000, { message: 'Maximum price is 1 million dollars.' }),
+    .lte(PRODUCT_FIELDS_LIMITS.maxPrice, {
+      message: 'Maximum price is 1 million dollars.',
+    }),
   description: z
     .string({ message: 'Must be a string.' })
-    .max(500, { message: 'Maximum 500 characters.' })
+    .max(PRODUCT_FIELDS_LIMITS.service.descriptionLength, {
+      message: `Maximum ${PRODUCT_FIELDS_LIMITS.service.descriptionLength} characters.`,
+    })
     .optional(),
   image: imageScheme.optional(),
 });

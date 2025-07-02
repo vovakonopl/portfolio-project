@@ -1,4 +1,4 @@
-import { Product } from '@/app/shop/upload-product/_utils/structures/product';
+import { Product } from '@/types/product/product';
 
 export enum ProductStateActions {
   SetField,
@@ -7,14 +7,14 @@ export enum ProductStateActions {
 
 type TAction<K extends keyof Product = keyof Product> =
   | {
-  type: ProductStateActions.SetField;
-  payload: { field: K; value: Product[K] };
-}
+      type: ProductStateActions.SetField;
+      payload: { field: K; value: Product[K] };
+    }
   | { type: ProductStateActions.SetProduct; payload: { product: Product } };
 
 export function productReducer<K extends keyof Product = keyof Product>(
   state: Product,
-  action: TAction<K>
+  action: TAction<K>,
 ) {
   switch (action.type) {
     case ProductStateActions.SetField: {

@@ -15,16 +15,14 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { PlusCircle } from 'lucide-react';
+import { GROUPS } from '@/constants/product/groups';
+import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
 import { cn } from '@/lib/cn';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
 import OptionGroup from './option-group';
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
-import {
-  TOptionGroups,
-  TOptionMap,
-} from '@/app/shop/upload-product/_utils/structures/option-groups';
-import { MAX_SECONDARY_GROUPS } from '@/app/shop/upload-product/_utils/constants';
+import { SecondaryOption } from '@/types/product/secondary-option';
+import { TOptionGroups, TOptionMap } from '@/types/product/option-groups';
 import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
 
 interface IGroupListProps {
@@ -129,7 +127,7 @@ const GroupList: FC<IGroupListProps> = ({
         </ol>
       </DndContext>
 
-      {optionGroups.size < MAX_SECONDARY_GROUPS && (
+      {optionGroups.size < GROUPS.maxSecondaryGroups && (
         <button
           className={cn(
             'ml-4 flex w-fit items-center gap-2 rounded border border-black px-4 py-2 transition-colors',
@@ -154,12 +152,13 @@ const GroupList: FC<IGroupListProps> = ({
           </h3>
           <div className="my-auto flex flex-col gap-6">
             <InputField
-              fullWidth
               id="option-name"
+              fullWidth
               label="Option name"
-              type="text"
+              maxLength={PRODUCT_FIELDS_LIMITS.option.nameLength}
               onChange={onChange}
               onKeyDown={onKeyDown}
+              type="text"
               value={inputValue}
             />
 

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import { SecondaryOption } from '@/types/product/secondary-option';
 
 interface IOptionDetailsProps {
   option: SecondaryOption;

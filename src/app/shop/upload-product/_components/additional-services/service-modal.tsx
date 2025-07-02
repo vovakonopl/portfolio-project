@@ -1,6 +1,7 @@
 import { FC, RefObject, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { X } from 'lucide-react';
 import {
   serviceScheme,
   TService,
@@ -9,10 +10,10 @@ import Image from 'next/image';
 import Modal from '@/components/modal';
 import InputField from '@/components/ui/text-input-field';
 import ImageDropzone from '@/components/ui/dropzone';
-import { X } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { AdditionalService } from '@/types/product/additional-service';
 import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
-import { AdditionalService } from '@/app/shop/upload-product/_utils/structures/additional-service';
+import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
 
 interface IServiceModalProps {
   closeModalRef: RefObject<() => void>;
@@ -71,27 +72,29 @@ const ServiceModal: FC<IServiceModalProps> = ({
       <h3 className="text-center text-xl font-medium">Additional service</h3>
       <InputField
         id="service-name"
-        label="Name*"
-        register={register('name')}
         error={errors.name}
-        maxLength={50}
         fullWidth
+        label="Name*"
+        maxLength={PRODUCT_FIELDS_LIMITS.service.nameLength}
+        register={register('name')}
       />
       <InputField
         id="service-price"
-        label="Price*"
-        register={register('price')}
         error={errors.price}
         fullWidth
+        label="Price*"
+        max={PRODUCT_FIELDS_LIMITS.maxPrice}
+        register={register('price')}
       />
       <InputField
         id="service-description"
+        className="h-28"
         component="textarea"
-        label="Description"
-        register={register('description')}
         error={errors.description}
         fullWidth
-        className="h-28"
+        label="Description"
+        maxLength={PRODUCT_FIELDS_LIMITS.service.descriptionLength}
+        register={register('description')}
       />
 
       {!image && (

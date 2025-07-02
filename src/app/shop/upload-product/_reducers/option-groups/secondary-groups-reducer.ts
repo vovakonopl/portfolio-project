@@ -1,12 +1,6 @@
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
-import {
-  TOptionGroups,
-  TOptionMap,
-} from '@/app/shop/upload-product/_utils/structures/option-groups';
-import {
-  MAX_OPTIONS_IN_GROUP,
-  MAX_SECONDARY_GROUPS,
-} from '@/app/shop/upload-product/_utils/constants';
+import { GROUPS } from '@/constants/product/groups';
+import { SecondaryOption } from '@/types/product/secondary-option';
+import { TOptionGroups, TOptionMap } from '@/types/product/option-groups';
 
 export enum SecondaryGroupsActions {
   AddOptionGroup,
@@ -60,7 +54,7 @@ export function secondaryGroupsReducer(
 ): TOptionGroups {
   switch (action.type) {
     case SecondaryGroupsActions.AddOptionGroup: {
-      if (state.size >= MAX_SECONDARY_GROUPS) {
+      if (state.size >= GROUPS.maxSecondaryGroups) {
         return state;
       }
 
@@ -107,7 +101,7 @@ export function secondaryGroupsReducer(
     }
 
     case SecondaryGroupsActions.AddOption: {
-      if (state.size >= MAX_OPTIONS_IN_GROUP) {
+      if (state.size >= GROUPS.maxOptionCount) {
         return state;
       }
 

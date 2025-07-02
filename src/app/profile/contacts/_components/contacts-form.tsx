@@ -95,7 +95,7 @@ const ContactForm: FC<IContactFormProps> = ({ closeModal }) => {
             disabled={isSubmitting}
             className="rounded border-gray-200 bg-black px-4 py-2 text-white transition-all ease-in hover:bg-opacity-80 active:scale-95 active:bg-opacity-100 disabled:opacity-80 sm:w-40"
           >
-            {isSubmitting ? 'Sibmitting' : 'Submit'}
+            {isSubmitting ? 'Submitting' : 'Submit'}
           </button>
         </div>
       </form>

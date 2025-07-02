@@ -1,4 +1,4 @@
-import { formScheme } from '@/app/shop/upload-product/_utils/schemes/form-scheme';
+import { formScheme } from '@/app/shop/upload-product/_utils/form-scheme';
 import { auth } from '@clerk/nextjs/server';
 import fs from 'fs/promises';
 import path from 'path';

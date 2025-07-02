@@ -1,6 +1,6 @@
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
-import { SecondaryOption } from '@/app/shop/upload-product/_utils/structures/secondary-option';
+import { SecondaryOption } from '@/types/product/secondary-option';
 import OptionDetails from '../option-details';
 import OptionBoxContainer from '../option-box-container';
 
