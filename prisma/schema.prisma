@@ -41,29 +41,31 @@ model Contact {
 }
 
 model Product {
-  id                 String            @id @default(uuid())
-  name               String
-  priceInCents       Int
-  imagePaths         String[]
-  description        String?
-  secondaryOptions   SecondaryOption[]
-  additionalServices Service[]
+  id           String   @id @default(uuid())
+  name         String
+  priceInCents Int
+  description  String?
+  imagePaths   String[]
 
-  optionGroup String?
-  optionName  String?
-  variants    ProductVariant[]
-
-  // same discaunt for all product varriants if they exist
+  // same discount for all product variants if they exist
   totalDiscountProcent        Int?
-  totalDiscountExpirationTime DateTime
-
-  comments Comment[]
-  filters  Filter[]
+  totalDiscountExpirationTime DateTime?
 
   // statistics
   rating        Int
   ratingNumber  Int
   remainInStock Int
+
+  additionalServices Service[]
+  secondaryOptions   SecondaryOption[]
+
+  // other variants
+  optionGroup String?
+  optionName  String?
+  variants    ProductVariant[]
+
+  comments Comment[]
+  filters  Filter[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -77,33 +79,33 @@ model Product {
 
   subCategoryId String
   subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
-  productId     String?
 }
 
 model ProductVariant {
-  id            String   @id @default(uuid())
-  name          String
-  priceInCents  Int
-  imagePaths    String[]
-  description   String?
-  remainInStock Int
-  optionGroup   String
-  optionName    String
+  id           String   @id @default(uuid())
+  name         String
+  priceInCents Int
+  description  String?
+  imagePaths   String[]
 
-  productId     String
-  product       Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  Comment       Comment[]
+  optionGroup String
+  optionName  String
+  productId   String
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  Filter        Filter[]
+  remainInStock Int
+
   Category      Category?    @relation(fields: [categoryId], references: [id])
   categoryId    String?
   SubCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
   subCategoryId String?
-  Filter        Filter[]
 }
 
 model SecondaryOption {
   id           String  @id @default(uuid())
   name         String?
-  priceInCents Int?
+  priceInCents Int
   optionGroup  String
   optionName   String
 
@@ -112,15 +114,17 @@ model SecondaryOption {
 }
 
 model Service {
-  id                     String   @id @default(uuid())
-  name                   String
-  priceInCents           Int
-  discountProcent        Int?
-  discountExpirationTime DateTime
-  description            String?
-  imagePath              String
+  id           String  @id @default(uuid())
+  name         String
+  priceInCents Int
+  description  String?
+  imagePath    String?
 
-  relatedTo Product[]
+  discountProcent        Int?
+  discountExpirationTime DateTime?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Purchase {
@@ -153,10 +157,8 @@ model Comment {
   replies Comment[] @relation("commentReplies")
 
   // if the comment is a reply to another comment, it will have these properties
-  parentCommentId  String?
-  parentComment    Comment?        @relation("commentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
-  ProductVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
-  productVariantId String?
+  parentCommentId String?
+  parentComment   Comment? @relation("commentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
 }
 
 model Category {
