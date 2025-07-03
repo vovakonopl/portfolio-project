@@ -5,6 +5,7 @@ import { optionScheme } from '@/scripts/validation-schemes/product-upload/option
 import { productInfoScheme } from '@/scripts/validation-schemes/product-upload/product-info-scheme';
 import { serviceScheme } from '@/scripts/validation-schemes/product-upload/service-scheme';
 import { GROUPS } from '@/constants/product/groups';
+import { MAX_SERVICES } from '@/constants/product/services';
 
 // Verifies that every key of the map equals to specified property of the stored object
 function refineMapKeys<T>(
@@ -12,7 +13,7 @@ function refineMapKeys<T>(
   ctx: z.RefinementCtx,
   objectKey: keyof T,
 ) {
-  for (const key in map.keys()) {
+  for (const key of map.keys()) {
     if (key === map.get(key)![objectKey]) continue;
 
     ctx.addIssue({
@@ -53,7 +54,7 @@ const serviceNameScheme = createNameScheme(
 export const productScheme = z
   .object({
     variants: z.object({
-      groupName: groupNameScheme,
+      name: groupNameScheme,
       options: z
         .map(
           z.string({ message: 'Must be a string.' }),
@@ -86,13 +87,16 @@ export const productScheme = z
 
     additionalServices: z
       .map(serviceNameScheme, serviceScheme)
+      .refine((map) => map.size <= MAX_SERVICES, {
+        message: `Maximum number of services is ${MAX_SERVICES}.`,
+      })
       .superRefine((map, ctx) => refineMapKeys(map, ctx, 'name')),
   })
   .merge(categoriesByIdScheme)
   .transform((data) => {
     // Remove option and add its values to all variants
     // if secondary group contains a single option or remove group if it's empty
-    for (const groupName in data.secondaryOptions) {
+    for (const groupName of data.secondaryOptions.keys()) {
       const optionGroup = data.secondaryOptions.get(groupName)!;
       if (optionGroup.size > 1) continue;
       if (optionGroup.size === 0) {
@@ -111,6 +115,8 @@ export const productScheme = z
 
       data.secondaryOptions.delete(groupName);
     }
+
+    return data;
   });
 
 export type TProduct = z.infer<typeof productScheme>;

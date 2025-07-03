@@ -77,7 +77,7 @@ const OptionList: FC<IOptionListProps> = ({
     const option = new SecondaryOption(
       data.displayedName,
       data.name || '',
-      Math.floor((data.price || 0) * 100), // dollars to cents
+      data.price || 0,
     );
 
     onOptionAdd(groupName, option);

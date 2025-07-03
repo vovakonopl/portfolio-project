@@ -29,7 +29,7 @@ const OptionDetails: FC<IOptionDetailsProps> = ({ option }) => {
         <p>
           <span className="mr-2 font-medium">Addition to price:</span>
           <span className="underline underline-offset-2">
-            {(option.priceInCents / 100).toFixed(2)}$
+            {option.price.toFixed(2)}$
           </span>
         </p>
       </div>
