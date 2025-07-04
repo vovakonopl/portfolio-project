@@ -6,6 +6,7 @@ import { productInfoScheme } from '@/scripts/validation-schemes/product-upload/p
 import { serviceScheme } from '@/scripts/validation-schemes/product-upload/service-scheme';
 import { GROUPS } from '@/constants/product/groups';
 import { MAX_SERVICES } from '@/constants/product/services';
+import { zodRegexEntry } from '@/scripts/validation-schemes/invalid-file-chars-regex';
 
 // Verifies that every key of the map equals to specified property of the stored object
 function refineMapKeys<T>(
@@ -35,7 +36,8 @@ function createNameScheme(
     .min(1, { message: `${capitalised} name required.` })
     .max(maxLength, {
       message: `Maximum length of ${nameType} name is ${maxLength} characters.`,
-    });
+    })
+    .regex(...zodRegexEntry);
 }
 
 const groupNameScheme = createNameScheme(

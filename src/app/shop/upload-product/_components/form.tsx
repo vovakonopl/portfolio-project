@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useCallback, useEffect, useReducer, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { Category, SubCategory } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
@@ -16,6 +17,7 @@ import { Product } from '@/types/product/product';
 import { TMainGroup, TOptionGroups } from '@/types/product/option-groups';
 import { TServiceMap } from '@/types/product/additional-service';
 import { productInfoScheme } from '@/scripts/validation-schemes/product-upload/product-info-scheme';
+import { transformToFormDataScheme } from '@/scripts/validation-schemes/product-upload/data-transformers/to-form-data';
 import { CircleHelp } from 'lucide-react';
 import { formReducer, FormStateActions } from '../_reducers/form-reducer';
 import {
@@ -81,7 +83,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
     control,
     clearErrors,
     formState: { errors, isSubmitting },
-    getValues,
     handleSubmit,
     register,
     setError,
@@ -90,6 +91,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
   } = useForm<TUploadProduct>({
     resolver: zodResolver(formScheme),
   });
+  const router = useRouter();
 
   // update product state on value change
   useEffect(() => {
@@ -125,32 +127,34 @@ const NewProductForm: FC<INewProductFormProps> = ({
   const onSubmit = async () => {
     if (!formRef.current) return;
 
-    const formData: FormData = new FormData(formRef.current);
+    const formData = transformToFormDataScheme.safeParse(formState);
+    if (!formData.success) {
+      setError(
+        'root',
+        { message: formData.error.message },
+        { shouldFocus: true },
+      );
 
-    // add all images to formData manually
-    // reason: FormData obj receives only 1 file from dropzone
-    formData.delete('images');
-
-    const images: Array<File> = getValues('images');
-    images.forEach((image: File) => formData.append('images', image));
+      return;
+    }
 
     // create new product
     const resp = await fetch('/api/product', {
       method: 'POST',
-      body: formData,
+      body: formData.data,
     });
 
     // on error
     if (!resp.ok) {
       const error = await resp.text();
-      setError('root', { message: error });
+      setError('root', { message: error }, { shouldFocus: true });
 
       return;
     }
 
     // redirect if success
     const productId = await resp.text();
-    // router.replace(`/shop/product/${productId}`);
+    router.replace(`/shop/product/${productId}`);
   };
 
   // Update form state when other parts are updated

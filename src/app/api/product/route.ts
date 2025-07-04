@@ -2,7 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { auth } from '@clerk/nextjs/server';
 import db from '@/lib/db';
-import { productScheme } from '@/scripts/validation-schemes/product-upload/product-scheme';
+import { transformFromFormDataScheme } from '@/scripts/validation-schemes/product-upload/data-transformers/from-form-data';
+import { TProduct } from '@/scripts/validation-schemes/product-upload/product-scheme';
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -12,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   const requestData = await req.formData();
-  const formData = productScheme.safeParse(requestData);
+  const formData = transformFromFormDataScheme.safeParse(requestData);
 
   if (!formData.success) {
     let errorMsg: string;
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const productData = formData.data;
+  const productData: TProduct = formData.data as TProduct;
 
   // =-=-=-=-=-=-=-=-=-= Store all images =-=-=-=-=-=-=-=-=-=
   const bucketPath: string = './image-bucket';
@@ -110,7 +111,7 @@ export async function POST(req: Request) {
 
   const toCents = (price?: number): number => Math.floor((price || 0) * 100);
 
-  const product = db.product.create({
+  const product = await db.product.create({
     data: {
       sellerId: userId,
       name: mainVariant.name,
@@ -178,7 +179,8 @@ export async function POST(req: Request) {
     },
   });
 
-  return new Response(JSON.stringify(product), { status: 200 });
+  // return product id as a result
+  return new Response(product.id, { status: 200 });
 }
 
 export async function PATCH(req: Request) {
