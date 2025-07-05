@@ -86,7 +86,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
     clearErrors,
     formState: { errors, isSubmitting },
     handleSubmit,
-    getValues,
     register,
     setError,
     setValue,
@@ -293,10 +292,6 @@ const NewProductForm: FC<INewProductFormProps> = ({
     });
   };
 
-  console.log(
-    `Category: ${getValues('category')}; subcategory: ${getValues('subcategory')}`,
-  );
-
   return (
     <form
       ref={formRef}
@@ -350,16 +345,16 @@ const NewProductForm: FC<INewProductFormProps> = ({
             name="category"
             render={({ field: { onChange, value } }) => (
               <Select
+                error={errors.category}
                 fullWidth
-                name="category"
                 label="Category"
+                name="category"
                 onChange={(value: string) => {
                   // clear subcategory when category is changed
                   setValue('subcategory', '');
                   onChange(value);
                 }}
                 value={value}
-                containerClassName=""
               >
                 {categories.map((category) => (
                   <SelectOption
@@ -379,25 +374,23 @@ const NewProductForm: FC<INewProductFormProps> = ({
             name="subcategory"
             render={({ field: { onChange, value } }) => (
               <Select
+                error={errors.subcategory}
                 fullWidth
-                name="subcategory"
                 label="Subcategory"
+                name="subcategory"
                 onChange={onChange}
                 value={value}
-                containerClassName=""
               >
-                {subCategories.has(getValues('category')) &&
-                  subCategories
-                    .get(getValues('category'))!
-                    .map((subCategory) => (
-                      <SelectOption
-                        id={subCategory.name}
-                        value={subCategory.name}
-                        key={subCategory.id}
-                      >
-                        {subCategory.name}
-                      </SelectOption>
-                    ))}
+                {subCategories.has(formState.category) &&
+                  subCategories.get(formState.category)!.map((subCategory) => (
+                    <SelectOption
+                      id={subCategory.name}
+                      value={subCategory.name}
+                      key={subCategory.id}
+                    >
+                      {subCategory.name}
+                    </SelectOption>
+                  ))}
               </Select>
             )}
           />

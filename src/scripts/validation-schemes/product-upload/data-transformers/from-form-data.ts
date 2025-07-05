@@ -84,8 +84,8 @@ export const transformFromFormDataScheme = formDataScheme
         },
         secondaryOptions,
         additionalServices,
-        categoryId: data.categoryId,
-        subCategoryId: data.subCategoryId,
+        category: data.category,
+        subcategory: data.subcategory,
       };
     } catch (error) {
       console.error('Error processing FormData:', error);

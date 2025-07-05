@@ -17,15 +17,12 @@ export const optionScheme = z.object({
         message: `Maximum length is ${PRODUCT_FIELDS_LIMITS.option.nameLength} chars.`,
       }),
   ),
-  price: z.union([
-    z
-      .number()
-      .min(0, { message: 'Must be 0 or greater.' })
-      .max(PRODUCT_FIELDS_LIMITS.maxPrice, {
-        message: `Maximum price is ${PRODUCT_FIELDS_LIMITS.maxPrice}.`,
-      }),
-    z.undefined(),
-  ]),
+  price: z.coerce
+    .number()
+    .min(0, { message: 'Must be 0 or greater.' })
+    .max(PRODUCT_FIELDS_LIMITS.maxPrice, {
+      message: `Maximum price is ${PRODUCT_FIELDS_LIMITS.maxPrice}.`,
+    }),
 });
 
 export type TOption = z.infer<typeof optionScheme>;

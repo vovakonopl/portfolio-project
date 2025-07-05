@@ -4,6 +4,7 @@ import { auth } from '@clerk/nextjs/server';
 import db from '@/lib/db';
 import { transformFromFormDataScheme } from '@/scripts/validation-schemes/product-upload/data-transformers/from-form-data';
 import { TProduct } from '@/scripts/validation-schemes/product-upload/product-scheme';
+import { Category, SubCategory } from '@prisma/client';
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -96,6 +97,33 @@ export async function POST(req: Request) {
     );
   }
 
+  // =-=-=-=-=-=-=-=-= Verify category and subcategory =-=-=-=-=-=-=-=-=
+  const category: Category | null = await db.category.findUnique({
+    where: {
+      name: productData.category,
+    },
+  });
+
+  if (!category) {
+    return new Response('Error occurred: Invalid category.', {
+      status: 403,
+    });
+  }
+
+  const subcategory: SubCategory | null = await db.subCategory.findUnique({
+    where: {
+      name_relatedCategoryId: {
+        name: productData.subcategory,
+        relatedCategoryId: category.id,
+      },
+    },
+  });
+  if (!subcategory) {
+    return new Response('Error occurred: Invalid subcategory.', {
+      status: 403,
+    });
+  }
+
   // =-=-=-=-=-=-=-=-=-= Store product data in DB =-=-=-=-=-=-=-=-=-=
   const productVariants = Array.from(productData.variants.options.values());
   const mainVariant = productVariants[0];
@@ -106,8 +134,8 @@ export async function POST(req: Request) {
     optionGroup = optionName = null;
   }
 
-  const categoryId: string = productData.categoryId;
-  const subCategoryId: string = productData.subCategoryId;
+  const categoryId: string = category.id;
+  const subCategoryId: string = subcategory.id;
 
   const toCents = (price?: number): number => Math.floor((price || 0) * 100);
 

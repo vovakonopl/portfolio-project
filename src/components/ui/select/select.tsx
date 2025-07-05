@@ -180,103 +180,120 @@ const Select: FC<ISelectProps> = ({
 
   return (
     <div
-      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (isOpen && e.key === 'Escape') {
-          handleClose();
-          (document.activeElement as HTMLElement)?.blur();
-        }
-      }}
       className={cn(
-        'select-field relative min-w-fit',
-        !value && 'no-value',
-        isOpen && 'open',
+        'flex flex-col gap-2',
         fullHeight && 'h-full',
         fullWidth && 'w-full',
-        containerClassName,
       )}
     >
-      <button
-        id={buttonId}
-        type="button"
-        onBlur={onBlur}
-        onClick={handleButtonClick}
+      <div
+        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+          if (isOpen && e.key === 'Escape') {
+            handleClose();
+            (document.activeElement as HTMLElement)?.blur();
+          }
+        }}
         className={cn(
-          'peer flex min-h-12 w-full min-w-40 items-center gap-1 rounded border border-gray-400 px-4 py-2 outline-none outline-1 outline-offset-0 transition-all placeholder:select-none placeholder:text-transparent focus:border-blue-400 focus:outline-blue-400 focus:placeholder:text-gray-400',
-          error && 'border-rose-700 outline-rose-700',
+          'select-field relative min-w-fit',
+          !value && 'no-value',
+          isOpen && 'open',
+          fullHeight && 'h-full',
+          fullWidth && 'w-full',
+          containerClassName,
         )}
       >
-        <Label htmlFor={buttonId} className="static -top-2 flex-1 text-start">
-          {label}
-        </Label>
-
-        {/* display value under the label when it selected */}
-        {value && <p>{value}</p>}
-
-        <ChevronDown
-          size={20}
-          className={cn(isOpen && !isClosing && 'rotate-180')}
-        />
-      </button>
-
-      {isOpen && (
-        <ul
-          ref={optionListRef}
+        <button
+          id={buttonId}
+          type="button"
+          onBlur={onBlur}
+          onClick={handleButtonClick}
           className={cn(
-            'appear absolute left-4 right-4 z-10 h-fit rounded-b border border-gray-400 border-t-transparent bg-white py-2 transition-opacity peer-focus:border-t-blue-400',
-            isClosing && 'disappear',
+            'peer flex min-h-12 w-full min-w-40 items-center gap-1 rounded',
+            'border border-gray-400 px-4 py-2 outline-none outline-1 outline-offset-0',
+            'transition-all placeholder:select-none placeholder:text-transparent',
+            'focus:border-blue-400 focus:outline-blue-400 focus:placeholder:text-gray-400',
+            error && 'border-rose-700 outline-rose-700',
           )}
         >
-          {/* if no children */}
-          {Children.count(children) === 0 && (
-            <p className="my-1 text-center text-lg italic text-gray-400">
-              No options are available
-            </p>
-          )}
+          <Label htmlFor={buttonId} className="static -top-2 flex-1 text-start">
+            {label}
+          </Label>
 
-          {Children.map(children, (child) => {
-            // clone element only if it is a SelectOption or SelectInputField component
-            if (
-              isValidElement<ISelectInputFieldProps>(child) &&
-              child.type === SelectInputField
-            ) {
-              return cloneElement<ISelectInputFieldProps>(child, {
-                ...child.props,
-                name,
-                onBlur,
-                onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (['ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
-                    return;
-                  }
+          {/* display value under the label when it selected */}
+          {value && <p>{value}</p>}
 
-                  onKeyDown(e);
-                },
-              });
-            }
+          <ChevronDown
+            size={20}
+            className={cn(isOpen && !isClosing && 'rotate-180')}
+          />
+        </button>
 
-            if (
-              isValidElement<ISelectOptionProps>(child) &&
-              child.type === SelectOption
-            ) {
-              const isCurrentlyChecked: boolean =
-                child.props && child.props.value === value;
+        {isOpen && (
+          <ul
+            ref={optionListRef}
+            className={cn(
+              'appear absolute left-4 right-4 z-10 h-fit rounded-b',
+              'border border-gray-400 border-t-transparent bg-white py-2',
+              'transition-opacity peer-focus:border-t-blue-400',
+              isClosing && 'disappear',
+            )}
+          >
+            {/* if no children */}
+            {(!children || Children.count(children) === 0) && (
+              <p className="my-1 text-center text-lg italic text-gray-400">
+                No options are available
+              </p>
+            )}
 
-              const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e.target.value);
-              };
+            {Children.map(children, (child) => {
+              // clone element only if it is a SelectOption or SelectInputField component
+              if (
+                isValidElement<ISelectInputFieldProps>(child) &&
+                child.type === SelectInputField
+              ) {
+                return cloneElement<ISelectInputFieldProps>(child, {
+                  ...child.props,
+                  name,
+                  onBlur,
+                  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (['ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
+                      return;
+                    }
 
-              return cloneElement<ISelectOptionProps>(child, {
-                ...child.props,
-                checked: isCurrentlyChecked,
-                name,
-                onChange,
-                onBlur,
-                onKeyDown,
-              });
-            }
+                    onKeyDown(e);
+                  },
+                });
+              }
 
-            return child;
-          })}
-        </ul>
+              if (
+                isValidElement<ISelectOptionProps>(child) &&
+                child.type === SelectOption
+              ) {
+                const isCurrentlyChecked: boolean =
+                  child.props && child.props.value === value;
+
+                const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  handleChange(e.target.value);
+                };
+
+                return cloneElement<ISelectOptionProps>(child, {
+                  ...child.props,
+                  checked: isCurrentlyChecked,
+                  name,
+                  onChange,
+                  onBlur,
+                  onKeyDown,
+                });
+              }
+
+              return child;
+            })}
+          </ul>
+        )}
+      </div>
+
+      {error && (
+        <p className="line-h-1 px-2 text-sm text-rose-700">{error.message}</p>
       )}
     </div>
   );

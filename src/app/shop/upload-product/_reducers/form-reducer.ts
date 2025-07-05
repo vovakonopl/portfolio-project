@@ -22,7 +22,6 @@ export function formReducer(state: IFormState, action: TAction) {
 
     case FormStateActions.SetField: {
       const { key, value } = action.payload;
-      console.log(key, value);
       const newState: IFormState = { ...state };
       (newState[key] as typeof value) = value;
 

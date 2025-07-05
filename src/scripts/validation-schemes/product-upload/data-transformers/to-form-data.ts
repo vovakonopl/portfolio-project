@@ -19,8 +19,8 @@ export type TTransformedData = {
   };
   secondaryOptions: [string, TSecondaryOption[]][];
   additionalServices: AdditionalService[];
-  categoryId: string;
-  subCategoryId: string;
+  category: string;
+  subcategory: string;
 };
 
 export const transformToFormDataScheme = productScheme.transform(

@@ -53,7 +53,6 @@ const OptionList: FC<IOptionListProps> = ({
     reset,
   } = useForm<TOption>({
     resolver: zodResolver(optionScheme),
-    defaultValues: { price: 0 },
   });
   const options: SecondaryOption[] = Array.from(optionMap.values());
   const handleDragEnd = (e: DragEndEvent) => {
@@ -127,6 +126,7 @@ const OptionList: FC<IOptionListProps> = ({
           onClose={handleCloseModal}
           closeModalRef={closeModalRef}
           defaultStyles={{ coverSmallScreen: false }}
+          className="max-w-lg"
         >
           <h3 className="text-center text-xl font-medium">Add a new option</h3>
           <div className="my-auto flex flex-col gap-6">
@@ -158,9 +158,7 @@ const OptionList: FC<IOptionListProps> = ({
               max={PRODUCT_FIELDS_LIMITS.maxPrice}
               min={0}
               onKeyDown={onKeyDown}
-              register={register('price', {
-                valueAsNumber: true,
-              })}
+              register={register('price')}
               type="number"
             />
 
