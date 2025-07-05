@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
-import { categoriesByIdScheme } from '@/scripts/validation-schemes/product-upload/categories-scheme';
+import { categoriesScheme } from '@/scripts/validation-schemes/product-upload/categories-scheme';
 import { optionScheme } from '@/scripts/validation-schemes/product-upload/option-scheme';
 import { productInfoScheme } from '@/scripts/validation-schemes/product-upload/product-info-scheme';
 import { serviceScheme } from '@/scripts/validation-schemes/product-upload/service-scheme';
@@ -94,7 +94,7 @@ export const productScheme = z
       })
       .superRefine((map, ctx) => refineMapKeys(map, ctx, 'name')),
   })
-  .merge(categoriesByIdScheme)
+  .merge(categoriesScheme)
   .transform((data) => {
     // Remove option and add its values to all variants
     // if secondary group contains a single option or remove group if it's empty

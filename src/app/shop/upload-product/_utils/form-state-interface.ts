@@ -8,4 +8,7 @@ export interface IFormState {
   variants: TMainGroup; // main group
   secondaryOptions: TOptionGroups;
   additionalServices: TServiceMap;
+
+  category: string;
+  subcategory: string;
 }

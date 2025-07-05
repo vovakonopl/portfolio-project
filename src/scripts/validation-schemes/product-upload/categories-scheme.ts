@@ -1,8 +1,12 @@
 import { z } from 'zod';
 
-export const categoriesByIdScheme = z.object({
-  categoryId: z.string(),
-  subCategoryId: z.string(),
+export const categoriesScheme = z.object({
+  category: z
+    .string({ message: 'Must be a string.' })
+    .min(1, { message: 'Category required.' }),
+  subcategory: z
+    .string({ message: 'Must be a string.' })
+    .min(1, { message: 'Subcategory required.' }),
 });
 
-export type TCategoriesById = z.infer<typeof categoriesByIdScheme>;
+export type TCategories = z.infer<typeof categoriesScheme>;

@@ -1,47 +1,46 @@
-import NewProductForm from './_components/form';
+import { FC } from 'react';
 import db from '@/lib/db';
 import { Category, SubCategory } from '@prisma/client';
-import { auth } from '@clerk/nextjs/server';
+import NewProductForm from './_components/form';
 
 interface INewProductProps {}
 
-const NewProduct = async () => {
-  // const categories = await db.category.findMany();
-  // const subCategories = await db.subCategory.findMany();
-  const categories: Array<SubCategory> = [];
-  const subCategories: Array<SubCategory> = [];
+const NewProduct: FC<INewProductProps> = async () => {
+  const categories: Category[] = await db.category.findMany();
+  const subCategories: SubCategory[] = await db.subCategory.findMany();
 
-  // create Map with categories and with array of subcategories with a key as category id
-  // Map with categories
-  // const categoriesMap: Map<string, Category> = new Map(
-  //   categories.map((category: Category) => [category.id, category]),
-  // );
-
-  // Map with empty arrays of subcategories
-  const subCategoriesMap: Map<string, Array<SubCategory>> = new Map(
-    categories.map((category: Category) => [category.id, []]),
+  // Map for categories
+  // key: category ID; value: category
+  const categoriesMap: Map<string, Category> = new Map(
+    categories.map((category: Category) => [category.id, category]),
   );
-  // append subcategories to map's arrays
-  subCategories.forEach((subCategory: SubCategory) => {
-    // const subCategories: Array<SubCategory> | undefined = subCategoriesMap.get(
-    //   subCategory.relatedCategoryId,
-    // );
 
-    if (!subCategories) {
-      console.error();
-      return;
+  // Map for sub categories
+  // key: category NAME; value: array of related subcategories
+  const subCategoriesMap: Map<string, SubCategory[]> = new Map(
+    categories.map((category: Category) => [category.name, []]),
+  );
+
+  // append subcategories to map
+  for (const subCategory of subCategories) {
+    const relatedCategory: Category | undefined = categoriesMap.get(
+      subCategory.relatedCategoryId,
+    );
+    if (!relatedCategory) {
+      console.error('Related category does not exist. Contact support.');
+      continue;
     }
 
+    const subCategories: SubCategory[] | undefined = subCategoriesMap.get(
+      relatedCategory.name,
+    )!;
     subCategories.push(subCategory);
-  });
-
-  // console.log(subCategoriesMap, categories);
+  }
 
   return (
     <div className="container">
       <main className="flex flex-col items-center">
         <h1 className="mb-2 text-2xl font-medium">Create a new product</h1>
-        {/* <FirstStep categories={categories} subCategories={subCategoriesMap} /> */}
         <NewProductForm
           categories={categories}
           subCategories={subCategoriesMap}

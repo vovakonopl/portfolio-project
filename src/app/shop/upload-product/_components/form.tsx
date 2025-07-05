@@ -46,11 +46,13 @@ const initialFormState: IFormState = {
   variants: initialMainGroupValue,
   secondaryOptions: new Map(),
   additionalServices: new Map(),
+  category: '',
+  subcategory: '',
 };
 
 interface INewProductFormProps {
-  categories: Array<Category>;
-  subCategories: Map<string, Array<SubCategory>>;
+  categories: Category[];
+  subCategories: Map<string, SubCategory[]>;
 }
 
 const NewProductForm: FC<INewProductFormProps> = ({
@@ -84,6 +86,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
     clearErrors,
     formState: { errors, isSubmitting },
     handleSubmit,
+    getValues,
     register,
     setError,
     setValue,
@@ -93,17 +96,29 @@ const NewProductForm: FC<INewProductFormProps> = ({
   });
   const router = useRouter();
 
-  // update product state on value change
+  // update product states on value change
   useEffect(() => {
     const { unsubscribe } = watch((value, { name }) => {
       if (!name) return unsubscribe;
 
+      // Product info fields were updated
       if (name in new Product()) {
+        type TKey = keyof Product;
         dispatchActiveProduct({
           type: ProductStateActions.SetField,
           payload: {
-            field: name as keyof Product,
-            value: value[name as keyof typeof value] as Product[keyof Product],
+            field: name as TKey,
+            value: value[name as keyof typeof value] as Product[TKey],
+          },
+        });
+      } else if (name === 'category' || name === 'subcategory') {
+        // Category fields were updated
+        type TKey = keyof IFormState;
+        dispatchFormState({
+          type: FormStateActions.SetField,
+          payload: {
+            key: name as TKey,
+            value: value[name as keyof typeof value] as IFormState[TKey],
           },
         });
       }
@@ -278,6 +293,10 @@ const NewProductForm: FC<INewProductFormProps> = ({
     });
   };
 
+  console.log(
+    `Category: ${getValues('category')}; subcategory: ${getValues('subcategory')}`,
+  );
+
   return (
     <form
       ref={formRef}
@@ -334,25 +353,23 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 fullWidth
                 name="category"
                 label="Category"
-                onValueChange={onChange}
+                onChange={(value: string) => {
+                  // clear subcategory when category is changed
+                  setValue('subcategory', '');
+                  onChange(value);
+                }}
                 value={value}
                 containerClassName=""
               >
-                <SelectOption id="1" value="1">
-                  test1
-                </SelectOption>
-                <SelectOption id="2" value="2">
-                  test2
-                </SelectOption>
-                <SelectOption id="3" value="3">
-                  test3
-                </SelectOption>
-                <SelectOption id="4" value="4">
-                  test4
-                </SelectOption>
-                <SelectOption id="5" value="5">
-                  test5
-                </SelectOption>
+                {categories.map((category) => (
+                  <SelectOption
+                    id={category.name}
+                    value={category.name}
+                    key={category.id}
+                  >
+                    {category.name}
+                  </SelectOption>
+                ))}
               </Select>
             )}
           />
@@ -365,25 +382,22 @@ const NewProductForm: FC<INewProductFormProps> = ({
                 fullWidth
                 name="subcategory"
                 label="Subcategory"
-                onValueChange={onChange}
+                onChange={onChange}
                 value={value}
                 containerClassName=""
               >
-                <SelectOption id="1" value="1">
-                  test1
-                </SelectOption>
-                <SelectOption id="2" value="2">
-                  test2
-                </SelectOption>
-                <SelectOption id="3" value="3">
-                  test3
-                </SelectOption>
-                <SelectOption id="4" value="4">
-                  test4
-                </SelectOption>
-                <SelectOption id="5" value="5">
-                  test5
-                </SelectOption>
+                {subCategories.has(getValues('category')) &&
+                  subCategories
+                    .get(getValues('category'))!
+                    .map((subCategory) => (
+                      <SelectOption
+                        id={subCategory.name}
+                        value={subCategory.name}
+                        key={subCategory.id}
+                      >
+                        {subCategory.name}
+                      </SelectOption>
+                    ))}
               </Select>
             )}
           />

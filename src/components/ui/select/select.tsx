@@ -26,7 +26,7 @@ interface ISelectProps {
   fullWidth?: boolean;
   label: string;
   name: string;
-  onValueChange?: (value: string) => void;
+  onChange: (value: string) => void;
   value?: string;
 }
 
@@ -39,10 +39,9 @@ const Select: FC<ISelectProps> = ({
   fullWidth,
   label,
   name,
-  onValueChange,
-  value: initialValue,
+  onChange,
+  value,
 }) => {
-  const [value, setValue] = useState<string | undefined>(initialValue);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // for animation
   const [isClosing, setIsClosing] = useState<boolean>(false);
@@ -76,8 +75,7 @@ const Select: FC<ISelectProps> = ({
   };
 
   const handleChange = (value: string) => {
-    onValueChange?.(value);
-    setValue(value);
+    onChange(value);
 
     handleClose();
   };
@@ -228,6 +226,13 @@ const Select: FC<ISelectProps> = ({
             isClosing && 'disappear',
           )}
         >
+          {/* if no children */}
+          {Children.count(children) === 0 && (
+            <p className="my-1 text-center text-lg italic text-gray-400">
+              No options are available
+            </p>
+          )}
+
           {Children.map(children, (child) => {
             // clone element only if it is a SelectOption or SelectInputField component
             if (

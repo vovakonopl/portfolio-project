@@ -174,14 +174,14 @@ model SubCategory {
   id   String @id @default(uuid())
   name String
 
-  relatedCategoryName String
-  relatedCategory     Category @relation(fields: [relatedCategoryName], references: [name], onDelete: Cascade)
+  relatedCategoryId String
+  relatedCategory   Category @relation(fields: [relatedCategoryId], references: [id], onDelete: Cascade)
 
   filters        Filter[]
   products       Product[]
   ProductVariant ProductVariant[]
 
-  @@unique([name, relatedCategoryName])
+  @@unique([name, relatedCategoryId])
 }
 
 model Filter {
