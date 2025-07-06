@@ -21,7 +21,7 @@ export const serviceScheme = z.object({
       message: `Maximum ${PRODUCT_FIELDS_LIMITS.service.descriptionLength} characters.`,
     })
     .optional(),
-  image: imageScheme.optional(),
+  image: imageScheme.optional().nullable(),
 });
 
 export type TService = z.infer<typeof serviceScheme>;

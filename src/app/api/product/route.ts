@@ -5,6 +5,7 @@ import db from '@/lib/db';
 import { transformFromFormDataScheme } from '@/scripts/validation-schemes/product-upload/data-transformers/from-form-data';
 import { TProduct } from '@/scripts/validation-schemes/product-upload/product-scheme';
 import { Category, SubCategory } from '@prisma/client';
+import { fileFriendlyName } from '@/scripts/file-friendly-name';
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
 
   // store images within a single folder for the whole product
   const imageGroupPath: string = `${bucketPath}/${crypto.randomUUID()}`;
-  await fs.mkdir(imageGroupPath);
+  await fs.mkdir(imageGroupPath, { recursive: true });
 
   // key - variant name, value - array of image paths
   const variantsImagePathsMap: Map<string, string[]> = new Map();
@@ -88,9 +89,15 @@ export async function POST(req: Request) {
       // Store the image in the map
       servicesImagePathsMap.set(service.name, imagePath);
     }
-  } catch {
-    await fs.rmdir(imageGroupPath);
+  } catch (err) {
+    // cleanup image folder
+    try {
+      await fs.rm(imageGroupPath, { recursive: true, force: true });
+    } catch {
+      console.error(`Can not cleanup image folder "${imageGroupPath}")`);
+    }
 
+    console.error(err);
     return new Response(
       'Error occurred on the server: Could not store the images.',
       { status: 500 },
@@ -136,7 +143,6 @@ export async function POST(req: Request) {
 
   const categoryId: string = category.id;
   const subCategoryId: string = subcategory.id;
-
   const toCents = (price?: number): number => Math.floor((price || 0) * 100);
 
   const product = await db.product.create({
@@ -179,17 +185,15 @@ export async function POST(req: Request) {
 
       // secondary options
       secondaryOptions: {
-        create: Array.from(
-          productData.secondaryOptions
-            .entries()
-            .flatMap(([optionGroup, options]) =>
-              options.values().map((option) => ({
-                name: option.name,
-                priceInCents: toCents(option.price),
-                optionGroup,
-                optionName: option.displayedName,
-              })),
-            ),
+        create: Array.from(productData.secondaryOptions.entries()).flatMap(
+          ([optionGroup, options]) => {
+            return Array.from(options.values()).map((option) => ({
+              name: option.name,
+              priceInCents: toCents(option.price),
+              optionGroup,
+              optionName: option.displayedName,
+            }));
+          },
         ),
       },
 

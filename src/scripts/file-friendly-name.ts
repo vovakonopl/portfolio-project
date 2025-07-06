@@ -1,3 +1,3 @@
-function fileFriendlyName(str: string) {
+export function fileFriendlyName(str: string) {
   return str.replace(/[\\/:*?"<>|]/g, '_');
 }

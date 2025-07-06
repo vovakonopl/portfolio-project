@@ -35,6 +35,7 @@ import { IFormState } from '../_utils/form-state-interface';
 import Title from './form-title';
 import Groups from './groups';
 import ServicesList from './additional-services/services-list';
+import { cn } from '@/lib/cn';
 
 const initialMainGroupValue: Readonly<TMainGroup> = {
   name: 'Main group',
@@ -92,6 +93,10 @@ const NewProductForm: FC<INewProductFormProps> = ({
     watch,
   } = useForm<TUploadProduct>({
     resolver: zodResolver(formScheme),
+    defaultValues: {
+      category: '',
+      subcategory: '',
+    },
   });
   const router = useRouter();
 
@@ -198,6 +203,16 @@ const NewProductForm: FC<INewProductFormProps> = ({
       },
     });
   }, [secondaryGroups]);
+
+  useEffect(() => {
+    dispatchFormState({
+      type: FormStateActions.SetField,
+      payload: {
+        key: 'additionalServices',
+        value: additionalServices,
+      },
+    });
+  }, [additionalServices]);
 
   const changeActiveProduct = useCallback(
     (optionName: string) => {
@@ -485,7 +500,11 @@ const NewProductForm: FC<INewProductFormProps> = ({
 
       <button
         disabled={isSubmitting}
-        className="w-fit rounded border border-black px-4 py-2"
+        className={cn(
+          'w-fit rounded border border-black bg-white px-8 py-2',
+          'hover:bg-black hover:bg-opacity-5 active:bg-black active:bg-opacity-10',
+          'disabled:cursor-wait disabled:bg-white disabled:opacity-40',
+        )}
       >
         Submit
       </button>

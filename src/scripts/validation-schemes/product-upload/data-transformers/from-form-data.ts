@@ -36,15 +36,14 @@ export const transformFromFormDataScheme = formDataScheme
         (variant: Product) => {
           // adding images
           const key: keyof TProduct = 'variants';
-          let idx: number = 0;
-          let image: File | undefined = undefined;
-
-          do {
-            image = formData.get(
-              mergeStrings(key, variant.optionName, `${idx}`),
+          for (let i = 0; ; i++) {
+            const image = formData.get(
+              mergeStrings(key, variant.optionName, `${i}`),
             ) as File | undefined;
-            idx++;
-          } while (image);
+            if (!image) break;
+
+            variant.images.push(image);
+          }
 
           return [variant.optionName, variant];
         },
