@@ -6,6 +6,7 @@ import { transformFromFormDataScheme } from '@/scripts/validation-schemes/produc
 import { TProduct } from '@/scripts/validation-schemes/product-upload/product-scheme';
 import { Category, SubCategory } from '@prisma/client';
 import { fileFriendlyName } from '@/scripts/file-friendly-name';
+import { IMAGE_BUCKET_FOLDER } from '@/constants/image-bucket-folder';
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -33,11 +34,13 @@ export async function POST(req: Request) {
   const productData: TProduct = formData.data as TProduct;
 
   // =-=-=-=-=-=-=-=-=-= Store all images =-=-=-=-=-=-=-=-=-=
-  const bucketPath: string = './image-bucket';
+  const pathInBucket = (path: string): string => {
+    return `./${IMAGE_BUCKET_FOLDER}/${path}`;
+  };
 
   // store images within a single folder for the whole product
-  const imageGroupPath: string = `${bucketPath}/${crypto.randomUUID()}`;
-  await fs.mkdir(imageGroupPath, { recursive: true });
+  const imageGroup: string = crypto.randomUUID();
+  await fs.mkdir(pathInBucket(imageGroup), { recursive: true });
 
   // key - variant name, value - array of image paths
   const variantsImagePathsMap: Map<string, string[]> = new Map();
@@ -49,18 +52,18 @@ export async function POST(req: Request) {
     // ---------------------- Product images ----------------------
     for (const variant of productData.variants.options.values()) {
       // if this is a single variant, store images in the root of the image group
-      let variantImagesPath: string = imageGroupPath;
+      let variantImagesPath: string = imageGroup;
       if (productData.variants.options.size > 1) {
         // if it has other variants, create subfolders for each variant
-        variantImagesPath = `${imageGroupPath}/${fileFriendlyName(variant.optionName)}`;
-        await fs.mkdir(variantImagesPath);
+        variantImagesPath += `/${fileFriendlyName(variant.optionName)}`;
+        await fs.mkdir(pathInBucket(variantImagesPath));
       }
 
       for (const image of variant.images) {
         const imageExtName: string = path.extname(image.name);
         const imagePath: string = `${variantImagesPath}/${++imageCount}${imageExtName}`;
         const imageBuffer = await image.arrayBuffer();
-        await fs.writeFile(imagePath, Buffer.from(imageBuffer));
+        await fs.writeFile(pathInBucket(imagePath), Buffer.from(imageBuffer));
 
         // Store the image in the map
         const variantName: string = fileFriendlyName(variant.optionName);
@@ -80,11 +83,11 @@ export async function POST(req: Request) {
       if (!service.image) continue;
 
       const imageExtName: string = path.extname(service.image.name);
-      const imagePath: string = `${imageGroupPath}/${fileFriendlyName(
+      const imagePath: string = `${fileFriendlyName(
         service.name,
       )}${imageExtName}`;
       const imageBuffer = await service.image.arrayBuffer();
-      await fs.writeFile(imagePath, Buffer.from(imageBuffer));
+      await fs.writeFile(pathInBucket(imagePath), Buffer.from(imageBuffer));
 
       // Store the image in the map
       servicesImagePathsMap.set(service.name, imagePath);
@@ -92,9 +95,9 @@ export async function POST(req: Request) {
   } catch (err) {
     // cleanup image folder
     try {
-      await fs.rm(imageGroupPath, { recursive: true, force: true });
+      await fs.rm(pathInBucket(imageGroup), { recursive: true, force: true });
     } catch {
-      console.error(`Can not cleanup image folder "${imageGroupPath}")`);
+      console.error(`Can not cleanup image folder "/${imageGroup}/")`);
     }
 
     console.error(err);
@@ -141,8 +144,6 @@ export async function POST(req: Request) {
     optionGroup = optionName = null;
   }
 
-  const categoryId: string = category.id;
-  const subCategoryId: string = subcategory.id;
   const toCents = (price?: number): number => Math.floor((price || 0) * 100);
 
   const product = await db.product.create({
@@ -155,8 +156,8 @@ export async function POST(req: Request) {
         variantsImagePathsMap.get(fileFriendlyName(mainVariant.optionName)) ||
         [],
 
-      categoryId,
-      subCategoryId,
+      categoryId: category.id,
+      subCategoryId: subcategory.id,
 
       rating: 0,
       ratingNumber: 0,
@@ -177,8 +178,8 @@ export async function POST(req: Request) {
           optionGroup: productData.variants.name,
           optionName: variant.optionName,
 
-          categoryId,
-          subCategoryId,
+          categoryId: category.id,
+          subCategoryId: subcategory.id,
           remainInStock: 0,
         })),
       },

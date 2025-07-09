@@ -5,11 +5,6 @@
 /*=========================================
     additional resets and utility classes
   =========================================*/
-html {
-  /* prevents the scrollbar from shifting the content when it appears/disappears */
-  scrollbar-gutter: stable both-edges;
-}
-
 @layer components {
   .container {
     width: 100%;
@@ -378,5 +373,3 @@ html {
     opacity: 0;
   }
 }
-
-

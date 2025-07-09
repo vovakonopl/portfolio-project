@@ -173,7 +173,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
 
     // redirect if success
     const productId = await resp.text();
-    router.replace(`/shop/product/${productId}`);
+    router.replace(`/product/${productId}`);
   };
 
   // Update form state when other parts are updated
