@@ -51,7 +51,8 @@ const ContactForm: FC<IContactFormProps> = ({ closeModal }) => {
       return;
     }
 
-    // if url input is empty and user pastes the link into the first input => move the copied data to the second input
+    // if url input is empty and the user pastes the link into the first input =>
+    // move the copied data to the second input
     e.preventDefault();
     setValue('url', copiedText, { shouldValidate: true });
   };

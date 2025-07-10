@@ -14,7 +14,7 @@ async function get(userId: string): Promise<string> {
   const userJSON: string | null = await redisClient.get(`user:${userId}`);
 
   if (!userJSON) {
-    // if user wasn't found in cache => return data from db and set it in cache
+    // if the user wasn't found in cache => return data from db and set it in cache
     const user: UserWithContacts | null = await db.user.findUnique({
       where: {
         id: userId,

@@ -28,7 +28,9 @@ const ServiceModal: FC<IServiceModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  const [image, setImage] = useState<File | undefined>(initialValues?.image);
+  const [image, setImage] = useState<File | null | undefined>(
+    initialValues?.image,
+  );
   const {
     control,
     formState: { errors },

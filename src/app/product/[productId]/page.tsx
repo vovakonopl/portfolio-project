@@ -157,7 +157,9 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
           </div>
 
           {/* options */}
-          <hr className="border-gray-300" />
+          {Array.from(groupsMap.keys()).length > 0 && (
+            <hr className="border-gray-300" />
+          )}
           {Array.from(groupsMap.keys()).map((group: string) => (
             <OptionGroup
               activeOption={selectedOptions[group]}

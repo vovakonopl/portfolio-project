@@ -31,17 +31,16 @@ function defineImageMIMEType(imagePath: string): TImageMIMETypes {
 }
 
 export async function GET(
-  _: NextRequest,
-  { params: { imagePath } }: { params: { imagePath: string[] } },
+  req: NextRequest,
+  { params }: { params: Promise<{ imagePath: string[] }> },
 ) {
+  const { imagePath } = await params;
   const path = imagePath.join('/');
-  console.log(1);
   try {
     const imageBuffer: Buffer = await fs.readFile(
       `./${IMAGE_BUCKET_FOLDER}/${path}`,
     );
     const contentType: TImageMIMETypes = defineImageMIMEType(path);
-    console.log(2);
     return new NextResponse(imageBuffer, {
       status: 200,
       headers: {
