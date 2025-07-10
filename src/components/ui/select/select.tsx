@@ -215,7 +215,11 @@ const Select: FC<ISelectProps> = ({
             error && 'border-rose-700 outline-rose-700',
           )}
         >
-          <Label htmlFor={buttonId} className="static -top-2 flex-1 text-start">
+          <Label
+            className="static -top-2 flex-1 text-start"
+            htmlFor={buttonId}
+            onClick={(e) => e.preventDefault()}
+          >
             {label}
           </Label>
 
