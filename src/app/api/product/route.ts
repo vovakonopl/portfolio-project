@@ -83,7 +83,7 @@ export async function POST(req: Request) {
       if (!service.image) continue;
 
       const imageExtName: string = path.extname(service.image.name);
-      const imagePath: string = `${fileFriendlyName(
+      const imagePath: string = `${imageGroup}/${fileFriendlyName(
         service.name,
       )}${imageExtName}`;
       const imageBuffer = await service.image.arrayBuffer();
