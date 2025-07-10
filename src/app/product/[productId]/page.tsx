@@ -2,11 +2,7 @@ import { FC } from 'react';
 import { notFound } from 'next/navigation';
 import { ProductVariant, SecondaryOption } from '@prisma/client';
 import db from '@/lib/db';
-import { cn } from '@/lib/cn';
 import { TProduct } from '@/types/product';
-import Image from 'next/image';
-import ProductImages from '@/app/product/[productId]/_components/product-images';
-import OptionGroup from '@/app/product/[productId]/_components/option-group';
 import {
   TGroupsMap,
   TOptionsMap,
@@ -18,6 +14,11 @@ import {
   generatePriceAndName,
   getSelectedOptionsFromParams,
 } from '@/app/product/[productId]/_utils/functions';
+import Image from 'next/image';
+import ProductImages from '@/app/product/[productId]/_components/product-images';
+import OptionGroup from '@/app/product/[productId]/_components/option-group';
+import Price from '@/app/product/[productId]/_components/price';
+import Services from '@/app/product/[productId]/_components/services';
 
 interface IProductPageProps {
   params: Promise<{ productId: string }>;
@@ -134,27 +135,7 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
           <div className="h-6 bg-gray-200">{/* rating */}</div>
 
           {/* price */}
-          <div className="decoration- flex gap-3 text-xl font-bold text-black">
-            {product.totalDiscountProcent && (
-              <span>
-                ${(price * (1 - product.totalDiscountProcent)).toFixed(2)}
-              </span>
-            )}
-
-            <span
-              className={cn(
-                product.totalDiscountProcent && 'text-gray-400 line-through',
-              )}
-            >
-              ${price.toFixed(2)}
-            </span>
-
-            {product.totalDiscountProcent && (
-              <span className="text rounded-full bg-rose-100 p-1 px-3 text-sm text-rose-600">
-                {Math.floor(product.totalDiscountProcent)}%
-              </span>
-            )}
-          </div>
+          <Price price={price} discountPercent={product.totalDiscountPercent} />
 
           {/* options */}
           {Array.from(groupsMap.keys()).length > 0 && (
@@ -171,8 +152,17 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
           ))}
 
           {/* description */}
-          <hr className="border-gray-300" />
-          <p className="word-break">{mainVariant.description}</p>
+          {mainVariant.description && (
+            <>
+              <hr className="border-gray-300" />
+              <p className="word-break">{mainVariant.description}</p>
+            </>
+          )}
+
+          {/* services */}
+          {product.additionalServices.length > 0 && (
+            <Services services={product.additionalServices} />
+          )}
         </div>
       </div>
 

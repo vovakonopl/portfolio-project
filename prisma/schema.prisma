@@ -48,7 +48,7 @@ model Product {
   imagePaths   String[]
 
   // same discount for all product variants if they exist
-  totalDiscountProcent        Int?
+  totalDiscountPercent        Int?
   totalDiscountExpirationTime DateTime?
 
   // statistics
@@ -120,7 +120,7 @@ model Service {
   description  String?
   imagePath    String?
 
-  discountProcent        Int?
+  discountPercent        Int?
   discountExpirationTime DateTime?
 
   productId String
