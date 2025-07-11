@@ -74,7 +74,6 @@ const OptionBoxContainer: FC<IOptionBoxContainerProps> = forwardRef(
       setElemWidthRem(width);
     }, [isRenaming]);
 
-    // TODO: fix buttons in the renaming state
     // Rename state handlers
     const handleCancelRename = () => {
       setIsRenaming(false);

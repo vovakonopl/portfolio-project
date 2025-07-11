@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, useState } from 'react';
-import Filters from './_components/filters';
-import Link from 'next/link';
 import { useResize } from '@/scripts/hooks/useResize';
+import CurrentRoutePath from '@/components/current-route-path';
+import Filters from './_components/filters';
 
 interface IShopProps {}
 
@@ -27,18 +27,12 @@ const Shop: FC<IShopProps> = () => {
 
   return (
     <div className="container flex flex-col">
-      <nav className="mb-4 flex gap-3 text-gray-400">
-        <Link href="/">Home</Link>
-        <span>&gt;</span>
-        <Link href="/shop" className="text-black underline underline-offset-4">
-          Shop
-        </Link>
-      </nav>
+      <CurrentRoutePath />
+
       <div className="flex gap-5">
-        <aside className="sticky top-nav-h h-[calc(100dvh-var(--nav-height)-1rem)] w-72 rounded-2xl border border-gray-200 pb-4 pt-4 max-md:hidden">
-          <Filters />
-        </aside>
-        <main className="h-[1000px] flex-1">
+        <Filters />
+
+        <main className="flex-1">
           <div className="hidden max-md:flex">
             {!isFilterVisible && (
               <button
