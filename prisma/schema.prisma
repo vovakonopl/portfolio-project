@@ -52,7 +52,7 @@ model Product {
   totalDiscountExpirationTime DateTime?
 
   // statistics
-  rating        Int
+  rating        Float
   ratingNumber  Int
   remainInStock Int
 

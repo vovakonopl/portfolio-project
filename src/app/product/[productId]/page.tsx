@@ -19,6 +19,8 @@ import ProductImages from '@/app/product/[productId]/_components/product-images'
 import OptionGroup from '@/app/product/[productId]/_components/option-group';
 import Price from '@/app/product/[productId]/_components/price';
 import Services from '@/app/product/[productId]/_components/services';
+import { cn } from '@/lib/cn';
+import Ratings from '@/app/product/[productId]/_components/ratings';
 
 interface IProductPageProps {
   params: Promise<{ productId: string }>;
@@ -131,8 +133,11 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
           <h1 className="text-2xl font-medium">{name}</h1>
 
           {/* rating */}
-          {/* TODO*/}
-          <div className="h-6 bg-gray-200">{/* rating */}</div>
+          <Ratings
+            rating={product.rating}
+            ratingsCount={product.ratingNumber}
+          />
+          {/*<div className="h-6 bg-gray-200">/!* rating *!/</div>*/}
 
           {/* price */}
           <Price price={price} discountPercent={product.totalDiscountPercent} />
@@ -163,6 +168,17 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
           {product.additionalServices.length > 0 && (
             <Services services={product.additionalServices} />
           )}
+
+          {/* add to cart button */}
+          <button
+            className={cn(
+              'mx-auto w-full max-w-lg rounded-full bg-black px-4 py-2',
+              'text-center text-white hover:opacity-85 active:opacity-75',
+            )}
+            // TODO: Add handler in future. To make it, button must be a client component
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
 
