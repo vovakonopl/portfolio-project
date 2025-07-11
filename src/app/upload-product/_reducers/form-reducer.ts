@@ -1,4 +1,4 @@
-import { IFormState } from '@/app/shop/upload-product/_utils/form-state-interface';
+import { IFormState } from '@/app/upload-product/_utils/form-state-interface';
 
 export enum FormStateActions {
   SetMode,

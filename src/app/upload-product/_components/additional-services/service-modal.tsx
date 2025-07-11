@@ -12,7 +12,7 @@ import InputField from '@/components/ui/text-input-field';
 import ImageDropzone from '@/components/ui/dropzone';
 import { cn } from '@/lib/cn';
 import { AdditionalService } from '@/types/product/additional-service';
-import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
+import ModalButtons from '@/app/upload-product/_components/modal-buttons';
 import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
 
 interface IServiceModalProps {

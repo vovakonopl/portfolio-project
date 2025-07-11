@@ -3,7 +3,7 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { TMainGroup } from '@/types/product/option-groups';
 import { Product } from '@/types/product/product';
-import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
+import { reorderArray } from '@/app/upload-product/_utils/reorder-array';
 import OptionListContainer from '../option-list-container';
 import MainOptionBox from './main-option-box';
 

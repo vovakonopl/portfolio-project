@@ -8,7 +8,7 @@ import {
 } from '@/types/product/option-groups';
 import { Product } from '@/types/product/product';
 import Tooltip from '@/components/ui/tooltip';
-import Title from '@/app/shop/upload-product/_components/form-title';
+import Title from '@/app/upload-product/_components/form-title';
 import MainOptionGroup from './product-options/main-group/main-group';
 import GroupList from './product-options/secondary-group/group-list';
 import {

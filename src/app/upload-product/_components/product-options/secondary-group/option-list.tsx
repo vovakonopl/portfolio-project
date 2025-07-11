@@ -12,8 +12,8 @@ import {
   optionScheme,
   TOption,
 } from '@/scripts/validation-schemes/product-upload/option-scheme';
-import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
-import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
+import { reorderArray } from '@/app/upload-product/_utils/reorder-array';
+import ModalButtons from '@/app/upload-product/_components/modal-buttons';
 import OptionListContainer from '../option-list-container';
 import OptionBox from './option-box';
 

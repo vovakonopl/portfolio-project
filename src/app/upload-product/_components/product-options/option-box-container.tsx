@@ -12,7 +12,7 @@ import { cn } from '@/lib/cn';
 import { Edit, X } from 'lucide-react';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { CSS } from '@dnd-kit/utilities';
-import { useSortableOptions } from '@/app/shop/upload-product/_utils/use-sortable-options';
+import { useSortableOptions } from '@/app/upload-product/_utils/use-sortable-options';
 import RenameOption from './rename-option';
 import ElementWrapper from './element-wrapper';
 

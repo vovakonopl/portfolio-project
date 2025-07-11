@@ -1,6 +1,6 @@
 import { FC, forwardRef, HTMLAttributes, ReactNode, Ref } from 'react';
 import { cn } from '@/lib/cn';
-import OptionBox from '@/app/shop/upload-product/_components/product-options/secondary-group/option-box';
+import OptionBox from '@/app/upload-product/_components/product-options/secondary-group/option-box';
 import ElementWrapper from './element-wrapper';
 import { useResize } from '@/scripts/hooks/useResize';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';

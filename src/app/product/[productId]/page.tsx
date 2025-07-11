@@ -137,7 +137,6 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
             rating={product.rating}
             ratingsCount={product.ratingNumber}
           />
-          {/*<div className="h-6 bg-gray-200">/!* rating *!/</div>*/}
 
           {/* price */}
           <Price price={price} discountPercent={product.totalDiscountPercent} />

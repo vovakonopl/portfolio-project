@@ -23,7 +23,7 @@ import InputField from '@/components/ui/text-input-field';
 import OptionGroup from './option-group';
 import { SecondaryOption } from '@/types/product/secondary-option';
 import { TOptionGroups, TOptionMap } from '@/types/product/option-groups';
-import ModalButtons from '@/app/shop/upload-product/_components/modal-buttons';
+import ModalButtons from '@/app/upload-product/_components/modal-buttons';
 
 interface IGroupListProps {
   optionGroups: TOptionGroups;

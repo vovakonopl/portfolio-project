@@ -13,7 +13,7 @@ import { PlusCircle } from 'lucide-react';
 import {
   InteractivePointerSensor,
   InteractiveTouchSensor,
-} from '@/app/shop/upload-product/_utils/interactive-sensors';
+} from '@/app/upload-product/_utils/interactive-sensors';
 
 interface IOptionListContainerProps extends HTMLAttributes<HTMLOListElement> {
   children: ReactNode;

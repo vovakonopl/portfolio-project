@@ -22,13 +22,13 @@ import { cn } from '@/lib/cn';
 import {
   ServiceStateActions,
   TAction as TServicesAction,
-} from '@/app/shop/upload-product/_reducers/service-reducer';
-import { reorderArray } from '@/app/shop/upload-product/_utils/reorder-array';
+} from '@/app/upload-product/_reducers/service-reducer';
+import { reorderArray } from '@/app/upload-product/_utils/reorder-array';
 import {
   InteractiveKeyboardSensor,
   InteractivePointerSensor,
   InteractiveTouchSensor,
-} from '@/app/shop/upload-product/_utils/interactive-sensors';
+} from '@/app/upload-product/_utils/interactive-sensors';
 import Service from './service';
 import ServiceModal from './service-modal';
 
