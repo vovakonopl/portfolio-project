@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useResize } from '@/scripts/hooks/useResize';
+import { SEARCH_PARAMETER_KEY } from '@/constants/search-parameter-key';
 
 const SCREEN_WIDTH = 768;
 
@@ -27,7 +28,8 @@ const SearchBar: FC<ISearchBarProps> = () => {
   const handleSubmit = () => {
     if (!searchValue) return;
 
-    const searchParams = new URLSearchParams({ search: searchValue });
+    const param = Object.fromEntries([[SEARCH_PARAMETER_KEY, searchValue]]);
+    const searchParams = new URLSearchParams(param);
     router.push(`/shop?${searchParams}`);
     setSearchValue('');
   };

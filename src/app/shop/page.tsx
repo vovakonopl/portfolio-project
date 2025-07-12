@@ -1,29 +1,33 @@
-'use client';
-
-import { FC, useState } from 'react';
-import { useResize } from '@/scripts/hooks/useResize';
+import { FC } from 'react';
 import CurrentRoutePath from '@/components/current-route-path';
+import { SEARCH_PARAMETER_KEY } from '@/constants/search-parameter-key';
+import { TProductReturn } from '@/app/shop/_product_getters/return-type';
+import { getProducts } from '@/app/shop/_product_getters/get-products';
+import { searchProducts } from '@/app/shop/_product_getters/search-products';
 import Filters from './_components/filters';
 
-interface IShopProps {}
+export const dynamic = 'force-dynamic'; // Retrieve actual data on each request
 
-const Shop: FC<IShopProps> = () => {
-  const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
+type TSearchParams = { [key: string]: string | string[] | undefined };
 
-  // hide filters on resize
-  useResize(() => {
-    // width after which filters are no longer visible
-    const windowMaxWidth: number = 768;
-    const windowWidth: number = window.innerWidth;
+interface IShopProps {
+  searchParams: Promise<TSearchParams>;
+}
 
-    if (windowWidth >= windowMaxWidth) {
-      setIsFilterVisible(false);
-    }
-  });
+const Shop: FC<IShopProps> = async ({ searchParams }) => {
+  const search = (await searchParams)[SEARCH_PARAMETER_KEY];
 
-  const closeFilters = () => {
-    setIsFilterVisible(false);
-  };
+  let products: TProductReturn | null;
+  if (!search) {
+    products = await getProducts(1);
+  } else {
+    // join search query into 1 string if there are multiple
+    const searchQuery: string = Array.isArray(search)
+      ? search.join(' ')
+      : search;
+
+    products = await searchProducts(searchQuery, 1);
+  }
 
   return (
     <div className="container flex flex-col">
@@ -33,25 +37,22 @@ const Shop: FC<IShopProps> = () => {
         <Filters />
 
         <main className="flex-1">
-          <div className="hidden max-md:flex">
-            {!isFilterVisible && (
-              <button
-                onClick={() => {
-                  setIsFilterVisible(true);
-                }}
+          {!products && (
+            <p className="text-lg text-gray-500">No products found</p>
+          )}
+
+          {products &&
+            products.data.map((product) => (
+              <div
+                className="mb-2 flex flex-col rounded border border-gray-400"
+                key={product.id}
               >
-                filters
-              </button>
-            )}
-            {isFilterVisible && (
-              <>
-                <div className="absolute inset-0 z-20 bg-black opacity-10"></div>
-                <div className="absolute inset-0 top-14 z-20 rounded-t-[1.25rem] bg-white pt-4 md:hidden">
-                  <Filters close={closeFilters} />
-                </div>
-              </>
-            )}
-          </div>
+                <p>{product.name}</p>
+                {product.variants.map((variant) => (
+                  <p key={variant.id}>{variant.name}</p>
+                ))}
+              </div>
+            ))}
         </main>
       </div>
     </div>

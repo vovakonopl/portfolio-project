@@ -16,11 +16,10 @@ const Hr: FC = () => {
   return <hr className="border-gray-200" />;
 };
 
-interface IFiltersProps {
-  close?: () => void;
-}
+interface IFiltersProps {}
 
-const Filters: FC<IFiltersProps> = ({ close }) => {
+// TODO: handle filters display on mobile devices
+const Filters: FC<IFiltersProps> = () => {
   return (
     <aside className="max-h-[32rem] w-72 rounded-2xl border border-gray-200 pb-4 pt-4 max-md:hidden">
       <div className="no-scrollbar flex max-h-full flex-col gap-6 overflow-auto px-4 pb-6 pt-1">
@@ -28,10 +27,7 @@ const Filters: FC<IFiltersProps> = ({ close }) => {
           <div className="flex items-center gap-4 md:justify-between">
             <h2 className="text-xl font-bold text-black">Filters</h2>
             <SlidersVertical className="size-6 fill-gray-400" />
-            <button
-              className="-mb-1 -mr-2 -mt-1 hidden p-2 max-md:ml-auto max-md:inline-block"
-              onClick={close}
-            >
+            <button className="-mb-1 -mr-2 -mt-1 hidden p-2 max-md:ml-auto max-md:inline-block">
               <X className="size-4 fill-gray-400" />
             </button>
           </div>

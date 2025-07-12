@@ -7,3 +7,9 @@ export type TProduct = Prisma.ProductGetPayload<{
     variants: true;
   };
 }>;
+
+export type TProductWithVariants = Prisma.ProductGetPayload<{
+  include: {
+    variants: true;
+  };
+}>;
