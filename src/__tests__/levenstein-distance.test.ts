@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { levenshteinDistance } from '@/scripts/levenshtein-distance';
+import { levenshteinDistance } from '@/scripts/fuzzy-search/levenshtein-distance';
 
 test('Empty strings', () => {
   expect(levenshteinDistance('', '')).toBe(0);
