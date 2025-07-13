@@ -7,6 +7,7 @@ import { TProduct } from '@/scripts/validation-schemes/product-upload/product-sc
 import { Category, SubCategory } from '@prisma/client';
 import { fileFriendlyName } from '@/scripts/file-friendly-name';
 import { IMAGE_BUCKET_FOLDER } from '@/constants/image-bucket-folder';
+import { storeProductName } from '@/lib/cache/product-names';
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -210,12 +211,20 @@ export async function POST(req: Request) {
         ),
       },
     },
+
+    include: {
+      variants: true,
+    },
   });
+
+  // store names in cache
+  storeProductName(product);
 
   // return product id as a result
   return new Response(product.id, { status: 200 });
 }
 
+/*
 export async function PATCH(req: Request) {
   const { userId } = await auth();
 
@@ -223,3 +232,4 @@ export async function PATCH(req: Request) {
     return new Response('User not logged in', { status: 403 });
   }
 }
+*/

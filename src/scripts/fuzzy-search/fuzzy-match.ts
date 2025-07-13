@@ -4,7 +4,7 @@ import { levenshteinDistance } from '@/scripts/fuzzy-search/levenshtein-distance
 const MIN_MATCH_THRESHOLD = 0.5; // words match for 50% or more
 
 // Function splits search query into separate words, numbers and words containing numbers.
-function splitSearchQuery(searchQuery: string): string[] {
+export function splitSearchQuery(searchQuery: string): string[] {
   return searchQuery.split(/[^\p{L}\p{N}_]+/u).filter((str) => str.length > 0);
 }
 

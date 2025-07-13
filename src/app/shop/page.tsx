@@ -37,9 +37,10 @@ const Shop: FC<IShopProps> = async ({ searchParams }) => {
         <Filters />
 
         <main className="flex-1">
-          {!products && (
-            <p className="text-lg text-gray-500">No products found</p>
-          )}
+          {!products ||
+            (products.data.length === 0 && (
+              <p className="text-lg text-gray-500">No products found</p>
+            ))}
 
           {products &&
             products.data.map((product) => (

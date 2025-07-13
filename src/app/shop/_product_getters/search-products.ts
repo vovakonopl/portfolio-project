@@ -1,12 +1,61 @@
 'use server';
 
 import { TProductReturn } from '@/app/shop/_product_getters/return-type';
+import {
+  fillProductNamesFromDb,
+  productNames,
+} from '@/lib/cache/product-names';
+import {
+  isFuzzyMatch,
+  splitSearchQuery,
+} from '@/scripts/fuzzy-search/fuzzy-match';
+import { PRODUCTS_COUNT_ON_PAGE } from '@/constants/products-count-on-page';
+import db from '@/lib/db';
 
 export async function searchProducts(
   search: string,
   page: number,
 ): Promise<TProductReturn | null> {
-  page = Math.max(page, 1);
+  if (splitSearchQuery(search).length === 0) return null;
+  if (productNames.size === 0) {
+    await fillProductNamesFromDb();
+  }
 
-  return null;
+  page = Math.max(page, 1);
+  const resultIds: string[] = [];
+  const skipCount: number = (page - 1) * PRODUCTS_COUNT_ON_PAGE;
+  if (skipCount >= productNames.size) return null;
+
+  let matchingCount: number = 0;
+  for (const [id, names] of productNames.entries()) {
+    for (const name of names) {
+      if (isFuzzyMatch(search, name)) {
+        matchingCount++;
+        if (matchingCount > skipCount) {
+          resultIds.push(id);
+        }
+
+        break;
+      }
+    }
+  }
+
+  try {
+    return {
+      data: await db.product.findMany({
+        include: { variants: true },
+        orderBy: [{ rating: 'desc' }, { ratingNumber: 'desc' }],
+        where: {
+          id: {
+            in: resultIds,
+          },
+        },
+      }),
+
+      count: matchingCount,
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
