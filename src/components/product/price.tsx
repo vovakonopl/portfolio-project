@@ -20,18 +20,25 @@ const Price: FC<IPriceProps> = ({ className, discountPercent, price }) => {
     : null;
 
   return (
-    <div className={cn('flex gap-3 text-xl font-bold text-black', className)}>
+    <div
+      className={cn(
+        'flex flex-wrap gap-x-3 text-xl font-bold text-black',
+        className,
+      )}
+    >
       {priceWithDiscount && <span>${priceWithDiscount.toFixed(2)}</span>}
 
-      <span className={cn(discountPercent && 'text-gray-400 line-through')}>
-        ${price.toFixed(2)}
-      </span>
-
-      {discountPercent && (
-        <span className="text rounded-full bg-rose-100 p-1 px-3 text-sm text-rose-600">
-          -{Math.floor(discountPercent * 100)}%
+      <div className="flex gap-3">
+        <span className={cn(discountPercent && 'text-gray-400 line-through')}>
+          ${price.toFixed(2)}
         </span>
-      )}
+
+        {discountPercent && (
+          <span className="rounded-full bg-rose-100 p-1 px-3 text-sm text-rose-600">
+            -{Math.floor(discountPercent * 100)}%
+          </span>
+        )}
+      </div>
     </div>
   );
 };

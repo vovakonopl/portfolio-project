@@ -29,7 +29,7 @@ const Navbar: FC<INavbarProps> = () => {
               <Link href="/shop">Shop</Link>
             </li>
             <li className="link">
-              <Link href="/public">On sale</Link>
+              <Link href="/shop">On sale</Link>
             </li>
           </ul>
         </div>

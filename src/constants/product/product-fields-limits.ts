@@ -3,7 +3,7 @@ export const PRODUCT_FIELDS_LIMITS = Object.freeze({
     nameLength: 25,
   }),
   product: Object.freeze({
-    nameLength: 200,
+    nameLength: 100,
     descriptionLength: 1000,
     imageCount: 15,
   }),

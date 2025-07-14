@@ -17,10 +17,10 @@ import {
 import Image from 'next/image';
 import ProductImages from '@/app/product/[productId]/_components/product-images';
 import OptionGroup from '@/app/product/[productId]/_components/option-group';
-import Price from '@/app/product/[productId]/_components/price';
+import Price from '@/components/product/price';
 import Services from '@/app/product/[productId]/_components/services';
 import { cn } from '@/lib/cn';
-import Ratings from '@/app/product/[productId]/_components/ratings';
+import Ratings from '@/components/product/ratings';
 
 interface IProductPageProps {
   params: Promise<{ productId: string }>;

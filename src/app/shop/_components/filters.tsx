@@ -34,11 +34,11 @@ const Filters: FC<IFiltersProps> = () => {
           <Hr />
         </div>
 
-        <div className="flex flex-col">
-          <Title>Price</Title>
-          {/* inputs */}
-        </div>
-        <Hr />
+        {/*<div className="flex flex-col">*/}
+        {/*  <Title>Price</Title>*/}
+        {/*  /!* inputs *!/*/}
+        {/*</div>*/}
+        {/*<Hr />*/}
 
         <button className="rounded-full bg-black py-3 font-medium text-white transition duration-150 ease-in-out hover:opacity-80 active:scale-95 active:opacity-100">
           Apply filters

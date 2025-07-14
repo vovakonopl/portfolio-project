@@ -87,6 +87,7 @@ const SearchBar: FC<ISearchBarProps> = () => {
 
   useEffect(() => {
     const handleClose = (e: KeyboardEvent) => {
+      if (!e.key) return;
       if (e.key.toLowerCase() === 'escape') {
         handleCloseSearch();
       }

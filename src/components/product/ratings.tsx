@@ -17,21 +17,30 @@ const Stars: FC<IStarsProps> = ({ className }) => {
 };
 
 interface IRatingsProps {
+  className?: string;
   rating: number;
   ratingsCount: number;
+  starClassName?: string;
 }
 
-const Ratings: FC<IRatingsProps> = ({ rating, ratingsCount }) => {
+const Ratings: FC<IRatingsProps> = ({
+  className,
+  rating,
+  ratingsCount,
+  starClassName,
+}) => {
   const ratingPercent: number = rating * 20; // max rating is 5
   const width: string = `${ratingPercent}%`;
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={cn('flex flex-wrap items-center gap-1', className)}>
       {/* stars */}
       <div className="relative w-fit">
         {/* placeholder with gray stars */}
         <div className="flex">
-          <Stars className="fill-slate-200 text-slate-200" />
+          <Stars
+            className={cn('fill-slate-200 text-slate-200', starClassName)}
+          />
         </div>
 
         {/* actual rating in stars */}
@@ -39,7 +48,12 @@ const Ratings: FC<IRatingsProps> = ({ rating, ratingsCount }) => {
           className="absolute left-0 top-0 h-full overflow-clip"
           style={{ width }}
         >
-          <Stars className="inline fill-yellow-400 text-yellow-400" />
+          <Stars
+            className={cn(
+              'inline fill-yellow-400 text-yellow-400',
+              starClassName,
+            )}
+          />
         </div>
       </div>
 

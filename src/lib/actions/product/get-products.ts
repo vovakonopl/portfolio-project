@@ -1,12 +1,12 @@
 'use server';
 
-import db from '@/lib/db';
 import { PRODUCTS_COUNT_ON_PAGE } from '@/constants/products-count-on-page';
-import { TProductReturn } from '@/app/shop/_product_getters/return-type';
+import db from '@/lib/db';
+import { TProductsReturn } from '@/lib/actions/product/products-return-type';
 
 export async function getProducts(
   page: number,
-): Promise<TProductReturn | null> {
+): Promise<TProductsReturn | null> {
   page = Math.max(page, 1);
 
   try {

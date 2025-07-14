@@ -1,6 +1,6 @@
 'use server';
 
-import { TProductReturn } from '@/app/shop/_product_getters/return-type';
+import { PRODUCTS_COUNT_ON_PAGE } from '@/constants/products-count-on-page';
 import {
   fillProductNamesFromDb,
   productNames,
@@ -9,13 +9,13 @@ import {
   isFuzzyMatch,
   splitSearchQuery,
 } from '@/scripts/fuzzy-search/fuzzy-match';
-import { PRODUCTS_COUNT_ON_PAGE } from '@/constants/products-count-on-page';
 import db from '@/lib/db';
+import { TProductsReturn } from '@/lib/actions/product/products-return-type';
 
 export async function searchProducts(
   search: string,
   page: number,
-): Promise<TProductReturn | null> {
+): Promise<TProductsReturn | null> {
   if (splitSearchQuery(search).length === 0) return null;
   if (productNames.size === 0) {
     await fillProductNamesFromDb();

@@ -1,10 +1,12 @@
 import { FC } from 'react';
 import CurrentRoutePath from '@/components/current-route-path';
 import { SEARCH_PARAMETER_KEY } from '@/constants/search-parameter-key';
-import { TProductReturn } from '@/app/shop/_product_getters/return-type';
-import { getProducts } from '@/app/shop/_product_getters/get-products';
-import { searchProducts } from '@/app/shop/_product_getters/search-products';
+import { TProductsReturn } from '@/lib/actions/product/products-return-type';
+import { getProducts } from '@/lib/actions/product/get-products';
+import { searchProducts } from '@/lib/actions/product/search-products';
 import Filters from './_components/filters';
+import ProductCard from '@/components/product/product-card';
+import { cn } from '@/lib/cn';
 
 export const dynamic = 'force-dynamic'; // Retrieve actual data on each request
 
@@ -17,7 +19,7 @@ interface IShopProps {
 const Shop: FC<IShopProps> = async ({ searchParams }) => {
   const search = (await searchParams)[SEARCH_PARAMETER_KEY];
 
-  let products: TProductReturn | null;
+  let products: TProductsReturn | null;
   if (!search) {
     products = await getProducts(1);
   } else {
@@ -39,21 +41,24 @@ const Shop: FC<IShopProps> = async ({ searchParams }) => {
         <main className="flex-1">
           {!products ||
             (products.data.length === 0 && (
-              <p className="text-lg text-gray-500">No products found</p>
+              <p className="text-center text-2xl text-gray-400">
+                No products found
+              </p>
             ))}
 
-          {products &&
-            products.data.map((product) => (
-              <div
-                className="mb-2 flex flex-col rounded border border-gray-400"
-                key={product.id}
-              >
-                <p>{product.name}</p>
-                {product.variants.map((variant) => (
-                  <p key={variant.id}>{variant.name}</p>
-                ))}
-              </div>
-            ))}
+          {products && (
+            <ul
+              className={cn(
+                'grid grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-4 max-lg:gap-2',
+              )}
+            >
+              {products.data.map((product) => (
+                <li className="h-full" key={product.id}>
+                  <ProductCard {...product} className="h-full" />
+                </li>
+              ))}
+            </ul>
+          )}
         </main>
       </div>
     </div>

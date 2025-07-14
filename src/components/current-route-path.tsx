@@ -30,7 +30,7 @@ const CurrentRoutePath: FC<ICurrentRoutePathProps> = () => {
       </Link>
 
       {routes.map((route: string, idx: number) => (
-        <Fragment key={Math.random()}>
+        <Fragment key={idx}>
           <span>&gt;</span>
           <Link
             className="text-black underline underline-offset-4"

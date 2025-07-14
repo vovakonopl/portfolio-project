@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Service } from '@prisma/client';
 import { cn } from '@/lib/cn';
 import Image from 'next/image';
-import Price from '@/app/product/[productId]/_components/price';
+import Price from '@/components/product/price';
 
 interface IServicesProps {
   services: Service[];
@@ -12,10 +12,10 @@ const Services: FC<IServicesProps> = ({ services }) => {
   return (
     <>
       <hr className="border-gray-300" />
-      <ul className="flex flex-1 flex-col">
+      <ul className="flex flex-1 flex-col gap-2">
         {services.map((service) => (
           <li
-            className="flex flex-1 gap-2 rounded-xl border border-gray-300"
+            className="flex gap-2 rounded-xl border border-gray-300"
             key={service.id}
           >
             {service.imagePath && (

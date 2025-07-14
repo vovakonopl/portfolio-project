@@ -1,6 +1,6 @@
 import { TProductWithVariants } from '@/types/product';
 
-export type TProductReturn = {
+export type TProductsReturn = {
   data: TProductWithVariants[];
   count: number;
 };
