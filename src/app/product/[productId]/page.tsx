@@ -21,6 +21,7 @@ import Price from '@/components/product/price';
 import Services from '@/app/product/[productId]/_components/services';
 import { cn } from '@/lib/cn';
 import Ratings from '@/components/product/ratings';
+import RecentTracker from '@/app/product/[productId]/_components/recent-tracker';
 
 interface IProductPageProps {
   params: Promise<{ productId: string }>;
@@ -109,7 +110,7 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
   );
 
   return (
-    <div className="container">
+    <main className="container">
       {/* product */}
       <div className="flex gap-10 max-md:flex-col max-md:gap-5">
         {/* images */}
@@ -182,7 +183,10 @@ const ProductPage: FC<IProductPageProps> = async ({ params, searchParams }) => {
       </div>
 
       {/* comments */}
-    </div>
+
+      {/* store product to recently visited */}
+      <RecentTracker productId={product.id} />
+    </main>
   );
 };
 

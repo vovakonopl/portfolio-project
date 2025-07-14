@@ -1,14 +1,15 @@
+import RecentlyViewedProducts from '@/components/product/recently-viewed-products';
+
 export default function Home() {
   return (
     <div className="container">
-      <main className="text-4xl font-bold">
+      <main className="flec-col flex gap-4">
         {/* header with all product categories */}
 
         {/* section with popular products */}
 
-        {/* section with recent products */}
-
-        {/* section with last viewed products (last 10) */}
+        {/* section with recently viewed products */}
+        <RecentlyViewedProducts />
       </main>
     </div>
   );
