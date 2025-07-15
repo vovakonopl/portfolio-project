@@ -3,24 +3,26 @@
 import { Prisma } from '@prisma/client';
 import db from '@/lib/db';
 
-export type TProductCardInfo = Prisma.ProductGetPayload<{
-  select: {
-    id: true;
-    name: true;
-    imagePaths: true;
-    optionGroup: true;
-    optionName: true;
-    priceInCents: true;
-    rating: true;
-    ratingNumber: true;
-    totalDiscountPercent: true;
+const select = Object.freeze({
+  id: true,
+  name: true,
+  imagePaths: true,
+  optionGroup: true,
+  optionName: true,
+  priceInCents: true,
+  rating: true,
+  ratingNumber: true,
+  totalDiscountPercent: true,
 
-    variants: {
-      select: {
-        optionName: true;
-      };
-    };
-  };
+  variants: {
+    select: {
+      optionName: true,
+    },
+  },
+});
+
+export type TProductCardInfo = Prisma.ProductGetPayload<{
+  select: typeof select;
 }>;
 
 export async function getProductCardInfo(
@@ -31,23 +33,25 @@ export async function getProductCardInfo(
       where: {
         id: productId,
       },
-      select: {
-        id: true,
-        name: true,
-        imagePaths: true,
-        optionGroup: true,
-        optionName: true,
-        priceInCents: true,
-        rating: true,
-        ratingNumber: true,
-        totalDiscountPercent: true,
+      select,
+    });
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
 
-        variants: {
-          select: {
-            optionName: true,
-          },
+export async function getProductCardInfoList(
+  productIds: string[],
+): Promise<TProductCardInfo[] | null> {
+  try {
+    return await db.product.findMany({
+      where: {
+        id: {
+          in: productIds,
         },
       },
+      select,
     });
   } catch (e) {
     console.error(e);

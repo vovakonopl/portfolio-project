@@ -1,49 +1,41 @@
 import { FC } from 'react';
-import {
-  getProductCardInfo,
-  TProductCardInfo,
-} from '@/lib/actions/product/get-product-card-info';
 import { TProductWithVariants } from '@/types/product';
 import Ratings from '@/components/product/ratings';
 import Price from '@/components/product/price';
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
 import Link from 'next/link';
+import { TProductCardInfo } from '@/lib/actions/product/get-product-card-info';
 
-type TProductCardProps = (
-  | {
-      productId: string;
-    }
-  | TProductWithVariants
-) & { className?: string };
+type TProductCardProps = (TProductWithVariants | TProductCardInfo) & {
+  className?: string;
+  imageClassName?: string;
+};
 
-const ProductCard: FC<TProductCardProps> = async ({ className, ...props }) => {
-  let productCardInfo: TProductCardInfo | TProductWithVariants | null;
-  if ('productId' in props) {
-    productCardInfo = await getProductCardInfo(props.productId);
+const ProductCard: FC<TProductCardProps> = ({
+  className,
+  id,
+  imageClassName,
+  imagePaths,
+  optionGroup,
+  optionName,
+  name,
+  priceInCents,
+  rating,
+  ratingNumber,
+  totalDiscountPercent,
+  variants,
+}) => {
+  const variantNames: string[] | null = optionGroup ? [optionName!] : null;
 
-    if (!productCardInfo) {
-      console.error(`Can not get '${props.productId}' for the card info.`);
-      return <></>;
-    }
-  } else {
-    productCardInfo = props;
+  for (const variant of variants) {
+    variantNames?.push(variant.optionName);
   }
 
-  const variants: string[] | null = productCardInfo.optionGroup
-    ? [productCardInfo.optionName!]
-    : null;
-
-  if (variants) {
-    for (const variant of productCardInfo.variants) {
-      variants.push(variant.optionName);
-    }
-  }
-
-  const URLToProduct: string = `/product/${productCardInfo.id}`;
+  const URLToProduct: string = `/product/${id}`;
   const createSearchParams = (variantName: string): URLSearchParams => {
     return new URLSearchParams(
-      Object.fromEntries([[productCardInfo.optionGroup, variantName]]),
+      Object.fromEntries([[optionGroup, variantName]]),
     );
   };
 
@@ -58,8 +50,11 @@ const ProductCard: FC<TProductCardProps> = async ({ className, ...props }) => {
         <div className="w-full">
           <Image
             alt=""
-            src={`/api/image/${productCardInfo.imagePaths[0]}`}
-            className="aspect-square w-full object-cover object-center"
+            src={`/api/image/${imagePaths[0]}`}
+            className={cn(
+              'aspect-square w-full object-cover object-center',
+              imageClassName,
+            )}
             height={600}
             width={600}
           />
@@ -71,27 +66,25 @@ const ProductCard: FC<TProductCardProps> = async ({ className, ...props }) => {
           className="peer text-black hover:underline active:text-opacity-60"
           href={URLToProduct}
         >
-          <h3 className="word-break font-medium">{productCardInfo.name}</h3>
+          <h3 className="word-break font-medium">{name}</h3>
         </Link>
         <Ratings
           className="gap-x-2"
-          rating={productCardInfo.rating}
-          ratingsCount={productCardInfo.ratingNumber}
+          rating={rating}
+          ratingsCount={ratingNumber}
           starClassName="size-4"
         />
         <Price
           className="text-base"
-          discountPercent={productCardInfo.totalDiscountPercent}
-          price={productCardInfo.priceInCents / 100}
+          discountPercent={totalDiscountPercent}
+          price={priceInCents / 100}
         />
 
-        {variants && (
+        {variantNames && (
           <div>
-            <h4 className="text-sm font-medium">
-              {productCardInfo?.optionGroup}
-            </h4>
+            <h4 className="text-sm font-medium">{optionGroup}</h4>
             <ul className="flex flex-wrap gap-1 text-xs">
-              {variants.map((variantName) => (
+              {variantNames.map((variantName) => (
                 <li
                   className={cn(
                     'rounded border border-gray-400 px-1 transition-colors',

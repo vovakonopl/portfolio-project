@@ -5,7 +5,7 @@ import { TProductsReturn } from '@/lib/actions/product/products-return-type';
 import { getProducts } from '@/lib/actions/product/get-products';
 import { searchProducts } from '@/lib/actions/product/search-products';
 import Filters from './_components/filters';
-import ProductCard from '@/components/product/product-card';
+import ProductCard from '@/components/product/card/product-card';
 import { cn } from '@/lib/cn';
 
 export const dynamic = 'force-dynamic'; // Retrieve actual data on each request
