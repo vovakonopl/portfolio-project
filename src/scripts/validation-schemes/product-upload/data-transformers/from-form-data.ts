@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+  filterGroups,
   productScheme,
   TProduct,
 } from '@/scripts/validation-schemes/product-upload/product-scheme';
@@ -76,7 +77,7 @@ export const transformFromFormDataScheme = formDataScheme
       const additionalServices: TServiceMap = new Map(serviceEntries);
 
       // Constructing final object
-      return {
+      const res: TProduct = {
         variants: {
           name: data.variants.name,
           options: variants,
@@ -86,6 +87,10 @@ export const transformFromFormDataScheme = formDataScheme
         category: data.category,
         subcategory: data.subcategory,
       };
+
+      // filter groups before returning
+      filterGroups(res);
+      return res;
     } catch (error) {
       console.error('Error processing FormData:', error);
       return null;

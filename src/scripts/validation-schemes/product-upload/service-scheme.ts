@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
 import { imageScheme } from '@/scripts/validation-schemes/image-scheme';
+import { MAX_SERVICES } from '@/constants/product/services';
+import {
+  createNameScheme,
+  refineMapKeys,
+} from '@/scripts/validation-schemes/product-upload/utils';
 
+// Single service
 export const serviceScheme = z.object({
   name: z
     .string()
@@ -25,3 +31,14 @@ export const serviceScheme = z.object({
 });
 
 export type TService = z.infer<typeof serviceScheme>;
+
+// Map of services
+export const serviceMapScheme = z
+  .map(
+    createNameScheme('service', PRODUCT_FIELDS_LIMITS.service.nameLength),
+    serviceScheme,
+  )
+  .refine((map) => map.size <= MAX_SERVICES, {
+    message: `Maximum number of services is ${MAX_SERVICES}.`,
+  })
+  .superRefine((map, ctx) => refineMapKeys(map, ctx, 'name'));

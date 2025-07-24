@@ -1,4 +1,4 @@
-export const zodRegexEntry: [RegExp, { message: string }] = [
+export const zodInvalidFileCharsRegexEntry: [RegExp, { message: string }] = [
   /^[^\\/:*?"<>|]*$/,
   {
     message:

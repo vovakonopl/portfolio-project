@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import { PRODUCT_FIELDS_LIMITS } from '@/constants/product/product-fields-limits';
 import { imageScheme } from '@/scripts/validation-schemes/image-scheme';
+import { GROUPS } from '@/constants/product/groups';
+import {
+  refineMapKeys,
+  createNameScheme,
+} from '@/scripts/validation-schemes/product-upload/utils';
 
+// Single object with product/variant info
 export const productInfoScheme = z.object({
   name: z
     .string()
@@ -26,4 +32,24 @@ export const productInfoScheme = z.object({
   }),
 });
 
-export type TProductInfo = z.infer<typeof productInfoScheme>;
+// Map of objects with product/variant info
+export const productInfoMapScheme = z
+  .map(
+    z.string({ message: 'Must be a string.' }),
+    productInfoScheme.extend({
+      optionName: createNameScheme(
+        'option',
+        PRODUCT_FIELDS_LIMITS.option.nameLength,
+      ),
+    }),
+  )
+  .refine((map) => map.size > 0, {
+    message: 'At least 1 product variant is required.',
+  })
+  .refine((map) => map.size <= GROUPS.maxOptionCount, {
+    message: `Maximum number of variants is ${GROUPS.maxOptionCount}.`,
+  })
+  .superRefine((map, ctx) => refineMapKeys(map, ctx, 'optionName'));
+
+// export type TProductInfo = z.infer<typeof productInfoScheme>;
+

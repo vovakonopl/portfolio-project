@@ -1,4 +1,5 @@
 import {
+  filterGroups,
   productScheme,
   TProduct,
 } from '@/scripts/validation-schemes/product-upload/product-scheme';
@@ -27,6 +28,9 @@ export const transformToFormDataScheme = productScheme.transform(
   (data: TProduct): FormData => {
     const formData = new FormData();
     const keys = getKeys(data);
+
+    // filter groups before processing
+    filterGroups(data);
 
     // Variants
     const variants = Array.from(data.variants.options.values());
