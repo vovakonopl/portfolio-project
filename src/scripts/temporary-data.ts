@@ -69,22 +69,3 @@ export function getTemporaryList(
     return isFreshData(value, storedFor);
   });
 }
-
-// Stores temporary data to local storage for specified time in milliseconds.
-export function setTemporaryData<T>(key: string, value: T) {
-  localStorage.set(key, JSON.stringify(new TemporaryData(value)));
-}
-
-// Gets data from local storage and returns it if it's "fresh"
-export function getTemporaryData(
-  key: string,
-  storedFor: number,
-): unknown | null {
-  const json: string | null = localStorage.getItem(key);
-  if (!json) return null;
-
-  const data: unknown = JSON.parse(json);
-  if (!isTemporaryData(data)) return null;
-
-  return isFreshData(data, storedFor) ? data.data : null;
-}
