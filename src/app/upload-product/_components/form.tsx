@@ -440,6 +440,7 @@ const NewProductForm: FC<INewProductFormProps> = ({
               max={PRODUCT_FIELDS_LIMITS.maxPrice}
               placeholder="1.00$"
               type="number"
+              step="any"
             />
           </div>
         </div>
