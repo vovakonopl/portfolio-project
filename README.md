@@ -90,3 +90,8 @@ Smart link parsing and phone validation
 
 ### 📌 Limitations  
 This project does not include full purchase functionality or checkout flow (though a purchase model is present in the schema). This is intentional – the focus is on frontend interactions, form architecture, and real-time UI logic.
+
+> _**Disclaimer**:  
+> This project is a personal portfolio project created for educational and demonstrational purposes only.  
+> All product names, images, and brands shown in demo GIFs are used as placeholders and are the property of their respective owners.  
+> I do not claim any affiliation with or endorsement from these brands._
