@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+### 🛍️ Trinket – Product Search & Upload Platform  
+Welcome to Trinket, my first portfolio project built to showcase core frontend and full-stack development skills. This project is a shop platform where users can explore and search products using a fuzzy search engine, and authorized users can upload products with complex variant logic.
 
-## Getting Started
+While not a fully finished commercial product, this app demonstrates essential functionality and hands-on experience with modern web technologies, clean UI/UX design, and structured logic handling.
 
-First, run the development server:
+### 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🛒 Product Upload (Single & Multiple Variants)  
+Authorized users can upload products in two modes:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Single Product Mode – upload name, price, description, and images.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Multiple Variant Mode – define main options (unique name/price/image) and secondary options (optional modifiers).
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Includes advanced logic for:
 
-## Learn More
+Removing empty/single-item groups.
 
-To learn more about Next.js, take a look at the following resources:
+Merging single options into all variants automatically.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Additional services (with price/name and optional image/description) that affect total price.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Drag-and-drop support for sorting options and service lists.
 
-## Deploy on Vercel
+📸 **Demo:**  
+👉 See the GIF below  
+![upload-demo](https://github.com/user-attachments/assets/838bf107-2202-47cc-a66f-88b037c6de7b)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🧾 Product Page View
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Each product has its own detailed page displaying:
+
+- Product name, description, images, and price
+- Dynamic rendering of variant groups and additional services
+- Interactive image slider (built with Swiper)
+- Total price updates based on selected options
+- Clean responsive layout
+
+📸 **Demo:**  
+👉 _See the GIF below_  
+![product-page-demo](https://github.com/user-attachments/assets/a732f0c9-e47c-4a2c-8edb-0e3bb94bdeed)
+
+### 🔎 Fuzzy Search (Levenshtein-based)  
+Users can search for products with flexible spelling using a custom fuzzy search algorithm based on Levenshtein distance.
+
+📸 **Demo:**  
+👉 See the GIF below  
+![search-demo](https://github.com/user-attachments/assets/dbce2a63-fc49-429e-95f6-0c2a6cfaf490)
+
+### 👤 Profile Page & Contact Management  
+Users can manage their profile through:
+
+Basic info (synced with Clerk)
+
+Editable bio
+
+Social OAuth linking (Google, Facebook, Apple)
+
+Separate Contacts tab: add phones, social/media links, or plain text like "Telegram @my_name".
+
+Smart link parsing and phone validation
+
+📸 **Demo:**  
+👉 See the GIF below  
+![profile-demo](https://github.com/user-attachments/assets/7a9d330f-e075-4e6d-b0f9-db8ee27e4d03)
+
+### 🧠 Other Notable Features  
+🖼️ Image Dropzone – drag or select images, view thumbnails, delete, and full-size preview
+
+🧩 Drag & Drop UI – implemented with dnd-kit to sort variant groups and services
+
+🕵️ Recently Viewed – displays up to 10 last-viewed products (saved for 7 days)
+
+📱 Responsive Design – built with Tailwind CSS for all screen sizes
+
+| Tech                             | Purpose                                                 |
+| -------------------------------- | ------------------------------------------------------- |
+| **React + Next.js + TypeScript** | Core framework                                          |
+| **Tailwind CSS**                 | Styling                                                 |
+| **PostgreSQL + Prisma**          | Database & ORM                                          |
+| **Clerk**                        | Authentication & OAuth                                  |
+| **Zod**                          | Schema validation                                       |
+| **React Hook Form**              | Form state management                                   |
+| **dnd-kit**                      | Drag & drop logic                                       |
+| **react-dropzone**               | Image uploads                                           |
+| **Swiper**                       | Image carousels                                         |
+| **lucide-react**                 | Icon library                                            |
+| **Redis (via Redis Cloud)**      | Simple user session caching                             |
+| **clsx + tailwind-merge**        | Utility for conditional styling                         |
+
+### 📌 Limitations  
+This project does not include full purchase functionality or checkout flow (though a purchase model is present in the schema). This is intentional – the focus is on frontend interactions, form architecture, and real-time UI logic.
