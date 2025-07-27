@@ -4,7 +4,6 @@ import { SEARCH_PARAMETER_KEY } from '@/constants/search-parameter-key';
 import { TProductsReturn } from '@/lib/actions/product/products-return-type';
 import { getProducts } from '@/lib/actions/product/get-products';
 import { searchProducts } from '@/lib/actions/product/search-products';
-import Filters from './_components/filters';
 import ProductCard from '@/components/product/card/product-card';
 import { cn } from '@/lib/cn';
 
@@ -36,7 +35,7 @@ const Shop: FC<IShopProps> = async ({ searchParams }) => {
       <CurrentRoutePath />
 
       <div className="flex gap-5">
-        <Filters />
+        {/*<Filters />*/}
 
         <main className="flex-1">
           {!products ||

@@ -20,13 +20,15 @@ const UserAbout: FC<IUserAboutProps> = ({ user }) => {
       <div className="flex">
         <Title>Username: </Title>
         <span className={cn(user.username && 'italic')}>
-          {user.username || 'No username'}
+          {user.username || (
+            <span className="italic text-gray-500">No username</span>
+          )}
         </span>
       </div>
 
       <div className="flex">
         <Title>BIO: </Title>
-        {!user.bio && <p className="italic">No BIO yet</p>}
+        {!user.bio && <p className="italic text-gray-500">No BIO yet</p>}
         {user.bio && (
           <p>
             {user.bio.split('\n').map((line: string) => (

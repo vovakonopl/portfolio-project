@@ -34,7 +34,8 @@ export const userAboutScheme = z.object({
       'Minimum 4 characters (or can be empty).',
     )
     .refine(
-      (value: string) => containsOnlyEnglishOrDigits(value),
+      (value: string) =>
+        value.length === 0 || containsOnlyEnglishOrDigits(value),
       'Only English letters or digits are allowed.',
     )
     .refine(
